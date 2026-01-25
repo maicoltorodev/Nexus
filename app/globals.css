@@ -1,0 +1,447 @@
+@import "tailwindcss";
+
+:root {
+  /* Colores de fondo oscuros */
+  --color-bg-primary: #0a0a0a;
+  --color-bg-secondary: #1a1a1a;
+  --color-bg-tertiary: #252525;
+  
+  /* Colores de marca - Dorado vibrante */
+  --color-gold: #FFD700;
+  --color-gold-light: #FFED4E;
+  --color-gold-dark: #CCA300;
+  --color-orange: #FFA500;
+  
+  /* Colores de texto */
+  --color-white: #FFFFFF;
+  --color-gray-100: #F5F5F5;
+  --color-gray-200: #E0E0E0;
+  --color-gray-400: #999999;
+  --color-gray-600: #666666;
+  --color-gray-800: #333333;
+  
+  /* Gradientes */
+  --gradient-gold: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  --gradient-dark: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
+  
+  --background: var(--color-bg-primary);
+  --foreground: var(--color-white);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Animaciones personalizadas */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 1s ease-out;
+}
+
+/* Animación de aparición de la X */
+@keyframes x-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-x-appear {
+  animation: x-appear 0.6s ease-out forwards;
+}
+
+/* Animación de slide desde el centro hacia la izquierda (NE) */
+@keyframes slide-left {
+  0% {
+    opacity: 0;
+    transform: translateX(100px) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.animate-slide-left {
+  animation: slide-left 0.8s ease-out forwards;
+  animation-delay: 0.6s;
+  opacity: 0;
+}
+
+/* Animación de slide desde el centro hacia la derecha (US) */
+@keyframes slide-right {
+  0% {
+    opacity: 0;
+    transform: translateX(-100px) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.animate-slide-right {
+  animation: slide-right 0.8s ease-out forwards;
+  animation-delay: 0.6s;
+  opacity: 0;
+}
+
+/* Animación innovadora y abrupta para la X */
+@keyframes spin-abrupt {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  10% {
+    transform: rotate(90deg) scale(1.1);
+  }
+  20% {
+    transform: rotate(180deg) scale(1);
+  }
+  30% {
+    transform: rotate(270deg) scale(1.15);
+  }
+  40% {
+    transform: rotate(360deg) scale(1);
+  }
+  45% {
+    transform: rotate(360deg) scale(1);
+  }
+  50% {
+    transform: rotate(450deg) scale(1.2);
+  }
+  60% {
+    transform: rotate(540deg) scale(1);
+  }
+  70% {
+    transform: rotate(630deg) scale(1.1);
+  }
+  80% {
+    transform: rotate(720deg) scale(1);
+  }
+  85% {
+    transform: rotate(720deg) scale(1);
+  }
+  90% {
+    transform: rotate(810deg) scale(1.15);
+  }
+  100% {
+    transform: rotate(900deg) scale(1);
+  }
+}
+
+/* Versión alternativa: Rotación 3D con perspectiva */
+@keyframes spin-3d-abrupt {
+  0% {
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1);
+  }
+  25% {
+    transform: perspective(1000px) rotateY(90deg) rotateX(15deg) scale(1.1);
+  }
+  50% {
+    transform: perspective(1000px) rotateY(180deg) rotateX(0deg) scale(1);
+  }
+  75% {
+    transform: perspective(1000px) rotateY(270deg) rotateX(-15deg) scale(1.1);
+  }
+  100% {
+    transform: perspective(1000px) rotateY(360deg) rotateX(0deg) scale(1);
+  }
+}
+
+/* Versión con efecto "glitch" y rotación - 4 ángulos */
+@keyframes spin-glitch {
+  0% {
+    transform: rotate(0deg) scale(1);
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
+  }
+  25% {
+    transform: rotate(90deg) scale(1.01);
+    filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.8));
+  }
+  50% {
+    transform: rotate(180deg) scale(1.02);
+    filter: drop-shadow(0 0 50px rgba(255, 215, 0, 1));
+  }
+  75% {
+    transform: rotate(270deg) scale(1.01);
+    filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.8));
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-glitch 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: 1.4s;
+}
+
+/* Filtro base para la X */
+.x-filter-base {
+  filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
+}
+
+
+/* Estilos para scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-orange);
+}
+
+/* Animación de flote para el FAB */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-10px) translateX(5px);
+  }
+  50% {
+    transform: translateY(-15px) translateX(0);
+  }
+  75% {
+    transform: translateY(-10px) translateX(-5px);
+  }
+}
+
+/* Animación de pulso sutil para la card blanca */
+@keyframes card-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(255, 215, 0, 0);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(255, 215, 0, 0.1);
+  }
+}
+
+/* Animación de shimmer/brillo que se mueve */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Animación de brillo dorado en el borde */
+@keyframes border-glow {
+  0%, 100% {
+    border-color: #e5e7eb;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1), inset 0 0 0 0 rgba(255, 215, 0, 0);
+  }
+  50% {
+    border-color: #FFD700;
+    box-shadow: 0 25px 70px rgba(255, 215, 0, 0.2), inset 0 0 20px rgba(255, 215, 0, 0.1);
+  }
+}
+
+.animate-card-pulse {
+  animation: card-pulse 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 215, 0, 0.3),
+    transparent
+  );
+  animation: shimmer 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.animate-border-glow {
+  animation: border-glow 4s ease-in-out infinite;
+}
+
+/* Animación de loop continua - brillo rotativo alrededor de la card */
+@keyframes rotate-glow {
+  0% {
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.1),
+      0 0 0 0 rgba(255, 215, 0, 0.4),
+      20px 0 0 0 rgba(255, 215, 0, 0),
+      -20px 0 0 0 rgba(255, 215, 0, 0),
+      0 20px 0 0 rgba(255, 215, 0, 0),
+      0 -20px 0 0 rgba(255, 215, 0, 0);
+  }
+  25% {
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.1),
+      0 0 0 0 rgba(255, 215, 0, 0),
+      20px 0 0 0 rgba(255, 215, 0, 0.4),
+      -20px 0 0 0 rgba(255, 215, 0, 0),
+      0 20px 0 0 rgba(255, 215, 0, 0),
+      0 -20px 0 0 rgba(255, 215, 0, 0);
+  }
+  50% {
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.1),
+      0 0 0 0 rgba(255, 215, 0, 0),
+      20px 0 0 0 rgba(255, 215, 0, 0),
+      -20px 0 0 0 rgba(255, 215, 0, 0),
+      0 20px 0 0 rgba(255, 215, 0, 0.4),
+      0 -20px 0 0 rgba(255, 215, 0, 0);
+  }
+  75% {
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.1),
+      0 0 0 0 rgba(255, 215, 0, 0),
+      20px 0 0 0 rgba(255, 215, 0, 0),
+      -20px 0 0 0 rgba(255, 215, 0, 0.4),
+      0 20px 0 0 rgba(255, 215, 0, 0),
+      0 -20px 0 0 rgba(255, 215, 0, 0);
+  }
+  100% {
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.1),
+      0 0 0 0 rgba(255, 215, 0, 0.4),
+      20px 0 0 0 rgba(255, 215, 0, 0),
+      -20px 0 0 0 rgba(255, 215, 0, 0),
+      0 20px 0 0 rgba(255, 215, 0, 0),
+      0 -20px 0 0 rgba(255, 215, 0, 0);
+  }
+}
+
+/* Alternativa: Efecto de glow pulsante más visible */
+@keyframes continuous-glow {
+  0%, 100% {
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.1),
+      0 0 20px rgba(255, 215, 0, 0.2),
+      inset 0 0 20px rgba(255, 215, 0, 0.05);
+  }
+  50% {
+    box-shadow: 
+      0 25px 70px rgba(0, 0, 0, 0.15),
+      0 0 40px rgba(255, 215, 0, 0.4),
+      inset 0 0 30px rgba(255, 215, 0, 0.15);
+  }
+}
+
+.animate-continuous-glow {
+  animation: continuous-glow 2s ease-in-out infinite;
+}
+
+/* Efectos de hover para la X del Hero */
+.x-container-base {
+  border: 2px solid transparent;
+  box-shadow: none;
+  background: transparent;
+  transition: border-color 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1), background 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.x-hover-container {
+  border-color: #FFD700;
+  box-shadow: 
+    0 0 30px rgba(255, 215, 0, 0.4),
+    0 0 60px rgba(255, 215, 0, 0.2),
+    inset 0 0 30px rgba(255, 215, 0, 0.05);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.03) 0%, rgba(255, 165, 0, 0.03) 100%);
+}
+
+.x-hover-x {
+  filter: drop-shadow(0 0 50px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 30px rgba(255, 215, 0, 0.5)) !important;
+}
+
+.x-hover-ne {
+  transform: scale(1.05) translateX(-5px);
+}
+
+.x-hover-ne img {
+  filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.6)) !important;
+}
+
+.x-hover-us {
+  transform: scale(1.05) translateX(5px);
+}
+
+.x-hover-us img {
+  filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.6)) !important;
+}
+
+.x-hover-card {
+  transform: scale(1.03);
+}
+
+.x-hover-card .rounded-lg {
+  box-shadow: 0 30px 80px rgba(255, 215, 0, 0.4), 0 0 50px rgba(255, 215, 0, 0.3) !important;
+}
+
+.x-hover-text {
+  color: #FFD700 !important;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.x-hover-button {
+  box-shadow: 0 15px 60px rgba(255, 215, 0, 0.6), 0 0 40px rgba(255, 215, 0, 0.4) !important;
+  transform: translateY(-3px) scale(1.05) !important;
+}

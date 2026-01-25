@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Nexus Estudio Gráfico - Diseño creativo y profesional que conecta ideas con realidad">
+    <meta name="keywords" content="diseño gráfico, estudio creativo, branding, identidad visual, diseño profesional">
+    <title>NEXUS | Estudio Gráfico</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Geometric Particle Background -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-logo">
+            <span class="logo-text">NE<span class="logo-x">X</span>US</span>
+        </div>
+        <div class="nav-links">
+            <a href="#servicios" class="nav-link">Servicios</a>
+            <a href="#portfolio" class="nav-link">Portfolio</a>
+            <a href="#about" class="nav-link">Nosotros</a>
+            <a href="#contacto" class="nav-link nav-link-cta">Contacto</a>
+        </div>
+        <button class="nav-toggle" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <div class="hero-logo-container">
+                <img src="nexus-logo.png" alt="Nexus Estudio Gráfico" class="hero-logo">
+            </div>
+
+            <h1 class="hero-title">
+                <span class="title-line">DISEÑO QUE</span>
+                <span class="title-line title-gradient">TRANSFORMA</span>
+                <span class="title-line">TU VISIÓN</span>
+            </h1>
+
+            <p class="hero-subtitle">
+                En <span class="highlight">Nexus</span>, conectamos creatividad con estrategia para construir marcas
+                inolvidables
+            </p>
+
+            <div class="hero-cta">
+                <a href="#contacto" class="btn btn-primary">
+                    <span>Iniciar Proyecto</span>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M4 10H16M16 10L10 4M16 10L10 16" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" />
+                    </svg>
+                </a>
+                <a href="#portfolio" class="btn btn-secondary">Ver Portfolio</a>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="servicios">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">NUESTROS SERVICIOS</span>
+                <h2 class="section-title">Soluciones <span class="gradient-text">Creativas</span></h2>
+                <p class="section-description">Transformamos ideas en experiencias visuales impactantes</p>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card" data-reveal>
+                    <div class="service-icon">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                            <path d="M12 8L24 2L36 8V20C36 30 24 38 24 38C24 38 12 30 12 20V8Z" stroke="currentColor"
+                                stroke-width="2" stroke-linejoin="round" />
+                            <path d="M24 24L30 18M24 24L18 18M24 24V32" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h3 class="service-title">Identidad de Marca</h3>
+                    <p class="service-description">Creamos identidades visuales únicas que capturan la esencia de tu
+                        negocio y resuenan con tu audiencia.</p>
+                    <ul class="service-features">
+                        <li>Diseño de logotipos</li>
+                        <li>Manual de marca</li>
+                        <li>Papelería corporativa</li>
+                    </ul>
+                </div>
+
+                <div class="service-card" data-reveal>
+                    <div class="service-icon">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                            <rect x="6" y="10" width="36" height="28" rx="2" stroke="currentColor" stroke-width="2" />
+                            <path d="M6 18H42M14 14H18M22 14H26" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" />
+                            <circle cx="15" cy="26" r="4" stroke="currentColor" stroke-width="2" />
+                            <path d="M24 30L30 24L38 32" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <h3 class="service-title">Diseño Digital</h3>
+                    <p class="service-description">Interfaces modernas y experiencias digitales que cautivan y
+                        convierten visitantes en clientes.</p>
+                    <ul class="service-features">
+                        <li>UI/UX Design</li>
+                        <li>Landing pages</li>
+                        <li>Redes sociales</li>
+                    </ul>
+                </div>
+
+                <div class="service-card" data-reveal>
+                    <div class="service-icon">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                            <path d="M8 24L16 16L24 22L40 8M40 8V18M40 8H30" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M38 24V36C38 37.1046 37.1046 38 36 38H12C10.8954 38 10 37.1046 10 36V12"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h3 class="service-title">Marketing Visual</h3>
+                    <p class="service-description">Estrategias visuales que impulsan tu presencia en el mercado y
+                        generan resultados medibles.</p>
+                    <ul class="service-features">
+                        <li>Campañas publicitarias</li>
+                        <li>Contenido para redes</li>
+                        <li>Material promocional</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section class="portfolio" id="portfolio">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">NUESTRO TRABAJO</span>
+                <h2 class="section-title">Portfolio <span class="gradient-text">Destacado</span></h2>
+                <p class="section-description">Proyectos que hablan por sí mismos</p>
+            </div>
+
+            <div class="portfolio-grid">
+                <div class="portfolio-item" data-reveal>
+                    <div class="portfolio-image">
+                        <div class="portfolio-overlay">
+                            <span class="portfolio-category">Branding</span>
+                            <h3 class="portfolio-title">Identidad Corporativa</h3>
+                            <p class="portfolio-desc">Renovación completa de marca</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-item" data-reveal>
+                    <div class="portfolio-image">
+                        <div class="portfolio-overlay">
+                            <span class="portfolio-category">Digital</span>
+                            <h3 class="portfolio-title">Diseño Web Premium</h3>
+                            <p class="portfolio-desc">Experiencia de usuario inmersiva</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-item" data-reveal>
+                    <div class="portfolio-image">
+                        <div class="portfolio-overlay">
+                            <span class="portfolio-category">Marketing</span>
+                            <h3 class="portfolio-title">Campaña 360°</h3>
+                            <p class="portfolio-desc">Estrategia visual integrada</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="portfolio-item" data-reveal>
+                    <div class="portfolio-image">
+                        <div class="portfolio-overlay">
+                            <span class="portfolio-category">Packaging</span>
+                            <h3 class="portfolio-title">Diseño de Producto</h3>
+                            <p class="portfolio-desc">Packaging innovador y funcional</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-content" data-reveal>
+                    <span class="section-tag">NOSOTROS</span>
+                    <h2 class="section-title">Donde la <span class="gradient-text">Creatividad</span> Encuentra su
+                        Propósito</h2>
+
+                    <p class="about-text">
+                        En <strong>Nexus</strong>, somos más que un estudio de diseño. Somos arquitectos de experiencias
+                        visuales que trascienden lo ordinario. Cada proyecto es una oportunidad para explorar los
+                        límites de la creatividad y construir conexiones auténticas.
+                    </p>
+
+                    <p class="about-text">
+                        Nuestro enfoque combina <span class="highlight">pensamiento estratégico</span>, <span
+                            class="highlight">diseño innovador</span> y una obsesión por los detalles que marca la
+                        diferencia entre lo bueno y lo extraordinario.
+                    </p>
+
+                    <div class="about-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">100+</div>
+                            <div class="stat-label">Proyectos Exitosos</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">50+</div>
+                            <div class="stat-label">Clientes Satisfechos</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">5+</div>
+                            <div class="stat-label">Años de Experiencia</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-visual" data-reveal>
+                    <div class="floating-shapes">
+                        <div class="float-shape shape-a"></div>
+                        <div class="float-shape shape-b"></div>
+                        <div class="float-shape shape-c"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contacto">
+        <div class="container">
+            <div class="contact-content" data-reveal>
+                <span class="section-tag">CONECTEMOS</span>
+                <h2 class="section-title">¿Listo para crear algo <span class="gradient-text">Extraordinario</span>?</h2>
+                <p class="contact-description">
+                    Cada gran proyecto comienza con una conversación. Cuéntanos tu visión y la transformaremos en
+                    realidad.
+                </p>
+
+                <div class="contact-methods">
+                    <a href="mailto:hola@nexusstudio.com" class="contact-method">
+                        <div class="method-icon">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                <path d="M4 8L16 18L28 8M4 8V24H28V8H4Z" stroke="currentColor" stroke-width="2"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <div class="method-content">
+                            <span class="method-label">Email</span>
+                            <span class="method-value">hola@nexusstudio.com</span>
+                        </div>
+                    </a>
+
+                    <a href="tel:+1234567890" class="contact-method">
+                        <div class="method-icon">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                <path
+                                    d="M9 5C9 5 11 5 13 9C13 9 13.5 11.5 11 14C11 14 13 19 18 21C20.5 18.5 23 19 23 19C27 21 27 23 27 23C27 23 27 27 21 27C15 27 5 17 5 11C5 5 9 5 9 5Z"
+                                    stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <div class="method-content">
+                            <span class="method-label">Teléfono</span>
+                            <span class="method-value">+1 (234) 567-890</span>
+                        </div>
+                    </a>
+
+                    <a href="https://wa.me/1234567890" target="_blank" class="contact-method">
+                        <div class="method-icon">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                <path
+                                    d="M16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4C9.37258 4 4 9.37258 4 16C4 18.4 4.7 20.6 5.9 22.5L4 28L9.7 26.2C11.5 27.3 13.7 28 16 28Z"
+                                    stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                                <path
+                                    d="M12 14C12 14 12.5 11.5 14.5 11.5C15.5 11.5 16 12 16 13C16 14 15 14.5 15 15.5V17M15 20H15.01"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <div class="method-content">
+                            <span class="method-label">WhatsApp</span>
+                            <span class="method-value">Chatea con nosotros</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="cta-buttons">
+                    <a href="#contacto" class="btn btn-primary btn-large">
+                        <span>Comenzar Proyecto</span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <span class="logo-text">NE<span class="logo-x">X</span>US</span>
+                    </div>
+                    <p class="footer-tagline">Estudio Gráfico</p>
+                    <p class="footer-description">Conectando creatividad con estrategia desde 2019</p>
+                </div>
+
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4 class="footer-heading">Servicios</h4>
+                        <ul class="footer-list">
+                            <li><a href="#servicios">Identidad de Marca</a></li>
+                            <li><a href="#servicios">Diseño Digital</a></li>
+                            <li><a href="#servicios">Marketing Visual</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h4 class="footer-heading">Empresa</h4>
+                        <ul class="footer-list">
+                            <li><a href="#about">Nosotros</a></li>
+                            <li><a href="#portfolio">Portfolio</a></li>
+                            <li><a href="#contacto">Contacto</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h4 class="footer-heading">Síguenos</h4>
+                        <ul class="footer-list">
+                            <li><a href="#" target="_blank">Instagram</a></li>
+                            <li><a href="#" target="_blank">Behance</a></li>
+                            <li><a href="#" target="_blank">LinkedIn</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Nexus Estudio Gráfico. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
