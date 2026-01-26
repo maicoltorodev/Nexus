@@ -9,30 +9,39 @@ export function useViewportCenter() {
   useEffect(() => {
     const isMobile = () => window.innerWidth < 768; // md breakpoint de Tailwind
 
+    let isRunning = false;
+
     const checkCentered = () => {
-      // Solo activar en móvil
-      if (!isMobile()) {
-        setCenteredId(null);
-        return;
-      }
+      if (isRunning) return;
+      isRunning = true;
 
-      const viewportCenter = window.innerHeight / 2;
-      let closestId: string | null = null;
-      let closestDistance = Infinity;
-
-      elementsRef.current.forEach((element, id) => {
-        const rect = element.getBoundingClientRect();
-        const elementCenter = rect.top + rect.height / 2;
-        const distance = Math.abs(viewportCenter - elementCenter);
-
-        // Si el elemento está en el centro del viewport (con un margen del 30% de la altura del viewport)
-        if (distance < window.innerHeight * 0.3 && distance < closestDistance) {
-          closestDistance = distance;
-          closestId = id;
+      requestAnimationFrame(() => {
+        // Solo activar en móvil
+        if (!isMobile()) {
+          setCenteredId(null);
+          isRunning = false;
+          return;
         }
-      });
 
-      setCenteredId(closestId);
+        const viewportCenter = window.innerHeight / 2;
+        let closestId: string | null = null;
+        let closestDistance = Infinity;
+
+        elementsRef.current.forEach((element, id) => {
+          const rect = element.getBoundingClientRect();
+          const elementCenter = rect.top + rect.height / 2;
+          const distance = Math.abs(viewportCenter - elementCenter);
+
+          // Si el elemento está en el centro del viewport (con un margen del 20% de la altura del viewport para ser más precisos)
+          if (distance < window.innerHeight * 0.2 && distance < closestDistance) {
+            closestDistance = distance;
+            closestId = id;
+          }
+        });
+
+        setCenteredId(closestId);
+        isRunning = false;
+      });
     };
 
     checkCentered();

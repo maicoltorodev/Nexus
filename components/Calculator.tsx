@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 
 type ServiceType = 'tarjetas' | 'volantes' | 'gran-formato' | 'papeleria';
 
@@ -27,8 +28,8 @@ interface CalculationResult {
 }
 
 const serviceOptions = [
-  { 
-    value: 'tarjetas', 
+  {
+    value: 'tarjetas',
     label: 'Tarjetas de Presentación',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,8 +37,8 @@ const serviceOptions = [
       </svg>
     )
   },
-  { 
-    value: 'volantes', 
+  {
+    value: 'volantes',
     label: 'Volantes / Flyers',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,8 +46,8 @@ const serviceOptions = [
       </svg>
     )
   },
-  { 
-    value: 'gran-formato', 
+  {
+    value: 'gran-formato',
     label: 'Gran Formato',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,8 +55,8 @@ const serviceOptions = [
       </svg>
     )
   },
-  { 
-    value: 'papeleria', 
+  {
+    value: 'papeleria',
     label: 'Papelería Comercial',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -197,28 +198,149 @@ const serviceConfig: Record<ServiceType, ServiceOption[]> = {
   ]
 };
 
+interface CustomSelectProps {
+  label: string;
+  icon: React.ReactNode;
+  options: { id: string; name: string }[] | { value: string; label: string }[];
+  value: string;
+  onChange: (value: any) => void;
+  placeholder?: string;
+}
+
+const CustomSelect = ({ label, icon, options, value, onChange }: CustomSelectProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const selectedLabel = options.find((opt: any) => (opt.id || opt.value) === value);
+  const displayName = selectedLabel ? ((selectedLabel as any).name || (selectedLabel as any).label) : '';
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={containerRef}>
+      <label className="flex items-center gap-2 text-sm font-semibold text-white mb-4 tracking-wide pointer-events-none">
+        {label} <span className="text-[#FFD700]">*</span>
+      </label>
+
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full px-5 py-4 pl-5 bg-[#0a0a0a] border ${isOpen ? 'border-[#FFD700] shadow-[0_0_15px_rgba(255,215,0,0.1)]' : 'border-[#FFD700]/20'} rounded-xl transition-all text-white font-light cursor-pointer hover:border-[#FFD700]/40 flex items-center justify-between group`}
+      >
+        <span className="truncate">{displayName}</span>
+
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          className="text-gray-500"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </motion.div>
+      </div>
+
+      <motion.div
+        initial={false}
+        animate={isOpen ? { opacity: 1, y: 5, display: 'block' } : { opacity: 0, y: -10, transitionEnd: { display: 'none' } }}
+        className="absolute z-[100] w-full mt-2 bg-[#0d0d0d] border border-[#FFD700]/20 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden backdrop-blur-xl"
+      >
+        <div className="max-h-60 overflow-y-auto py-2 custom-scrollbar">
+          {options.map((option: any) => {
+            const optVal = option.id || option.value;
+            const optName = option.name || option.label;
+            const isSelected = optVal === value;
+
+            return (
+              <div
+                key={optVal}
+                onClick={() => {
+                  onChange(optVal);
+                  setIsOpen(false);
+                }}
+                className={`px-6 py-3 text-sm transition-colors cursor-pointer hover:bg-[#FFD700]/10 ${isSelected ? 'text-[#FFD700] bg-[#FFD700]/5 font-bold' : 'text-gray-400 hover:text-white'}`}
+              >
+                {optName}
+              </div>
+            );
+          })}
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+const CustomNumberInput = ({ label, value, onChange, min, step, placeholder }: {
+  label: string;
+  value: number;
+  onChange: (val: number) => void;
+  min: number;
+  step: number;
+  placeholder: string;
+}) => {
+  const [isFocused, setIsFocused] = useState(false);
+
+  const increment = () => onChange(Number((value + step).toFixed(2)));
+  const decrement = () => onChange(Number(Math.max(min, value - step).toFixed(2)));
+
+  return (
+    <div className="relative group">
+      <label className="flex items-center gap-2 text-sm font-semibold text-white mb-4 tracking-wide pointer-events-none transition-colors group-hover:text-[#FFD700]">
+        {label} <span className="text-[#FFD700]">*</span>
+      </label>
+
+      <div className={`relative flex items-center bg-[#0a0a0a] border ${isFocused ? 'border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.15)]' : 'border-[#FFD700]/20'} rounded-2xl overflow-hidden transition-all duration-300`}>
+        <motion.button
+          whileHover={{ scale: 1.2 }}
+          whileTap={{ scale: 0.9 }}
+          type="button"
+          onClick={decrement}
+          className="px-6 py-4 text-[#FFD700] transition-colors border-r border-[#FFD700]/10"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+          </svg>
+        </motion.button>
+
+        <input
+          type="number"
+          value={value === 0 ? '' : value}
+          onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          className="w-full bg-transparent px-4 py-4 text-white text-center font-bold text-lg focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          placeholder={placeholder}
+          min={min}
+        />
+
+        <motion.button
+          whileHover={{ scale: 1.2 }}
+          whileTap={{ scale: 0.9 }}
+          type="button"
+          onClick={increment}
+          className="px-6 py-4 text-[#FFD700] transition-colors border-l border-[#FFD700]/10"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+        </motion.button>
+      </div>
+    </div>
+  );
+};
+
 export default function Calculator() {
   const [serviceType, setServiceType] = useState<ServiceType>('tarjetas');
   const [selectedOptionId, setSelectedOptionId] = useState<string>('');
   const [cantidad, setCantidad] = useState<number>(1000);
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
-  
-  // Refs para el portapapeles 3D
-  const clipboardRef = useRef<HTMLDivElement>(null);
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const startY = useRef(0);
-  const currentRotationX = useRef(15);
-  const currentRotationY = useRef(45);
-  const animationFrameRef = useRef<number | null>(null);
-  const hasUserInteracted = useRef(false);
-
-  // Estado para la calculadora 3D funcional
-  const [calcDisplay, setCalcDisplay] = useState('0');
-  const [calcValue, setCalcValue] = useState(0);
-  const [calcOperator, setCalcOperator] = useState<string | null>(null);
-  const [calcWaitingForOperand, setCalcWaitingForOperand] = useState(false);
 
   // Inicializar con la primera opción del servicio seleccionado
   useEffect(() => {
@@ -241,129 +363,6 @@ export default function Calculator() {
     setResult(null);
   }, [serviceType, selectedOptionId, cantidad]);
 
-  // Inicializar rotación automática del portapapeles 3D
-  useEffect(() => {
-    const clipboard = clipboardRef.current;
-    if (!clipboard) return;
-
-    let time = 0;
-    let lastTime = Date.now();
-    let baseRotationX = 15;
-    let baseRotationY = 45;
-
-    const animate = () => {
-      if (!isDragging.current) {
-        const now = Date.now();
-        const deltaTime = (now - lastTime) / 1000;
-        lastTime = now;
-        time += deltaTime;
-
-        // Si el usuario ha interactuado, usar sus valores como base
-        if (hasUserInteracted.current) {
-          baseRotationX = currentRotationX.current;
-          baseRotationY = currentRotationY.current;
-        }
-
-        // Oscilación suave en un rango limitado para mantener la calculadora visible
-        // Rotación Y: oscila alrededor de la posición base
-        const rangeY = 25; // Rango de oscilación
-        const autoRotateY = baseRotationY + Math.sin(time * 0.5) * rangeY;
-
-        // Rotación X: oscila alrededor de la posición base
-        const rangeX = 10; // Rango de oscilación
-        const autoRotateX = baseRotationX + Math.cos(time * 0.3) * rangeX;
-        
-        clipboard.style.transform = `perspective(1000px) rotateX(${autoRotateX}deg) rotateY(${autoRotateY}deg)`;
-      } else {
-        // Cuando está siendo arrastrada, usar la posición del usuario directamente
-        clipboard.style.transform = `perspective(1000px) rotateX(${currentRotationX.current}deg) rotateY(${currentRotationY.current}deg)`;
-      }
-      animationFrameRef.current = requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, []);
-
-  // Handlers para el portapapeles 3D
-  const handleClipboardStart = (clientX: number, clientY: number) => {
-    isDragging.current = true;
-    hasUserInteracted.current = true;
-    startX.current = clientX;
-    startY.current = clientY;
-  };
-
-  const handleClipboardMove = (clientX: number, clientY: number) => {
-    if (!isDragging.current || !clipboardRef.current) return;
-
-    const deltaX = clientX - startX.current;
-    const deltaY = clientY - startY.current;
-
-    currentRotationY.current += deltaX * 0.5;
-    currentRotationX.current -= deltaY * 0.5;
-    currentRotationX.current = Math.max(-90, Math.min(90, currentRotationX.current));
-
-    clipboardRef.current.style.transform = `perspective(1000px) rotateX(${currentRotationX.current}deg) rotateY(${currentRotationY.current}deg)`;
-    clipboardRef.current.style.cursor = 'grabbing';
-
-    startX.current = clientX;
-    startY.current = clientY;
-  };
-
-  const handleClipboardEnd = () => {
-    isDragging.current = false;
-    if (clipboardRef.current) {
-      clipboardRef.current.style.cursor = 'grab';
-    }
-  };
-
-  // Global mouse/touch events para el portapapeles
-  useEffect(() => {
-    const handleGlobalMouseMove = (e: MouseEvent) => {
-      if (isDragging.current) {
-        handleClipboardMove(e.clientX, e.clientY);
-      }
-    };
-
-    const handleGlobalMouseUp = () => {
-      if (isDragging.current) {
-        handleClipboardEnd();
-      }
-    };
-
-    const handleGlobalTouchMove = (e: TouchEvent) => {
-      if (isDragging.current && e.touches.length === 1) {
-        e.preventDefault();
-        handleClipboardMove(e.touches[0].clientX, e.touches[0].clientY);
-      }
-    };
-
-    const handleGlobalTouchEnd = () => {
-      if (isDragging.current) {
-        handleClipboardEnd();
-      }
-    };
-
-    window.addEventListener('mousemove', handleGlobalMouseMove);
-    window.addEventListener('mouseup', handleGlobalMouseUp);
-    window.addEventListener('touchmove', handleGlobalTouchMove, { passive: false });
-    window.addEventListener('touchend', handleGlobalTouchEnd);
-    window.addEventListener('touchcancel', handleGlobalTouchEnd);
-
-    return () => {
-      window.removeEventListener('mousemove', handleGlobalMouseMove);
-      window.removeEventListener('mouseup', handleGlobalMouseUp);
-      window.removeEventListener('touchmove', handleGlobalTouchMove);
-      window.removeEventListener('touchend', handleGlobalTouchEnd);
-      window.removeEventListener('touchcancel', handleGlobalTouchEnd);
-    };
-  }, []);
-
   const selectedOption = serviceConfig[serviceType]?.find(opt => opt.id === selectedOptionId);
   const availableOptions = serviceConfig[serviceType] || [];
 
@@ -371,7 +370,7 @@ export default function Calculator() {
     if (!selectedOption) return;
 
     setIsCalculating(true);
-    
+
     setTimeout(() => {
       let precioMinCalculado = 0;
       let precioMaxCalculado = 0;
@@ -411,7 +410,7 @@ export default function Calculator() {
         size: selectedOption.size
       });
       setIsCalculating(false);
-      
+
       // Marcar que se usó la calculadora
       localStorage.setItem('calculatorUsed', 'true');
       window.dispatchEvent(new Event('calculatorUsed'));
@@ -421,9 +420,9 @@ export default function Calculator() {
         setTimeout(() => {
           const resultsPanel = document.getElementById('calculator-results');
           if (resultsPanel) {
-            resultsPanel.scrollIntoView({ 
-              behavior: 'smooth', 
-              block: 'center' 
+            resultsPanel.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
             });
           }
         }, 100);
@@ -432,118 +431,23 @@ export default function Calculator() {
   };
 
   const selectedService = serviceOptions.find(s => s.value === serviceType);
-  const cantidadLabel = serviceType === 'gran-formato' 
-    ? 'Metros Cuadrados (m²)' 
-    : serviceType === 'papeleria' 
-    ? 'Cantidad (múltiplos de 100 hojas)' 
-    : 'Cantidad';
-  
-  const cantidadPlaceholder = serviceType === 'gran-formato' 
-    ? 'Ej: 1, 2.5, 5' 
-    : serviceType === 'papeleria' 
-    ? 'Ej: 100, 200, 300' 
-    : 'Ej: 100, 500, 1000';
+  const cantidadLabel = serviceType === 'gran-formato'
+    ? 'Metros Cuadrados (m²)'
+    : serviceType === 'papeleria'
+      ? 'Cantidad (múltiplos de 100 hojas)'
+      : 'Cantidad';
+
+  const cantidadPlaceholder = serviceType === 'gran-formato'
+    ? 'Ej: 1, 2.5, 5'
+    : serviceType === 'papeleria'
+      ? 'Ej: 100, 200, 300'
+      : 'Ej: 100, 500, 1000';
 
   const isValidQuantity = () => {
     if (!selectedOption) return false;
     if (cantidad <= 0) return false;
     if (serviceType === 'papeleria' && cantidad % 100 !== 0) return false;
     return true;
-  };
-
-  // Funciones para la calculadora 3D
-  const formatDisplay = (value: string | number): string => {
-    const num = typeof value === 'string' ? parseFloat(value) : value;
-    if (isNaN(num)) return '0';
-    // Limitar a 10 caracteres para que quepa en la pantalla
-    const str = num.toString();
-    if (str.length > 10) {
-      return num.toExponential(5);
-    }
-    return str;
-  };
-
-  const handleCalcInput = (value: string) => {
-    if (calcWaitingForOperand) {
-      setCalcDisplay(value);
-      setCalcWaitingForOperand(false);
-    } else {
-      const newDisplay = calcDisplay === '0' ? value : calcDisplay + value;
-      // Limitar la longitud del display
-      if (newDisplay.length <= 10) {
-        setCalcDisplay(newDisplay);
-      }
-    }
-  };
-
-  const handleCalcOperator = (nextOperator: string) => {
-    const inputValue = parseFloat(calcDisplay);
-
-    if (calcValue === 0) {
-      setCalcValue(inputValue);
-    } else if (calcOperator) {
-      const currentValue = calcValue || 0;
-      const newValue = calculate(currentValue, inputValue, calcOperator);
-
-      setCalcValue(newValue);
-      setCalcDisplay(formatDisplay(newValue));
-    }
-
-    setCalcWaitingForOperand(true);
-    setCalcOperator(nextOperator);
-  };
-
-  const calculate = (firstValue: number, secondValue: number, operator: string): number => {
-    switch (operator) {
-      case '+':
-        return firstValue + secondValue;
-      case '-':
-        return firstValue - secondValue;
-      case '×':
-        return firstValue * secondValue;
-      case '÷':
-        return secondValue !== 0 ? firstValue / secondValue : 0;
-      default:
-        return secondValue;
-    }
-  };
-
-  const handleCalcEquals = () => {
-    const inputValue = parseFloat(calcDisplay);
-
-    if (calcOperator && !calcWaitingForOperand) {
-      const newValue = calculate(calcValue, inputValue, calcOperator);
-      setCalcDisplay(formatDisplay(newValue));
-      setCalcValue(0);
-      setCalcOperator(null);
-      setCalcWaitingForOperand(true);
-    }
-  };
-
-  const handleCalcClear = () => {
-    setCalcDisplay('0');
-    setCalcValue(0);
-    setCalcOperator(null);
-    setCalcWaitingForOperand(false);
-  };
-
-  const handleCalcToggleSign = () => {
-    const value = parseFloat(calcDisplay);
-    setCalcDisplay(formatDisplay(-value));
-  };
-
-  const handleCalcPercent = () => {
-    const value = parseFloat(calcDisplay);
-    setCalcDisplay(formatDisplay(value / 100));
-  };
-
-  const handleCalcDecimal = () => {
-    if (calcWaitingForOperand) {
-      setCalcDisplay('0.');
-      setCalcWaitingForOperand(false);
-    } else if (calcDisplay.indexOf('.') === -1) {
-      setCalcDisplay(calcDisplay + '.');
-    }
   };
 
   return (
@@ -567,276 +471,32 @@ export default function Calculator() {
             Obtén una estimación rápida y precisa del costo de tu servicio
           </p>
         </div>
-
-        {/* Calculadora 3D Interactiva */}
-        <div className="relative flex items-center justify-center my-8 md:my-12 pointer-events-auto">
-          <div className="relative">
-            <div
-              ref={clipboardRef}
-              className="relative"
-              style={{
-                width: 'clamp(140px, 20vw, 200px)',
-                height: 'clamp(180px, 26vw, 260px)',
-                transformStyle: 'preserve-3d',
-                transform: 'perspective(1000px) rotateX(15deg) rotateY(45deg)',
-                cursor: 'grab',
-                userSelect: 'none',
-                touchAction: 'none',
-              }}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                handleClipboardStart(e.clientX, e.clientY);
-              }}
-              onTouchStart={(e) => {
-                if (e.touches.length === 1) {
-                  handleClipboardStart(e.touches[0].clientX, e.touches[0].clientY);
-                }
-              }}
-            >
-              {/* Cara frontal de la calculadora */}
-              <div
-                className="absolute w-full h-full bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]"
-                style={{
-                  transform: 'translateZ(8px)',
-                  boxShadow: 'inset 0 0 30px rgba(255, 215, 0, 0.1), 0 0 20px rgba(255, 215, 0, 0.2)',
-                  borderRadius: '8px',
-                  backfaceVisibility: 'hidden',
-                }}
-              >
-                {/* Pantalla de la calculadora */}
-                <div className="absolute top-1 left-1 right-1 h-12 bg-[#0a0a0a] rounded px-2 flex items-center justify-end overflow-hidden">
-                  <span className="text-[#FFD700] font-mono text-lg font-bold truncate">{calcDisplay}</span>
-                </div>
-                
-                {/* Botones de la calculadora */}
-                <div className="absolute top-16 left-1 right-1 bottom-1 grid grid-cols-4 gap-1">
-                  {/* Fila 1 */}
-                  <button 
-                    onClick={handleCalcClear}
-                    className="w-full h-8 bg-[#FFD700]/20 rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#FFD700]/30 transition-colors cursor-pointer"
-                  >C</button>
-                  <button 
-                    onClick={handleCalcToggleSign}
-                    className="w-full h-8 bg-[#FFD700]/20 rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#FFD700]/30 transition-colors cursor-pointer"
-                  >±</button>
-                  <button 
-                    onClick={handleCalcPercent}
-                    className="w-full h-8 bg-[#FFD700]/20 rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#FFD700]/30 transition-colors cursor-pointer"
-                  >%</button>
-                  <button 
-                    onClick={() => handleCalcOperator('÷')}
-                    className="w-full h-8 bg-[#FFA500]/30 rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#FFA500]/40 transition-colors cursor-pointer"
-                  >÷</button>
-                  
-                  {/* Fila 2 */}
-                  <button 
-                    onClick={() => handleCalcInput('7')}
-                    className="w-full h-8 bg-[#0a0a0a] rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#1a1a1a] transition-colors cursor-pointer"
-                  >7</button>
-                  <button 
-                    onClick={() => handleCalcInput('8')}
-                    className="w-full h-8 bg-[#0a0a0a] rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#1a1a1a] transition-colors cursor-pointer"
-                  >8</button>
-                  <button 
-                    onClick={() => handleCalcInput('9')}
-                    className="w-full h-8 bg-[#0a0a0a] rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#1a1a1a] transition-colors cursor-pointer"
-                  >9</button>
-                  <button 
-                    onClick={() => handleCalcOperator('×')}
-                    className="w-full h-8 bg-[#FFA500]/30 rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#FFA500]/40 transition-colors cursor-pointer"
-                  >×</button>
-                  
-                  {/* Fila 3 */}
-                  <button 
-                    onClick={() => handleCalcInput('4')}
-                    className="w-full h-8 bg-[#0a0a0a] rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#1a1a1a] transition-colors cursor-pointer"
-                  >4</button>
-                  <button 
-                    onClick={() => handleCalcInput('5')}
-                    className="w-full h-8 bg-[#0a0a0a] rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#1a1a1a] transition-colors cursor-pointer"
-                  >5</button>
-                  <button 
-                    onClick={() => handleCalcInput('6')}
-                    className="w-full h-8 bg-[#0a0a0a] rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#1a1a1a] transition-colors cursor-pointer"
-                  >6</button>
-                  <button 
-                    onClick={() => handleCalcOperator('-')}
-                    className="w-full h-8 bg-[#FFA500]/30 rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#FFA500]/40 transition-colors cursor-pointer"
-                  >-</button>
-                  
-                  {/* Fila 4 */}
-                  <button 
-                    onClick={() => handleCalcInput('1')}
-                    className="w-full h-8 bg-[#0a0a0a] rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#1a1a1a] transition-colors cursor-pointer"
-                  >1</button>
-                  <button 
-                    onClick={() => handleCalcInput('2')}
-                    className="w-full h-8 bg-[#0a0a0a] rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#1a1a1a] transition-colors cursor-pointer"
-                  >2</button>
-                  <button 
-                    onClick={() => handleCalcInput('3')}
-                    className="w-full h-8 bg-[#0a0a0a] rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#1a1a1a] transition-colors cursor-pointer"
-                  >3</button>
-                  <button 
-                    onClick={() => handleCalcOperator('+')}
-                    className="w-full h-8 bg-[#FFA500]/30 rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#FFA500]/40 transition-colors cursor-pointer"
-                  >+</button>
-                  
-                  {/* Fila 5 */}
-                  <button 
-                    onClick={() => handleCalcInput('0')}
-                    className="w-full h-8 bg-[#0a0a0a] rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#1a1a1a] transition-colors cursor-pointer col-span-2"
-                  >0</button>
-                  <button 
-                    onClick={handleCalcDecimal}
-                    className="w-full h-8 bg-[#0a0a0a] rounded flex items-center justify-center text-[#FFD700] text-sm font-bold hover:bg-[#1a1a1a] transition-colors cursor-pointer"
-                  >.</button>
-                  <button 
-                    onClick={handleCalcEquals}
-                    className="w-full h-8 bg-gradient-to-br from-[#FFD700] to-[#FFA500] rounded flex items-center justify-center text-[#0a0a0a] text-sm font-bold hover:opacity-90 transition-opacity cursor-pointer"
-                  >=</button>
-                </div>
-              </div>
-              
-              {/* Tapa trasera de la calculadora */}
-              <div
-                className="absolute w-full h-full bg-gradient-to-br from-[#0a0a0a] to-[#1a1a1a]"
-                style={{
-                  transform: 'translateZ(-8px) rotateY(180deg)',
-                  boxShadow: 'inset 0 0 20px rgba(255, 215, 0, 0.05), 0 0 15px rgba(255, 215, 0, 0.1)',
-                  borderRadius: '8px',
-                  backfaceVisibility: 'hidden',
-                }}
-              >
-                {/* Detalles decorativos en la tapa */}
-                <div className="absolute inset-2 rounded-sm">
-                  {/* Líneas decorativas sutiles */}
-                  <div className="absolute top-1/4 left-2 right-2 h-px bg-[#FFD700]/10"></div>
-                  <div className="absolute top-1/2 left-2 right-2 h-px bg-[#FFD700]/10"></div>
-                  <div className="absolute top-3/4 left-2 right-2 h-px bg-[#FFD700]/10"></div>
-                  {/* Texto o logo sutil */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#FFD700]/20 text-xs font-light tracking-widest uppercase">
-                    NXS
-                  </div>
-                </div>
-              </div>
-              
-              {/* Lado derecho de la calculadora */}
-              <div
-                className="absolute w-4 h-full bg-gradient-to-r from-[#0a0a0a] to-[#1a1a1a]"
-                style={{
-                  right: 0,
-                  top: 0,
-                  transform: 'rotateY(90deg) translateZ(4px)',
-                  borderRadius: '0 8px 8px 0',
-                  backfaceVisibility: 'hidden',
-                }}
-              />
-              {/* Lado izquierdo de la calculadora */}
-              <div
-                className="absolute w-4 h-full bg-gradient-to-r from-[#1a1a1a] to-[#0a0a0a]"
-                style={{
-                  left: 0,
-                  top: 0,
-                  transform: 'rotateY(-90deg) translateZ(4px)',
-                  borderRadius: '8px 0 0 8px',
-                  backfaceVisibility: 'hidden',
-                }}
-              />
-              {/* Lado superior de la calculadora */}
-              <div
-                className="absolute w-full h-4 bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a]"
-                style={{
-                  top: 0,
-                  left: 0,
-                  transform: 'rotateX(90deg) translateZ(4px)',
-                  borderRadius: '8px 8px 0 0',
-                  backfaceVisibility: 'hidden',
-                }}
-              />
-              {/* Lado inferior de la calculadora */}
-              <div
-                className="absolute w-full h-4 bg-gradient-to-b from-[#0a0a0a] to-[#1a1a1a]"
-                style={{
-                  bottom: 0,
-                  left: 0,
-                  transform: 'rotateX(-90deg) translateZ(4px)',
-                  borderRadius: '0 0 8px 8px',
-                  backfaceVisibility: 'hidden',
-                }}
-              />
-            </div>
-          </div>
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Panel de entrada */}
           <div className="lg:col-span-2">
             <div className="bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] rounded-3xl p-8 md:p-10 border border-[#FFD700]/10 shadow-2xl">
-              <div className="space-y-6">
-                {/* Tipo de servicio */}
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-semibold text-white mb-4 tracking-wide">
-                    <svg className="w-5 h-5 text-[#FFD700]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                    Tipo de Servicio <span className="text-[#FFD700]">*</span>
-                  </label>
-                  <div className="relative">
-                    <select
-                      value={serviceType}
-                      onChange={(e) => setServiceType(e.target.value as ServiceType)}
-                      className="w-full px-5 py-4 pl-12 bg-[#0a0a0a] border border-[#FFD700]/20 rounded-xl focus:ring-2 focus:ring-[#FFD700]/50 focus:border-[#FFD700] transition-all text-white font-light appearance-none cursor-pointer hover:border-[#FFD700]/40"
-                    >
-                      {serviceOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#FFD700]">
-                      {selectedService?.icon}
-                    </div>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
+              <div className="space-y-8">
+                {/* Custom Dropdown: Tipo de servicio */}
+                <CustomSelect
+                  label="Tipo de Servicio"
+                  icon={selectedService?.icon}
+                  options={serviceOptions}
+                  value={serviceType}
+                  onChange={(val) => setServiceType(val)}
+                />
 
-                {/* Opción del servicio */}
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-semibold text-white mb-4 tracking-wide">
-                    <svg className="w-5 h-5 text-[#FFD700]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {/* Custom Dropdown: Opción del servicio */}
+                <CustomSelect
+                  label="Opción"
+                  icon={(
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Opción <span className="text-[#FFD700]">*</span>
-                  </label>
-                  <div className="relative">
-                    <select
-                      value={selectedOptionId}
-                      onChange={(e) => setSelectedOptionId(e.target.value)}
-                      className="w-full px-5 py-4 pl-12 bg-[#0a0a0a] border border-[#FFD700]/20 rounded-xl focus:ring-2 focus:ring-[#FFD700]/50 focus:border-[#FFD700] transition-all text-white font-light appearance-none cursor-pointer hover:border-[#FFD700]/40"
-                    >
-                      {availableOptions.map((option) => (
-                        <option key={option.id} value={option.id}>
-                          {option.name}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#FFD700] pointer-events-none">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
+                  )}
+                  options={availableOptions}
+                  value={selectedOptionId}
+                  onChange={(val) => setSelectedOptionId(val)}
+                />
 
                 {/* Información predeterminada */}
                 {selectedOption && (
@@ -862,41 +522,21 @@ export default function Calculator() {
                   </div>
                 )}
 
-                {/* Cantidad */}
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-semibold text-white mb-4 tracking-wide">
-                    <svg className="w-5 h-5 text-[#FFD700]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
-                    </svg>
-                    {cantidadLabel} <span className="text-[#FFD700]">*</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      min={serviceType === 'papeleria' ? 100 : serviceType === 'gran-formato' ? 0.1 : 1}
-                      step={serviceType === 'papeleria' ? 100 : serviceType === 'gran-formato' ? 0.1 : 1}
-                      value={cantidad}
-                      onChange={(e) => {
-                        const value = serviceType === 'gran-formato' 
-                          ? parseFloat(e.target.value) || 0 
-                          : parseInt(e.target.value) || 0;
-                        setCantidad(value);
-                      }}
-                      className="w-full px-5 py-4 pl-12 bg-[#0a0a0a] border border-[#FFD700]/20 rounded-xl focus:ring-2 focus:ring-[#FFD700]/50 focus:border-[#FFD700] transition-all text-white placeholder-gray-500 font-light hover:border-[#FFD700]/40"
-                      placeholder={cantidadPlaceholder}
-                    />
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#FFD700] pointer-events-none">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
-                      </svg>
-                    </div>
-                  </div>
-                  {serviceType === 'papeleria' && cantidad > 0 && cantidad % 100 !== 0 && (
-                    <p className="mt-2 text-xs text-[#FFA500]">
-                      La cantidad debe ser múltiplo de 100 hojas
-                    </p>
-                  )}
-                </div>
+                {/* Cantidad Personalizada */}
+                <CustomNumberInput
+                  label={cantidadLabel}
+                  value={cantidad}
+                  onChange={setCantidad}
+                  min={serviceType === 'papeleria' ? 100 : serviceType === 'gran-formato' ? 0.1 : 1}
+                  step={serviceType === 'papeleria' ? 100 : serviceType === 'gran-formato' ? 0.1 : 1}
+                  placeholder={cantidadPlaceholder}
+                />
+
+                {serviceType === 'papeleria' && cantidad > 0 && cantidad % 100 !== 0 && (
+                  <p className="mt-2 text-xs text-[#FFA500] animate-pulse">
+                    La cantidad debe ser múltiplo de 100 hojas
+                  </p>
+                )}
 
                 {/* Botón calcular */}
                 <div className="pt-4">
@@ -904,7 +544,7 @@ export default function Calculator() {
                     onClick={calculatePrice}
                     disabled={isCalculating || !isValidQuantity()}
                     className="group relative w-full font-semibold py-5 px-8 rounded-xl text-lg transition-all duration-500 overflow-hidden text-[#0a0a0a] disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ 
+                    style={{
                       background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
                       boxShadow: '0 10px 40px rgba(255, 215, 0, 0.3)'
                     }}

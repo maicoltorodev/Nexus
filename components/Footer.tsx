@@ -33,13 +33,15 @@ export default function Footer() {
             <ul className="space-y-3">
               {[
                 { href: '#inicio', label: 'Inicio' },
-                { href: '#servicios', label: 'Servicios' },
+                { href: '#tarjeta', label: 'Tarjetas' },
+                { href: '#web-design', label: 'Webs' },
+                { href: '#servicios', label: 'Impresión' },
                 { href: '#calculadora', label: 'Calculadora' },
-                { href: '#contacto', label: 'Contacto' }
+                { href: '#testimonios', label: 'Opiniones' }
               ].map((link) => (
                 <li key={link.href}>
-                  <a 
-                    href={link.href} 
+                  <a
+                    href={link.href}
                     className="text-gray-400 hover:text-[#FFD700] transition-all duration-300 flex items-center gap-2 group"
                   >
                     <span className="w-0 group-hover:w-2 h-0.5 bg-[#FFD700] transition-all duration-300"></span>

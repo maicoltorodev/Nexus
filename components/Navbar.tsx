@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -15,19 +16,21 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { href: '#inicio', label: 'Inicio' },
-    { href: '#servicios', label: 'Servicios' },
-    { href: '#calculadora', label: 'Calculadora' },
-    { href: '#contacto', label: 'Contacto' }
+    { href: '/#inicio', label: 'Inicio' },
+    { href: '/#tarjeta', label: 'Tarjetas' },
+    { href: '/#web-design', label: 'Webs' },
+    { href: '/#servicios', label: 'Impresión' },
+    { href: '/#calculadora', label: 'Calculadora' },
+    { href: '/#testimonios', label: 'Opiniones' },
+    { href: '/#contacto', label: 'Contacto' }
   ];
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-[#0a0a0a]/95 backdrop-blur-md shadow-lg border-b border-[#FFD700]/20'
-          : 'bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+        ? 'bg-[#0a0a0a]/95 backdrop-blur-md shadow-lg border-b border-[#FFD700]/20'
+        : 'bg-transparent'
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
@@ -80,26 +83,24 @@ export default function Navbar() {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
-                className={`font-medium transition-colors hover:text-[#FFD700] ${
-                  isScrolled ? 'text-white' : 'text-white'
-                }`}
+                className={`font-medium transition-colors hover:text-[#FFD700] ${isScrolled ? 'text-white' : 'text-white'
+                  }`}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`md:hidden p-2 rounded-lg transition-colors ${
-              isScrolled
-                ? 'text-white hover:bg-white/10'
-                : 'text-white hover:bg-white/10'
-            }`}
+            className={`md:hidden p-2 rounded-lg transition-colors ${isScrolled
+              ? 'text-white hover:bg-white/10'
+              : 'text-white hover:bg-white/10'
+              }`}
             aria-label="Toggle menu"
           >
             <svg
@@ -125,14 +126,14 @@ export default function Navbar() {
           <div className="md:hidden py-4 border-t border-[#FFD700]/20 bg-[#0a0a0a]/98 backdrop-blur-md">
             <div className="flex flex-col space-y-4">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="text-white font-medium hover:text-[#FFD700] transition-colors"
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
             </div>
           </div>

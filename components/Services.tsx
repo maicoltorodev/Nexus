@@ -3,6 +3,8 @@
 import { useViewportCenter } from '@/hooks/useViewportCenter';
 import { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
 const services = [
   {
@@ -93,6 +95,8 @@ export default function Services() {
     window.open(whatsappUrl, '_blank');
   };
 
+
+
   return (
     <section id="servicios" className="relative py-24 overflow-hidden" style={{ background: 'linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)' }}>
       {/* Efecto de fondo decorativo */}
@@ -103,130 +107,70 @@ export default function Services() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header mejorado */}
-        <div className="text-center mb-20">
+        <div className="text-center mb-16">
           <div className="inline-block mb-4 px-4 py-2 rounded-full border border-[#FFD700]/30 bg-[#FFD700]/5">
-            <span className="text-sm font-semibold text-[#FFD700] tracking-wider uppercase">Servicios</span>
+            <span className="text-sm font-semibold text-[#FFD700] tracking-wider uppercase">Nuestro Portafolio</span>
           </div>
           <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight">
-            Soluciones <span className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">Premium</span>
+            Soluciones <span className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">Gráficas y Publicitarias</span>
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed font-light">
-            Excelencia en cada detalle, calidad en cada proyecto
+            Desarrollamos soluciones de alto impacto diseñadas exclusivamente <span className="text-white font-medium">para ti y tu negocio</span>.
           </p>
         </div>
 
-        {/* Grid de servicios mejorado */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => {
-            const cardRef = useRef<HTMLDivElement>(null);
-            const isCentered = centeredId === `service-${service.id}`;
-            const isHovered = isCentered;
+          {services.map((service) => {
+            const isCentered = isMobile && centeredId === service.id.toString();
 
             return (
               <div
                 key={service.id}
-                ref={(el) => {
-                  cardRef.current = el;
-                  registerElement(`service-${service.id}`, el);
-                }}
+                ref={(el) => registerElement(service.id.toString(), el)}
                 onClick={() => openWhatsApp(service.title)}
-                className={`group relative bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] rounded-3xl border transition-all duration-300 md:duration-700 overflow-hidden md:hover:border-[#FFD700]/50 cursor-pointer min-h-[480px] shadow-2xl md:hover:shadow-[0_20px_60px_rgba(255,215,0,0.15)] ${
-                  isHovered && !isMobile 
-                    ? 'border-[#FFD700]/50 shadow-[0_20px_60px_rgba(255,215,0,0.15)]' 
-                    : isHovered && isMobile
-                    ? 'border-[#FFD700]/40'
-                    : 'border-[#FFD700]/10'
-                }`}
-                style={{
-                  animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`,
-                  transform: isHovered && !isMobile ? 'translateY(-12px) scale(1.02)' : undefined,
-                  transition: 'transform 0.3s ease-out'
-                }}
-                onMouseEnter={(e) => {
-                  if (window.innerWidth >= 768) {
-                    e.currentTarget.style.transform = 'translateY(-12px) scale(1.02)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (window.innerWidth >= 768) {
-                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                  }
-                }}
+                className={`group relative bg-[#111] rounded-3xl border transition-all duration-300 overflow-hidden cursor-pointer min-h-[460px] will-change-[border-color]
+                  ${isCentered
+                    ? 'border-[#FFD700]'
+                    : 'border-[#FFD700]/10 shadow-xl'} 
+                  md:shadow-2xl md:hover:border-[#FFD700]/40 md:hover:-translate-y-2 md:hover:shadow-[0_20px_60px_rgba(255,215,0,0.15)]`}
               >
-                {/* Imagen de fondo - Solo 40% superior */}
                 <div className="absolute top-0 left-0 right-0 h-[40%] overflow-hidden">
                   <div className="relative w-full h-full">
                     <Image
                       src={service.image}
                       alt={service.title}
                       fill
-                      className="object-cover transition-transform duration-300 md:duration-700 md:group-hover:scale-110"
+                      className={`object-cover transition-transform duration-700 md:group-hover:scale-110`}
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      loading="lazy"
                     />
-                    {/* Overlay elegante con gradiente */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/60 via-[#0a0a0a]/30 to-transparent transition-opacity duration-300 md:duration-700 md:group-hover:from-[#0a0a0a]/40 md:group-hover:via-[#0a0a0a]/20"></div>
-                    {/* Borde inferior sutil de la imagen */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/60 via-transparent to-transparent"></div>
                     <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FFD700]/30 to-transparent"></div>
                   </div>
                 </div>
 
-                {/* Efecto de brillo al hover - más sutil */}
-                <div className={`absolute inset-0 bg-gradient-to-br transition-all duration-300 md:duration-700 md:group-hover:from-[#FFD700]/8 md:group-hover:to-[#FFA500]/8 ${
-                  isHovered && !isMobile
-                    ? 'from-[#FFD700]/8 to-[#FFA500]/8' 
-                    : 'from-[#FFD700]/0 to-[#FFA500]/0'
-                }`}></div>
-                
-                {/* Línea superior dorada - más elegante */}
-                <div className={`absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FFD700] to-transparent transition-all duration-300 md:duration-700 md:group-hover:scale-x-100 md:group-hover:opacity-100 z-20 ${
-                  isHovered && !isMobile ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0'
-                }`}></div>
-
-                {/* Contenido */}
-                <div className="relative z-10 flex flex-col h-full min-h-[480px]">
-                  {/* Parte superior con imagen e icono */}
-                  <div className="relative h-[40%] flex items-center justify-center pt-8 pb-4">
-                    <div className={`relative p-5 rounded-2xl bg-gradient-to-br from-[#FFD700]/25 to-[#FFA500]/25 backdrop-blur-md border-2 transition-all duration-300 md:duration-500 text-[#FFD700] shadow-lg md:group-hover:border-[#FFD700] md:group-hover:scale-110 md:group-hover:shadow-[0_10px_30px_rgba(255,215,0,0.4)] ${
-                      isHovered && !isMobile
-                        ? 'border-[#FFD700] scale-110 shadow-[0_10px_30px_rgba(255,215,0,0.4)]' 
-                        : 'border-[#FFD700]/50 scale-100'
-                    }`}>
-                      {/* Brillo interno del icono */}
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/10 to-transparent opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 md:duration-500"></div>
-                      <div className="relative z-10">
-                        {service.icon}
-                      </div>
-                    </div>
+                <div className="relative z-10 flex flex-col h-full pt-44 pb-8 px-8">
+                  <div className={`mb-6 p-4 w-fit rounded-2xl bg-gradient-to-br from-[#FFD700]/20 to-[#FFA500]/20 backdrop-blur-md border transition-all duration-500 text-[#FFD700] shadow-lg 
+                    ${isCentered ? 'border-[#FFD700]/50' : 'border-[#FFD700]/50 md:group-hover:scale-110 md:group-hover:border-[#FFD700]'}`}>
+                    {service.icon}
                   </div>
-
-                  {/* Parte inferior con fondo normal y descripción */}
-                  <div className="flex-1 flex flex-col justify-start items-center px-6 pb-8 pt-6">
-                    <h3 className={`text-2xl md:text-3xl font-bold mb-4 text-center transition-all duration-300 md:duration-500 md:group-hover:text-[#FFD700] tracking-tight ${
-                      isHovered && !isMobile ? 'text-[#FFD700]' : 'text-white'
-                    }`}>
-                      {service.title}
-                    </h3>
-                    <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-[#FFD700]/50 to-transparent mb-5 transition-all duration-300 md:duration-500 md:group-hover:via-[#FFD700] md:group-hover:w-24"></div>
-                    <p className="text-gray-300 text-center leading-relaxed text-base md:text-lg font-normal max-w-sm px-2">
-                      {service.description}
-                    </p>
+                  <h3 className={`text-2xl md:text-3xl font-bold mb-4 transition-colors tracking-tight 
+                    ${isCentered ? 'text-white' : 'text-white md:group-hover:text-[#FFD700]'}`}>
+                    {service.title}
+                  </h3>
+                  <div className={`h-1 bg-[#FFD700]/50 mb-6 transition-all duration-500 
+                    ${isCentered ? 'w-12' : 'w-12 md:group-hover:w-20 md:group-hover:bg-[#FFD700]'}`}></div>
+                  <p className="text-gray-400 leading-relaxed text-base font-light">
+                    {service.description}
+                  </p>
+                  <div className={`mt-auto pt-8 flex items-center gap-2 text-[#FFD700] text-xs font-black uppercase tracking-widest transition-opacity 
+                    ${isCentered ? 'opacity-100' : 'opacity-0 md:group-hover:opacity-100'}`}>
+                    Cotizar ahora <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
               </div>
             );
           })}
-        </div>
-
-        {/* Footer de sección mejorado */}
-        <div className="mt-20 text-center space-y-6">
-          <div className="inline-block px-6 py-3 rounded-full bg-gradient-to-r from-[#FFD700]/10 to-[#FFA500]/10 border border-[#FFD700]/20">
-            <p className="text-lg font-semibold text-white">
-              Impresión litográfica, servicio rápido
-            </p>
-          </div>
-          <p className="text-xl text-gray-400 font-light">
-            Impresión digital en alta resolución
-          </p>
         </div>
       </div>
     </section>

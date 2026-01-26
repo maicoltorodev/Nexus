@@ -75,19 +75,33 @@ export default function Testimonials() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Auto-slide para desktop y móvil
+  // Lógica de Auto-slide robusta
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (isMobile) {
-        // En móvil, cambia de a 1 testimonio
-        setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-      } else {
-        // En desktop, cambia de a 1 pero limitado para mostrar 3 a la vez
-        setCurrentIndex((prev) => (prev + 1) % (testimonials.length - 2));
-      }
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [isMobile]);
+    let interval: NodeJS.Timeout;
+
+    // Observer para pausar cuando no es visible
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          interval = setInterval(() => {
+            nextSlide();
+          }, 5000);
+        } else {
+          clearInterval(interval);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (carouselRef.current) {
+      observer.observe(carouselRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+      clearInterval(interval);
+    };
+  }, [isMobile, currentIndex]); // Se reinicia el timer cuando cambia el slide manualmente o cambia el layout
 
   const getInitial = (name: string) => {
     return name.charAt(0).toUpperCase();
@@ -118,7 +132,7 @@ export default function Testimonials() {
 
   const handleTouchEnd = () => {
     if (!touchStartX.current || !touchEndX.current) return;
-    
+
     const distance = touchStartX.current - touchEndX.current;
     const minSwipeDistance = 50;
 
@@ -175,10 +189,10 @@ export default function Testimonials() {
         <div className="text-center mb-20">
           <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full border border-[#FFD700]/30 bg-[#FFD700]/5">
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
             </svg>
             <span className="text-sm font-semibold text-[#FFD700] tracking-wider uppercase">Testimonios de Google</span>
           </div>
@@ -186,7 +200,7 @@ export default function Testimonials() {
           <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight">
             Lo que dicen <span className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">nuestros clientes</span>
           </h2>
-          
+
           {/* Badge de calificación con estrellas - Centrado debajo del título */}
           <div className="flex justify-center mb-6">
             <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-[#FFD700]/10 to-[#FFA500]/10 border border-[#FFD700]/30">
@@ -243,14 +257,13 @@ export default function Testimonials() {
               {testimonials.map((testimonial, index) => (
                 <div
                   key={testimonial.id}
-                  className={`flex-shrink-0 ${
-                    isMobile ? 'w-full' : 'w-1/3 px-3'
-                  }`}
+                  className={`flex-shrink-0 ${isMobile ? 'w-full' : 'w-1/3 px-3'
+                    }`}
                 >
                   <div className="group relative bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] rounded-2xl p-8 border border-[#FFD700]/10 hover:border-[#FFD700]/40 transition-all duration-500 h-full">
                     {/* Efecto de brillo al hover */}
                     <div className="absolute inset-0 bg-gradient-to-br from-[#FFD700]/0 to-[#FFA500]/0 group-hover:from-[#FFD700]/5 group-hover:to-[#FFA500]/5 transition-all duration-500 rounded-2xl"></div>
-                    
+
                     {/* Línea superior dorada */}
                     <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#FFD700] to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
 
@@ -316,10 +329,10 @@ export default function Testimonials() {
             className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-[#FFD700]/10 to-[#FFA500]/10 border border-[#FFD700]/30 hover:border-[#FFD700] hover:from-[#FFD700]/20 hover:to-[#FFA500]/20 transition-all duration-300 group"
           >
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
             </svg>
             <span className="text-white font-medium group-hover:text-[#FFD700] transition-colors">
               Ver todos los comentarios en Google

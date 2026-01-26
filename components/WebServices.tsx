@@ -13,30 +13,99 @@ import {
     Terminal,
     MousePointer2
 } from 'lucide-react';
+import Link from 'next/link';
 
-const webPlans = [
-    {
-        title: "Landing Page",
-        description: "Diseños de una sola página optimizados para convertir visitantes en clientes. Ideal para lanzamientos o promociones específicas.",
-        features: ["Diseño Responsive", "Formulario de Contacto", "Integración RRSS", "Velocidad de carga extrema"],
-        icon: <Rocket className="w-8 h-8" />,
-        color: "from-[#FFD700] to-[#FFA500]"
-    },
-    {
-        title: "Sitio Corporativo",
-        description: "Presencia profesional completa para tu empresa. Múltiples secciones, blogs y diseño que proyecta autoridad.",
-        features: ["Hasta 5 secciones", "Blog Autogestionable", "Optimización SEO", "Diseño Premium"],
-        icon: <Code className="w-8 h-8" />,
-        color: "from-[#FFA500] to-[#FF8C00]"
-    },
-    {
-        title: "E-Commerce",
-        description: "Tu tienda abierta las 24 horas. Gestión de inventario, pagos online y experiencia de compra optimizada.",
-        features: ["Carrito de Compras", "Pasarela de Pagos", "Gestión de Productos", "Panel de Administración"],
-        icon: <ShieldCheck className="w-8 h-8" />,
-        color: "from-[#FFD700] via-[#FFA500] to-[#FF4500]"
-    }
-];
+
+
+const MobileMockup = () => {
+    return (
+        <div className="lg:hidden relative w-full max-w-[280px] mx-auto mb-16 px-4">
+            {/* Floating Performance Badge for Mobile */}
+            <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-6 -right-4 z-40 bg-black/90 backdrop-blur-xl border border-green-500/30 p-2.5 rounded-xl flex items-center gap-2 shadow-[0_10px_30px_rgba(34,197,94,0.3)]"
+            >
+                <div className="w-8 h-8 rounded-full border-2 border-[#22c55e] flex items-center justify-center font-black text-[#22c55e] text-xs">99</div>
+                <div className="leading-tight">
+                    <p className="text-[7px] text-gray-400 uppercase font-black tracking-tighter">Google Core</p>
+                    <p className="text-[10px] text-white font-bold">Vitals</p>
+                </div>
+            </motion.div>
+
+            {/* Marco del Celular Premium */}
+            <div className="relative aspect-[9/19] bg-[#050505] rounded-[3rem] border-[8px] border-[#1a1a1a] shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] overflow-hidden ring-1 ring-white/10">
+                {/* Notch / Dynamic Island */}
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-full z-30 flex items-center justify-end px-2">
+                    <div className="w-1 h-1 rounded-full bg-blue-500/40" />
+                </div>
+
+                {/* Botones laterales (simulados) */}
+                <div className="absolute top-24 -left-[10px] w-[2px] h-12 bg-white/10 rounded-r-full" />
+                <div className="absolute top-40 -left-[10px] w-[2px] h-12 bg-white/10 rounded-r-full" />
+                <div className="absolute top-32 -right-[10px] w-[2px] h-16 bg-white/10 rounded-l-full" />
+
+                {/* Contenido de la Pantalla - Mini Web UI */}
+                <div className="h-full flex flex-col pt-8 bg-[#0a0a0a]">
+                    {/* Mini Navbar */}
+                    <div className="px-4 py-3 flex justify-between items-center border-b border-white/5">
+                        <div className="w-12 h-3 bg-gradient-to-r from-[#FFD700] to-[#FFA500] rounded-full" />
+                        <div className="flex gap-1.5">
+                            <div className="w-4 h-0.5 bg-white/40 rounded-full" />
+                            <div className="w-3 h-0.5 bg-white/40 rounded-full" />
+                        </div>
+                    </div>
+
+                    {/* Mini Hero Section */}
+                    <div className="px-4 py-6 space-y-3">
+                        <div className="h-2 w-20 bg-[#FFD700]/20 rounded-full" />
+                        <div className="space-y-1.5">
+                            <div className="h-4 w-full bg-white/10 rounded-md" />
+                            <div className="h-4 w-[90%] bg-white/10 rounded-md" />
+                            <div className="h-4 w-[60%] bg-white/10 rounded-md" />
+                        </div>
+                        <div className="pt-2">
+                            <div className="h-8 w-28 bg-[#FFD700] rounded-full shadow-[0_5px_15px_rgba(255,215,0,0.2)]" />
+                        </div>
+                    </div>
+
+                    {/* Mini Image/Banner Area */}
+                    <div className="px-4 py-2">
+                        <div className="w-full aspect-video bg-gradient-to-br from-white/5 to-transparent rounded-2xl border border-white/5 relative overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                        </div>
+                    </div>
+
+                    {/* Mini Features Grid */}
+                    <div className="px-4 py-6 grid grid-cols-2 gap-3">
+                        <div className="p-3 bg-white/[0.03] border border-white/5 rounded-xl space-y-2">
+                            <div className="w-6 h-6 rounded-lg bg-[#22c55e]/20" />
+                            <div className="w-full h-1 bg-white/10 rounded-full" />
+                        </div>
+                        <div className="p-3 bg-white/[0.03] border border-white/5 rounded-xl space-y-2">
+                            <div className="w-6 h-6 rounded-lg bg-[#FFD700]/20" />
+                            <div className="w-full h-1 bg-white/10 rounded-full" />
+                        </div>
+                    </div>
+
+                    {/* Floating Info Overlay */}
+                    <div className="absolute bottom-6 left-4 right-4 z-40">
+                        <motion.div
+                            animate={{ y: [0, -4, 0] }}
+                            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                            className="bg-gradient-to-br from-[#FFD700] to-[#FFA500] p-3 rounded-2xl text-black font-black text-[9px] flex items-center justify-center gap-2 shadow-2xl"
+                        >
+                            <Smartphone className="w-3.5 h-3.5" /> 100% RESPONSIVE
+                        </motion.div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Efecto de Brillo de Fondo sutil */}
+            <div className="absolute inset-x-0 bottom-0 h-1/2 -z-10 bg-[#FFD700]/10 blur-[100px] rounded-full" />
+        </div>
+    );
+};
 
 const BrowserMockup = () => {
     const ref = useRef(null);
@@ -58,9 +127,9 @@ const BrowserMockup = () => {
             <motion.div
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -top-10 -left-10 z-20 bg-black/80 backdrop-blur-xl border border-[#FFD700]/30 p-4 rounded-2xl flex items-center gap-4 shadow-[0_0_30px_rgba(255,215,0,0.2)]"
+                className="absolute -top-10 -left-10 z-20 bg-black/80 backdrop-blur-xl border border-green-500/30 p-4 rounded-2xl flex items-center gap-4 shadow-[0_0_30px_rgba(34,197,94,0.2)]"
             >
-                <div className="w-12 h-12 rounded-full border-4 border-[#FFD700] flex items-center justify-center font-black text-[#FFD700]">99</div>
+                <div className="w-12 h-12 rounded-full border-4 border-[#22c55e] flex items-center justify-center font-black text-[#22c55e]">99</div>
                 <div>
                     <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Performance</p>
                     <p className="text-white font-bold">Google Core Web Vitals</p>
@@ -87,34 +156,71 @@ const BrowserMockup = () => {
                     </div>
                 </div>
 
-                {/* Browser Content (Code Section) */}
-                <div className="p-8 font-mono text-sm space-y-2 relative">
-                    <div className="flex gap-2 text-blue-400"><span>const</span> <span className="text-purple-400">NexusProject</span> = <span className="text-yellow-400">async</span> () ={">"} {"{"}</div>
-                    <div className="pl-4 text-gray-400">await <span className="text-blue-400">optimize</span>({"{"}</div>
-                    <div className="pl-8 text-gray-500">performance: <span className="text-green-500">'ultra-fast'</span>,</div>
-                    <div className="pl-8 text-gray-500">design: <span className="text-green-500">'premium'</span>,</div>
-                    <div className="pl-8 text-gray-500">seo: <span className="text-yellow-400">true</span></div>
-                    <div className="pl-4 text-gray-400">{"}"});</div>
-                    <div className="pl-4 text-pink-400">return <span className="text-blue-400">success</span>;</div>
-                    <div className="text-blue-400">{"}"};</div>
+                {/* Browser Content (Mini Web UI Section) */}
+                <div className="p-0 flex h-full relative" style={{ height: 'calc(100% - 40px)' }}>
+                    {/* Navigation Sidebar sutil */}
+                    <div className="w-16 h-full bg-white/[0.02] border-r border-white/5 p-4 space-y-4">
+                        <div className="w-8 h-8 rounded-lg bg-[#FFD700]/20 antialiased" />
+                        <div className="w-8 h-2 bg-white/10 rounded-full" />
+                        <div className="w-8 h-2 bg-white/10 rounded-full" />
+                        <div className="w-8 h-2 bg-white/10 rounded-full" />
+                    </div>
 
-                    {/* Floating UI Elements over code */}
-                    <motion.div
-                        animate={{ x: [0, 20, 0], y: [0, 10, 0] }}
-                        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute bottom-10 right-10 bg-gradient-to-br from-[#FFD700] to-[#FFA500] p-4 rounded-xl text-black font-black flex items-center gap-2 shadow-xl"
-                    >
-                        <Smartphone className="w-5 h-5" /> 100% RESPONSIVE
-                    </motion.div>
+                    {/* Main Content Area */}
+                    <div className="flex-1 p-8 space-y-6">
+                        {/* Header Area */}
+                        <div className="flex justify-between items-center">
+                            <div className="space-y-2">
+                                <div className="h-6 w-48 bg-gradient-to-r from-white/20 to-transparent rounded-lg" />
+                                <div className="h-2 w-32 bg-white/5 rounded-full" />
+                            </div>
+                            <div className="flex gap-2">
+                                <div className="w-8 h-8 rounded-full bg-white/5" />
+                                <div className="w-8 h-8 rounded-full bg-white/5" />
+                            </div>
+                        </div>
 
-                    {/* Cursor effect */}
+                        {/* Content Grid */}
+                        <div className="grid grid-cols-3 gap-4">
+                            <div className="h-24 bg-white/[0.03] border border-white/5 rounded-2xl p-4 space-y-2">
+                                <div className="w-1/2 h-2 bg-[#FFD700]/30 rounded-full" />
+                                <div className="w-full h-1 bg-white/10 rounded-full" />
+                                <div className="w-full h-1 bg-white/10 rounded-full" />
+                            </div>
+                            <div className="h-24 bg-white/[0.03] border border-white/5 rounded-2xl p-4 space-y-2">
+                                <div className="w-1/2 h-2 bg-[#FFA500]/30 rounded-full" />
+                                <div className="w-full h-1 bg-white/10 rounded-full" />
+                                <div className="w-full h-1 bg-white/10 rounded-full" />
+                            </div>
+                            <div className="h-24 bg-white/[0.03] border border-white/5 rounded-2xl p-4 space-y-2">
+                                <div className="w-1/2 h-2 bg-[#FFD700]/30 rounded-full" />
+                                <div className="w-full h-1 bg-white/10 rounded-full" />
+                                <div className="w-full h-1 bg-white/10 rounded-full" />
+                            </div>
+                        </div>
+
+                        {/* Footer-like element */}
+                        <div className="h-20 w-full bg-gradient-to-br from-[#FFD700]/5 to-transparent rounded-2xl border border-[#FFD700]/10" />
+                    </div>
+
+                    {/* Floating CTA integrated in UI */}
+                    <div className="absolute bottom-8 right-8">
+                        <motion.div
+                            animate={{ scale: [1, 1.05, 1] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                            className="bg-gradient-to-br from-[#FFD700] to-[#FFA500] px-4 py-2 rounded-xl text-black font-black text-[10px] flex items-center gap-2 shadow-xl"
+                        >
+                            <Smartphone className="w-3 h-3" /> 100% RESPONSIVE
+                        </motion.div>
+                    </div>
+
+                    {/* Cursor effect (Se mantiene para la interactividad) */}
                     <motion.div
                         animate={{ x: [100, 300, 150], y: [100, 50, 200] }}
                         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute pointer-events-none"
+                        className="absolute pointer-events-none z-50"
                     >
-                        <MousePointer2 className="w-6 h-6 text-[#FFD700] fill-[#FFD700] drop-shadow-lg" />
-                        <div className="ml-4 mt-2 px-2 py-1 bg-white text-[10px] text-black font-bold rounded shadow-lg uppercase">Nexus Design</div>
+                        <MousePointer2 className="w-5 h-5 text-[#FFD700] fill-[#FFD700] drop-shadow-lg" />
                     </motion.div>
                 </div>
             </div>
@@ -126,17 +232,12 @@ const BrowserMockup = () => {
 };
 
 const WebServices = () => {
-    const openWhatsApp = (planTitle: string) => {
-        const phoneNumber = '573184022999';
-        const message = encodeURIComponent(`Hola Nexus, me gustaría obtener información sobre el plan de Sitio Web: ${planTitle}.`);
-        window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
-    };
 
     return (
         <section id="web-design" className="relative py-32 px-4 overflow-hidden bg-[#0a0a0a]">
             {/* Background Decorative Elements */}
-            <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-[#FFD700]/5 rounded-full blur-[150px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-[50%] h-[50%] bg-[#FFA500]/5 rounded-full blur-[150px] translate-y-1/2 -translate-x-1/4 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-[#FFD700]/5 rounded-full blur-[80px] md:blur-[150px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[50%] h-[50%] bg-[#FFA500]/5 rounded-full blur-[80px] md:blur-[150px] translate-y-1/2 -translate-x-1/4 pointer-events-none" />
 
             <div className="max-w-7xl mx-auto relative z-10">
                 <div className="text-center mb-20 text-balance px-4">
@@ -155,13 +256,14 @@ const WebServices = () => {
                             Tu Ventana al <span className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">Mundo Digital</span>
                         </h2>
                         <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-light mb-16">
-                            No solo hacemos páginas, construimos experiencias digitales de alto impacto que impulsan el crecimiento de tu negocio bajo el sello de calidad de <span className="text-white font-medium">Nexus</span>.
+                            Soluciones web de alto rendimiento con el sello de calidad <span className="text-white font-medium">Nexus</span> e impulsadas por nuestro aliado tecnológico <span className="text-white font-medium">InZidium</span>.
                         </p>
                     </motion.div>
                 </div>
 
                 {/* MOCKUP VIVO SECTION */}
                 <BrowserMockup />
+                <MobileMockup />
 
                 {/* Features Row - Reimagined */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-24 max-w-5xl mx-auto">
@@ -186,47 +288,26 @@ const WebServices = () => {
                     ))}
                 </div>
 
-                {/* Pricing/Plans Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {webPlans.map((plan, idx) => (
-                        <motion.div
-                            key={idx}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: idx * 0.2 }}
-                            whileHover={{ y: -10 }}
-                            className="group relative bg-[#111] border border-white/10 rounded-[2.5rem] p-8 md:p-10 overflow-hidden flex flex-col justify-between shadow-2xl"
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#FFD700]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                            <div>
-                                <div className={`w-16 h-16 rounded-[1.5rem] bg-gradient-to-br ${plan.color} flex items-center justify-center text-black mb-8 shadow-lg group-hover:scale-110 transition-transform`}>
-                                    {plan.icon}
-                                </div>
-                                <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">{plan.title}</h3>
-                                <p className="text-gray-400 mb-8 leading-relaxed font-light text-sm">
-                                    {plan.description}
-                                </p>
-                                <div className="space-y-4 mb-10">
-                                    {plan.features.map((feature, fIdx) => (
-                                        <div key={fIdx} className="flex items-center gap-3 text-xs text-gray-300">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-[#FFD700]" />
-                                            {feature}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
 
-                            <button
-                                onClick={() => openWhatsApp(plan.title)}
-                                className="w-full py-5 rounded-2xl border border-[#FFD700]/30 text-white font-black tracking-[0.2em] uppercase text-[10px] flex items-center justify-center gap-3 group-hover:bg-[#FFD700] group-hover:text-black transition-all duration-500"
-                            >
-                                Solicitar Cotización <ArrowRight className="w-4 h-4" />
-                            </button>
-                        </motion.div>
-                    ))}
-                </div>
+                {/* CTA to Plans Page */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="flex flex-col items-center"
+                >
+                    <Link
+                        href="/planes"
+                        className="group relative px-12 py-6 bg-gradient-to-r from-[#FFD700] to-[#FFA500] rounded-[2rem] text-black font-black tracking-[0.2em] uppercase text-sm shadow-[0_15px_40px_rgba(255,215,0,0.3)] hover:scale-105 transition-all duration-300 overflow-hidden"
+                    >
+                        <span className="relative z-10 flex items-center gap-4">
+                            Ver Planes de Desarrollo <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+                        </span>
+                        <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
+                    </Link>
+
+                </motion.div>
             </div>
         </section>
     );

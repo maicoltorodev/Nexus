@@ -8,8 +8,8 @@ export default function Hero() {
 
   return (
     <section className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-[#0a0a0a]">
-      {/* Efecto de brillo dorado sutil */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-transparent" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.05) 0%, transparent 70%)' }}></div>
+      {/* Efecto de brillo dorado sutil optimizado */}
+      <div className="absolute inset-0 opacity-20 md:opacity-100 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.08) 0%, transparent 60%)' }}></div>
 
       {/* Contenido principal */}
       <div className="relative z-10 w-full h-full flex flex-col items-center justify-center text-center px-4">
@@ -27,6 +27,7 @@ export default function Hero() {
                   height={160}
                   className="w-full h-full object-contain"
                   priority
+                  sizes="(max-width: 768px) 100px, 160px"
                   style={{ filter: 'drop-shadow(0 0 20px rgba(255, 215, 0, 0.3))' }}
                 />
               </div>
@@ -43,6 +44,7 @@ export default function Hero() {
                   height={112}
                   className={`w-full h-full object-contain animate-spin-slow transition-[filter] duration-500 x-filter-base ${isXHovered ? 'x-hover-x' : ''}`}
                   priority
+                  sizes="(max-width: 768px) 80px, 112px"
                 />
               </div>
               {/* US - se desliza desde el centro hacia la derecha */}
@@ -54,14 +56,15 @@ export default function Hero() {
                   height={160}
                   className="w-full h-full object-contain"
                   priority
+                  sizes="(max-width: 768px) 100px, 160px"
                   style={{ filter: 'drop-shadow(0 0 20px rgba(255, 215, 0, 0.3))' }}
                 />
               </div>
             </div>
 
             {/* Card blanca con texto ESTUDIO GRÁFICO */}
-            <div className={`relative w-full max-w-[300px] sm:max-w-[420px] md:max-w-[500px] mx-auto mb-10 md:mb-16 px-4 transition-all duration-500 ${isXHovered ? 'x-hover-card' : ''}`} style={{ animation: 'fadeInUp 0.8s ease-out 1.4s both' }}>
-              <div className="rounded-lg px-4 py-3 sm:px-6 sm:py-3 md:px-9 md:py-4 border-2 bg-white border-gray-200 shadow-2xl animate-card-pulse animate-border-glow animate-shimmer animate-continuous-glow group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-[0_30px_80px_rgba(255,215,0,0.3)]">
+            <div className={`relative w-full max-w-[300px] sm:max-w-[420px] md:max-w-[500px] mx-auto mb-10 md:mb-16 px-4 transition-all duration-700 ${isXHovered ? 'x-hover-card' : ''}`} style={{ animation: 'fadeInUp 0.8s ease-out 1.2s both' }}>
+              <div className="rounded-xl px-4 py-3 sm:px-6 sm:py-3 md:px-9 md:py-4 border bg-white shadow-xl animate-hero-card group cursor-pointer transition-all duration-500">
                 <p className="text-black text-center font-bold text-sm sm:text-base md:text-lg lg:text-xl uppercase relative z-10 transition-all duration-300 group-hover:text-[#FFD700]" style={{ letterSpacing: '0.3em' }}>
                   · ESTUDIO GRÁFICO ·
                 </p>
@@ -75,34 +78,13 @@ export default function Hero() {
             </p>
           </div>
 
-          {/* Botón fuera del container */}
-          <a
-            href="#servicios"
-            className={`group relative inline-flex items-center justify-center px-6 py-3 sm:px-8 sm:py-3 md:px-10 md:py-4 text-sm sm:text-base font-semibold text-[#0a0a0a] transition-all duration-500 overflow-hidden ${isXHovered ? 'x-hover-button' : ''}`}
-            style={{
-              animation: 'fadeInUp 0.8s ease-out 2.6s both',
-              background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-              borderRadius: '12px',
-              boxShadow: '0 10px 40px rgba(255, 215, 0, 0.3)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = '0 15px 50px rgba(255, 215, 0, 0.6)';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = '0 10px 40px rgba(255, 215, 0, 0.3)';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            <span className="relative z-10">Servicios</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-[#FFA500] to-[#FFD700] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          </a>
+
         </div>
       </div>
 
       {/* Scroll indicator */}
       <a
-        href="#servicios"
+        href="#tarjeta"
         className="absolute bottom-16 right-4 sm:bottom-8 sm:right-8 z-20 animate-bounce cursor-pointer transition-transform duration-300 hover:scale-110"
         aria-label="Ir a servicios"
       >
