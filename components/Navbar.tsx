@@ -44,8 +44,8 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
-        ? 'py-3 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-white/10 shadow-2xl'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled || isMobileMenuOpen
+        ? 'py-3 bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-white/10 shadow-2xl'
         : 'py-6 bg-transparent'
         }`}
     >
@@ -91,7 +91,10 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden relative z-[60] w-12 h-12 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-colors"
+            className={`lg:hidden relative z-[60] w-11 h-11 flex items-center justify-center rounded-xl border transition-all duration-300 ${isMobileMenuOpen
+                ? 'bg-[#FFD700]/10 border-[#FFD700]/20 text-[#FFD700]'
+                : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
+              }`}
             aria-label="Toggle menu"
           >
             <AnimatePresence mode="wait">
