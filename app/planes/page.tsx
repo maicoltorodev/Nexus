@@ -233,8 +233,17 @@ export default function PlansPage() {
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-8 md:mb-10 text-center lg:text-left">
                                             {plan.features.map(f => <FeatureItem key={f} text={f} colorClass={plan.color} />)}
                                         </div>
-                                        <button onClick={() => openWhatsApp(plan.title)} className="group w-full sm:w-auto px-8 md:px-10 py-4 md:py-5 rounded-full flex items-center justify-center gap-3 font-bold uppercase text-[10px] md:text-[11px] tracking-widest transition-all glass-panel-inz hover:bg-white/10 hover:scale-105 border-white/20 font-[family-name:var(--font-orbitron)]">
+                                        <button
+                                            onClick={() => openWhatsApp(plan.title)}
+                                            className="group w-full sm:w-auto px-10 py-5 rounded-full flex items-center justify-center gap-3 font-bold uppercase text-[10px] md:text-[11px] tracking-widest transition-all glass-panel-inz hover:scale-105 border-white/30 font-[family-name:var(--font-orbitron)] relative overflow-hidden"
+                                            style={{
+                                                '--glow-color': plan.shadowColor
+                                            } as React.CSSProperties}
+                                        >
+                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                                             Solicitar Plan <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                            {/* Glow on hover */}
+                                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ boxShadow: `inset 0 0 20px ${plan.shadowColor}` }} />
                                         </button>
                                     </motion.div>
 
