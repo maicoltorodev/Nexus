@@ -43,84 +43,86 @@ export default function Navbar() {
   ];
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled || isMobileMenuOpen
-        ? 'py-3 bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-white/10 shadow-2xl'
-        : 'py-6 bg-transparent'
-        }`}
-    >
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between">
-          {/* Brand/Logo */}
-          <div className="flex items-center gap-4 relative z-[60]">
-            <Link href="/" className="group flex items-center gap-2">
-              <span className="text-xl font-black tracking-tighter text-white">
-                NE<span className="text-[#FFD700]">X</span>US
-              </span>
-            </Link>
-          </div>
-
-          {/* Desktop Menu */}
-          <div className="hidden lg:flex items-center space-x-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-[#FFD700] transition-colors relative group"
-              >
-                {link.label}
-                <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-[#FFD700] scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+    <nav className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
+      <div
+        className={`w-full transition-all duration-500 pointer-events-auto ${isScrolled || isMobileMenuOpen
+          ? 'py-3 bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-white/10 shadow-2xl'
+          : 'py-6 bg-transparent'
+          }`}
+      >
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex items-center justify-between">
+            {/* Brand/Logo */}
+            <div className="flex items-center gap-4 relative z-[60]">
+              <Link href="/" className="group flex items-center gap-2">
+                <span className="text-xl font-black tracking-tighter text-white">
+                  NE<span className="text-[#FFD700]">X</span>US
+                </span>
               </Link>
-            ))}
-            <div className="ml-6 pl-6 border-l border-white/10 flex items-center gap-4">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-white transition-all hover:scale-110"
-                  aria-label={social.label}
-                >
-                  {social.icon}
-                </a>
-              ))}
             </div>
-          </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`lg:hidden relative z-[60] w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-300 border ${isMobileMenuOpen
+            {/* Desktop Menu */}
+            <div className="hidden lg:flex items-center space-x-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-[#FFD700] transition-colors relative group"
+                >
+                  {link.label}
+                  <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-[#FFD700] scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+                </Link>
+              ))}
+              <div className="ml-6 pl-6 border-l border-white/10 flex items-center gap-4">
+                {socialLinks.map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-white transition-all hover:scale-110"
+                    aria-label={social.label}
+                  >
+                    {social.icon}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={`lg:hidden relative z-[60] w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-300 border ${isMobileMenuOpen
                 ? 'bg-[#FFD700] border-[#FFD700] text-black shadow-[0_0_30px_rgba(255,215,0,0.5)]'
                 : isScrolled
                   ? 'bg-[#0a0a0a]/80 border-white/10 text-white'
                   : 'bg-black/60 border-white/40 text-white backdrop-blur-md hover:bg-black/80'
-              }`}
-            aria-label="Toggle menu"
-          >
-            <AnimatePresence mode="wait">
-              {isMobileMenuOpen ? (
-                <motion.div
-                  key="close"
-                  initial={{ opacity: 0, rotate: -90 }}
-                  animate={{ opacity: 1, rotate: 0 }}
-                  exit={{ opacity: 0, rotate: 90 }}
-                >
-                  <X className="w-6 h-6 text-black" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="menu"
-                  initial={{ opacity: 0, rotate: 90 }}
-                  animate={{ opacity: 1, rotate: 0 }}
-                  exit={{ opacity: 0, rotate: -90 }}
-                >
-                  <Menu className="w-6 h-6" />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </button>
+                }`}
+              aria-label="Toggle menu"
+            >
+              <AnimatePresence mode="wait">
+                {isMobileMenuOpen ? (
+                  <motion.div
+                    key="close"
+                    initial={{ opacity: 0, rotate: -90 }}
+                    animate={{ opacity: 1, rotate: 0 }}
+                    exit={{ opacity: 0, rotate: 90 }}
+                  >
+                    <X className="w-6 h-6 text-black" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="menu"
+                    initial={{ opacity: 0, rotate: 90 }}
+                    animate={{ opacity: 1, rotate: 0 }}
+                    exit={{ opacity: 0, rotate: -90 }}
+                  >
+                    <Menu className="w-6 h-6" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -131,7 +133,7 @@ export default function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 lg:hidden bg-[#0a0a0a]"
+            className="fixed top-0 left-0 w-full h-[100dvh] z-[55] lg:hidden bg-[#0a0a0a] flex flex-col pointer-events-auto"
           >
             {/* Background elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -139,7 +141,7 @@ export default function Navbar() {
               <div className="absolute -bottom-[10%] -left-[10%] w-[70%] h-[70%] bg-[#FFD700]/5 rounded-full blur-[120px]" />
             </div>
 
-            <div className="relative h-full flex flex-col px-8 pt-32 pb-12 overflow-y-auto">
+            <div className="relative flex-1 min-h-0 flex flex-col px-8 pt-28 pb-12 overflow-y-auto">
               <div className="flex flex-col space-y-6">
                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#FFD700]/60 mb-2">Navegación</p>
                 {navLinks.map((link, idx) => (
