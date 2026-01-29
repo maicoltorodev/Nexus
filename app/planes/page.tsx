@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Rocket, Zap, CheckCircle2, Terminal, Smartphone, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import FloatingButton from '@/components/FloatingButton';
 
 // --- Types & Data ---
 interface Plan {
@@ -128,6 +129,7 @@ const cardVariants = (isEven: boolean) => ({
 // --- Main Page ---
 
 export default function PlansPage() {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const openWhatsApp = useCallback((planTitle: string) => {
         const msg = encodeURIComponent(`Hola NEXUS, me gustaría obtener información sobre el plan: ${planTitle}.`);
         window.open(`https://wa.me/573184022999?text=${msg}`, '_blank');
@@ -135,7 +137,7 @@ export default function PlansPage() {
 
     return (
         <main className="bg-[#030712] min-h-screen text-white overflow-x-hidden selection:bg-[#FFD700] selection:text-black">
-            <Navbar />
+            <Navbar isMenuOpen={isMenuOpen} onMenuToggle={setIsMenuOpen} />
 
             {/* Hero */}
             <section className="relative pt-48 pb-32 px-4 bg-[#0a0a0a]">
@@ -336,6 +338,7 @@ export default function PlansPage() {
             </section>
 
             <Footer />
+            <FloatingButton isMenuOpen={isMenuOpen} />
         </main>
     );
 }

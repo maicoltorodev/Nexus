@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-export default function FloatingButton() {
+export default function FloatingButton({ isMenuOpen }: { isMenuOpen?: boolean }) {
   const [isVisible, setIsVisible] = useState(false);
   const [showHelpText, setShowHelpText] = useState(false);
   const [showCardText, setShowCardText] = useState(false);
@@ -110,6 +110,8 @@ export default function FloatingButton() {
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
     window.open(whatsappUrl, '_blank');
   };
+
+  if (isMenuOpen) return null;
 
   return (
     <div className="fixed bottom-8 right-8 z-50 flex items-center gap-3">

@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Services from '@/components/Services';
@@ -10,9 +13,11 @@ import Footer from '@/components/Footer';
 import FloatingButton from '@/components/FloatingButton';
 
 export default function Home() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <main id="inicio" className="relative">
-      <Navbar />
+      <Navbar isMenuOpen={isMenuOpen} onMenuToggle={setIsMenuOpen} />
       <Hero />
       <BusinessCard />
       <WebServices />
@@ -21,7 +26,7 @@ export default function Home() {
       <Testimonials />
       <Contact />
       <Footer />
-      <FloatingButton />
+      <FloatingButton isMenuOpen={isMenuOpen} />
     </main>
   );
 }

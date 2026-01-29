@@ -5,9 +5,21 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Instagram, Facebook, MessageCircle, ArrowRight, ExternalLink } from 'lucide-react';
 
-export default function Navbar() {
+export default function Navbar({
+  isMenuOpen: controlledOpen,
+  onMenuToggle: controlledToggle
+}: {
+  isMenuOpen?: boolean;
+  onMenuToggle?: (open: boolean) => void;
+}) {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const isMobileMenuOpen = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setIsMobileMenuOpen = (open: boolean) => {
+    if (controlledToggle) controlledToggle(open);
+    else setInternalOpen(open);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,7 +65,7 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between">
             {/* Brand/Logo */}
-            <div className="flex items-center gap-4 relative z-[60]">
+            <div className={`flex items-center gap-4 relative z-[60] transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
               <Link href="/" className="group flex items-center gap-2">
                 <span className="text-xl font-black tracking-tighter text-white">
                   NE<span className="text-[#FFD700]">X</span>US
@@ -89,38 +101,18 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Button - Hidden when open as X is now inside */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`lg:hidden relative z-[60] w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-300 border ${isMobileMenuOpen
-                ? 'bg-[#FFD700] border-[#FFD700] text-black shadow-[0_0_30px_rgba(255,215,0,0.5)]'
-                : isScrolled
-                  ? 'bg-[#0a0a0a]/80 border-white/10 text-white'
-                  : 'bg-black/60 border-white/40 text-white backdrop-blur-md hover:bg-black/80'
+              className={`lg:hidden relative z-[60] w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-500 border ${isMobileMenuOpen
+                  ? 'opacity-0 pointer-events-none'
+                  : isScrolled
+                    ? 'bg-[#0a0a0a]/80 border-white/10 text-white'
+                    : 'bg-black/60 border-white/40 text-white backdrop-blur-md hover:bg-black/80'
                 }`}
               aria-label="Toggle menu"
             >
-              <AnimatePresence mode="wait">
-                {isMobileMenuOpen ? (
-                  <motion.div
-                    key="close"
-                    initial={{ opacity: 0, rotate: -90 }}
-                    animate={{ opacity: 1, rotate: 0 }}
-                    exit={{ opacity: 0, rotate: 90 }}
-                  >
-                    <X className="w-6 h-6 text-black" />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="menu"
-                    initial={{ opacity: 0, rotate: 90 }}
-                    animate={{ opacity: 1, rotate: 0 }}
-                    exit={{ opacity: 0, rotate: -90 }}
-                  >
-                    <Menu className="w-6 h-6" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <Menu className="w-6 h-6" />
             </button>
           </div>
         </div>
@@ -130,18 +122,34 @@ export default function Navbar() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed top-0 left-0 w-full h-[100dvh] z-[55] lg:hidden bg-[#0a0a0a] flex flex-col pointer-events-auto"
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed top-0 left-0 w-full h-[100dvh] z-[70] lg:hidden bg-[#0a0a0a] flex flex-col pointer-events-auto"
           >
+            {/* Mobile Menu Header - Logo & X Inside */}
+            <div className="flex items-center justify-between px-6 py-6 border-b border-white/5 bg-[#0a0a0a]/50 backdrop-blur-md">
+              <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="group flex items-center gap-2">
+                <span className="text-xl font-black tracking-tighter text-white">
+                  NE<span className="text-[#FFD700]">X</span>US
+                </span>
+              </Link>
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-12 h-12 flex items-center justify-center rounded-xl bg-[#FFD700] text-black shadow-[0_0_20px_rgba(255,215,0,0.3)] transition-transform hover:scale-95 active:scale-90"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
             {/* Background elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div className="absolute -top-[10%] -right-[10%] w-[70%] h-[70%] bg-[#FFD700]/5 rounded-full blur-[120px]" />
               <div className="absolute -bottom-[10%] -left-[10%] w-[70%] h-[70%] bg-[#FFD700]/5 rounded-full blur-[120px]" />
             </div>
 
-            <div className="relative flex-1 min-h-0 flex flex-col px-8 pt-28 pb-12 overflow-y-auto">
+            <div className="relative flex-1 min-h-0 flex flex-col px-8 pt-12 pb-12 overflow-y-auto">
               <div className="flex flex-col space-y-6">
                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#FFD700]/60 mb-2">Navegación</p>
                 {navLinks.map((link, idx) => (
