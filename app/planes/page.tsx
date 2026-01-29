@@ -232,24 +232,33 @@ export default function PlansPage() {
                                         </div>
 
                                         <p className="text-sm md:text-lg text-slate-400 font-light leading-relaxed mb-6 md:mb-8 font-[family-name:var(--font-orbitron)] max-w-2xl mx-auto lg:mx-0">{plan.description}</p>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-8 md:mb-10 text-center lg:text-left">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-0 text-center lg:text-left">
                                             {plan.features.map(f => <FeatureItem key={f} text={f} colorClass={plan.color} />)}
                                         </div>
-                                        <button
-                                            onClick={() => openWhatsApp(plan.title)}
-                                            className="group w-full sm:w-auto px-10 py-5 rounded-full flex items-center justify-center gap-3 font-bold uppercase text-[10px] md:text-[11px] tracking-widest transition-all glass-panel-inz hover:scale-105 border-white/30 font-[family-name:var(--font-orbitron)] relative overflow-hidden"
-                                            style={{
-                                                '--glow-color': plan.shadowColor
-                                            } as React.CSSProperties}
-                                        >
-                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                                            Solicitar Plan <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                            {/* Glow on hover */}
-                                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ boxShadow: `inset 0 0 20px ${plan.shadowColor}` }} />
-                                        </button>
                                     </motion.div>
-
                                 </div>
+
+                                {/* Plan CTA Centralizado */}
+                                <motion.div
+                                    initial="hidden"
+                                    whileInView="visible"
+                                    viewport={{ once: true }}
+                                    variants={fadeInVariants}
+                                    className="w-full flex justify-center mt-12 md:mt-24 pb-4"
+                                >
+                                    <button
+                                        onClick={() => openWhatsApp(plan.title)}
+                                        className="group w-full sm:w-auto px-12 py-6 rounded-full flex items-center justify-center gap-4 font-bold uppercase text-[10px] md:text-[11px] tracking-widest transition-all glass-panel-inz hover:scale-105 border-white/30 font-[family-name:var(--font-orbitron)] relative overflow-hidden"
+                                        style={{
+                                            '--glow-color': plan.shadowColor
+                                        } as React.CSSProperties}
+                                    >
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                                        Solicitar Plan <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                                        {/* Glow on hover */}
+                                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ boxShadow: `inset 0 0 20px ${plan.shadowColor}` }} />
+                                    </button>
+                                </motion.div>
                             </div>
                         </section>
                     );
