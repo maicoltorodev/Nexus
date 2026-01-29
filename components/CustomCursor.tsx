@@ -15,6 +15,22 @@ export default function CustomCursor() {
     useEffect(() => {
         if (typeof window === 'undefined' || window.innerWidth < 1024) return;
 
+        // Inyectar estilo global para ocultar el cursor solo si es visible
+        let styleTag: HTMLStyleElement | null = null;
+        if (isVisible) {
+            styleTag = document.createElement('style');
+            styleTag.id = 'hide-default-cursor';
+            styleTag.innerHTML = `
+                *, *::before, *::after, html, body {
+                    cursor: none !important;
+                }
+                a, button, [role="button"], input, select, textarea {
+                    cursor: none !important;
+                }
+            `;
+            document.head.appendChild(styleTag);
+        }
+
         const moveCursor = (e: MouseEvent) => {
             cursorX.set(e.clientX);
             cursorY.set(e.clientY);
@@ -49,6 +65,8 @@ export default function CustomCursor() {
         document.addEventListener('mouseleave', handleMouseLeave);
 
         return () => {
+            if (styleTag) styleTag.remove();
+
             window.removeEventListener('mousemove', moveCursor);
             window.removeEventListener('mouseover', handleMouseOver);
             document.removeEventListener('mouseenter', handleMouseEnter);

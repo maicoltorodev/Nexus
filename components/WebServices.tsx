@@ -256,7 +256,7 @@ const WebServices = () => {
                             Tu Ventana al <span className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">Mundo Digital</span>
                         </h2>
                         <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-light mb-16">
-                            Soluciones web de alto rendimiento con el sello de calidad <span className="text-white font-medium">Nexus</span> e impulsadas por nuestro aliado tecnológico <span className="text-white font-medium">InZidium</span>.
+                            No solo hacemos páginas, construimos experiencias digitales de alto impacto que impulsan el crecimiento de tu negocio bajo el sello de calidad de <span className="text-white font-medium italic-none">NE<span className="text-[#FFD700] font-black">X</span>US</span> y la ingeniería de vanguardia de <span className="font-[family-name:var(--font-orbitron)] bg-gradient-to-r from-purple-500 to-cyan-400 bg-clip-text text-transparent font-bold">InZidium</span>.
                         </p>
                     </motion.div>
                 </div>
@@ -299,12 +299,9 @@ const WebServices = () => {
                 >
                     <Link
                         href="/planes"
-                        className="group relative px-12 py-6 bg-gradient-to-r from-[#FFD700] to-[#FFA500] rounded-[2rem] text-black font-black tracking-[0.2em] uppercase text-sm shadow-[0_15px_40px_rgba(255,215,0,0.3)] hover:scale-105 transition-all duration-300 overflow-hidden"
+                        className="group px-16 py-7 rounded-full flex items-center justify-center gap-4 font-black tracking-[0.2em] uppercase text-xs transition-all duration-500 glass-panel-inz text-white hover:bg-white/10 hover:scale-[1.05] hover:shadow-[0_0_50px_rgba(255,255,255,0.1)] font-[family-name:var(--font-orbitron)] border-white/20 hover:text-cyan-400"
                     >
-                        <span className="relative z-10 flex items-center gap-4">
-                            Ver Planes de Desarrollo <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-                        </span>
-                        <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
+                        Ver Planes de Desarrollo <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
                     </Link>
 
                 </motion.div>

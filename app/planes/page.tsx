@@ -1,231 +1,284 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import {
-    Code,
-    Smartphone,
-    Rocket,
-    ShieldCheck,
-    ArrowRight,
-    Terminal,
-    CheckCircle2,
-    Zap,
-    Search
-} from 'lucide-react';
-import Link from 'next/link';
+import { Rocket, Zap, CheckCircle2, Terminal, Smartphone, ArrowRight } from 'lucide-react';
+import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
-const webPlans = [
+// --- Types & Data ---
+interface Plan {
+    id: string;
+    title: string;
+    price: string;
+    annual: string;
+    description: string;
+    features: string[];
+    icon: React.ElementType;
+    color: string;
+    popular?: boolean;
+    idealFor?: string;
+    bgGlow: string;
+    accentColor: string;
+    shadowColor: string;
+    splitAt?: number;
+}
+
+const webPlans: Plan[] = [
     {
+        id: "lanzamiento",
         title: "Lanzamiento Web",
         price: "$600.000",
-        annual: "$250.000",
-        time: "2–4 días",
-        description: "Para negocios que quieren estar en internet rápidamente.",
-        features: [
-            "Página de inicio, servicios y contacto",
-            "Se ve bien en celulares y computadores",
-            "Botón de WhatsApp y ubicación en Google Maps",
-            "Sitio seguro con candado verde",
-            "Formulario para que te escriban",
-            "Incluye alojamiento web y dirección del sitio"
-        ],
-        maintenance: "Cambios adicionales se cobran aparte",
-        icon: <Rocket className="w-10 h-10" />,
-        color: "from-[#FFD700] to-[#FFA500]",
-        popular: false
+        annual: "$200.000",
+        description: "La solución perfecta para profesionales y pequeños negocios que necesitan una presencia digital inmediata.",
+        features: ["Arquitectura One-Page", "Vista Móvil Adaptada", "Google Maps Integrado", "Certificado SSL", "Botón WhatsApp Estratégico", "Hosting y Dominio Incluido x 1 año", "Soporte x 1 semana", "Entrega: 1–3 días"],
+        icon: Rocket,
+        color: "from-cyan-400 to-blue-500",
+        bgGlow: "rgba(34, 211, 238, 0.15)",
+        accentColor: "cyan",
+        shadowColor: "#22d3ee",
+        idealFor: "Emprendedores y Proyectos Rápidos"
     },
     {
+        id: "funcional",
         title: "Sitio Funcional",
         price: "$1.300.000",
-        annual: "$400.000",
-        time: "4–6 días",
-        description: "Para empresas que necesitan un sitio web completo y profesional.",
-        features: [
-            "Todo lo del plan anterior",
-            "Secciones diseñadas especialmente para tu negocio",
-            "Formulario con más opciones de contacto",
-            "Copias de seguridad automáticas",
-            "Mejoras para que cargue más rápido",
-            "Ayuda técnica durante 2 meses"
-        ],
-        maintenance: "Incluye ayuda técnica por 2 meses",
-        icon: <Zap className="w-10 h-10" />,
-        color: "from-[#FFA500] to-[#FF8C00]",
-        popular: true
+        annual: "$350.000",
+        description: "Diseñado para negocios en crecimiento que requieren una estructura sólida y múltiples secciones.",
+        features: ["Todo el Plan Lanzamiento", "Hasta 5 Páginas Internas", "Diseño Personalizado", "Respaldos Automáticos", "Optimización SEO Inicial", "Soporte x 1 mes", "Entrega: 4–6 días"],
+        icon: Zap,
+        color: "from-emerald-400 to-green-500",
+        popular: true,
+        idealFor: "Negocios en crecimiento y PYMES",
+        bgGlow: "rgba(16, 185, 129, 0.15)",
+        accentColor: "emerald",
+        shadowColor: "#10b981"
     },
     {
+        id: "experiencia",
         title: "Experiencia Cliente",
         price: "$2.800.000",
         annual: "$500.000",
-        time: "5–7 días",
-        description: "Para mejorar cómo tus clientes interactúan y reservan contigo.",
-        features: [
-            "Todo lo del plan anterior",
-            "Sistema de reservas o cotizaciones en línea",
-            "Mejoras avanzadas de velocidad y rendimiento",
-            "Estadísticas de visitantes de tu sitio",
-            "Informes básicos de rendimiento",
-            "Ayuda técnica durante 3 meses"
-        ],
-        maintenance: "Incluye ayuda técnica por 3 meses",
-        icon: <CheckCircle2 className="w-10 h-10" />,
-        color: "from-[#FFD700] via-[#FFA500] to-[#FF4500]",
-        popular: false
+        description: "Transforma tu sitio en una plataforma de gestión. Ideal para agendamiento o procesos automatizados.",
+        features: ["Todo el Plan Funcional", "Arquitectura de Conversión", "Agendamiento o Catálogo", "Estrategia SEO Avanzada", "Reportes Mensuales", "Soporte x 2 meses", "Entrega: 5–7 días"],
+        icon: CheckCircle2,
+        color: "from-yellow-400 via-amber-500 to-orange-500",
+        idealFor: "Clínicas, Agencias y Empresas de Servicios",
+        bgGlow: "rgba(245, 158, 11, 0.15)",
+        accentColor: "amber",
+        shadowColor: "#f59e0b"
     },
     {
+        id: "crecimiento",
         title: "Crecimiento Pro",
         price: "$4.000.000",
         annual: "$600.000",
-        time: "7–10 días",
-        description: "Sitio estratégico para atraer más clientes y hacer crecer tu negocio.",
-        features: [
-            "Todo lo del plan anterior",
-            "Optimización para aparecer en Google",
-            "Sistema de pagos en línea / Gestión de clientes",
-            "Sitio 100% personalizado a tu marca",
-            "Seguridad máxima contra ataques",
-            "Soporte y ayuda completa"
-        ],
-        maintenance: "Optimización continua y soporte profesional",
-        icon: <Terminal className="w-10 h-10" />,
-        color: "from-blue-500 to-purple-600",
-        popular: false
+        description: "Activo estratégico de alto impacto enfocado 100% en la conversión y liderazgo de mercado.",
+        features: ["Todo el Plan Experiencia", "Chatbot con IA 24/7", "Marketing Estratégico", "Pasarela de Pagos o CRM", "Diseño UI/UX Único", "Seguridad Anti-Hacking", "Soporte x 3 meses", "Entrega: 7–10 días"],
+        icon: Terminal,
+        color: "from-purple-600 to-fuchsia-600",
+        idealFor: "Inmobiliarias, E-commerce, Academias Digitales y Negocios Escalables",
+        bgGlow: "rgba(232, 121, 249, 0.15)",
+        accentColor: "purple",
+        shadowColor: "#a855f7"
     },
     {
+        id: "medida",
         title: "A tu Medida",
         price: "A cotizar",
         annual: "A cotizar",
-        time: "Variable",
-        description: "Para proyectos especiales con funciones únicas y diseño exclusivo.",
-        features: [
-            "Sitio completamente flexible y personalizado",
-            "Conexiones especiales con otras plataformas",
-            "Estrategias avanzadas de publicidad digital",
-            "Informes personalizados para tu negocio",
-            "Sitio accesible para todos los usuarios",
-            "Mantenimiento diseñado para tus necesidades"
-        ],
-        maintenance: "Según lo que necesite tu proyecto",
-        icon: <Smartphone className="w-10 h-10" />,
-        color: "from-gray-700 to-gray-900",
-        popular: false
+        description: "Para proyectos con requerimientos técnicos específicos o aplicaciones web escalables.",
+        features: ["Desarrollo a Medida", "Integraciones vía API", "Marketing Full Stack", "Dashboards de Datos", "Auditoría Accesibilidad", "Plan de Escalabilidad"],
+        icon: Smartphone,
+        color: "from-slate-700 to-slate-900",
+        bgGlow: "rgba(71, 85, 105, 0.15)",
+        accentColor: "slate",
+        shadowColor: "#64748b",
+        idealFor: "Startups y Proyectos Muy Específicos",
+        splitAt: 2
     }
 ];
 
+// --- Sub-components ---
+
+const FeatureItem = React.memo(({ text, colorClass }: { text: string, colorClass: string }) => (
+    <div className="flex items-start gap-3 group/item text-left">
+        <div className={`mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-gradient-to-br ${colorClass} flex items-center justify-center p-0.5`}>
+            <CheckCircle2 className="w-full h-full text-white" />
+        </div>
+        <span className="text-sm md:text-base text-slate-300 group-hover/item:text-white transition-colors leading-snug">
+            {text}
+        </span>
+    </div>
+));
+
+FeatureItem.displayName = 'FeatureItem';
+
+const fadeInVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8 } }
+};
+
+const cardVariants = (isEven: boolean) => ({
+    hidden: { opacity: 0, scale: 0.9, x: isEven ? 50 : -50 },
+    visible: { opacity: 1, scale: 1, x: 0, transition: { duration: 0.8 } }
+});
+
+// --- Main Page ---
+
 export default function PlansPage() {
-    const openWhatsApp = (planTitle: string) => {
-        const phoneNumber = '573143855079'; // Número de InZidium/Maicol Toro del sitio
-        const message = encodeURIComponent(`Hola InZidium, me interesa el plan de Desarrollo Web: ${planTitle}. Vengo desde Nexus.`);
-        window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
-    };
+    const openWhatsApp = useCallback((planTitle: string) => {
+        const msg = encodeURIComponent(`Hola NEXUS, me gustaría obtener información sobre el plan: ${planTitle}.`);
+        window.open(`https://wa.me/573184022999?text=${msg}`, '_blank');
+    }, []);
 
     return (
-        <main className="bg-[#0a0a0a] min-h-screen selection:bg-[#FFD700]/30">
+        <main className="bg-[#030712] min-h-screen text-white overflow-x-hidden selection:bg-[#FFD700] selection:text-black">
             <Navbar />
 
-            {/* Nexus Identity Hero */}
-            <section className="relative pt-40 pb-24 px-4 overflow-hidden">
-                {/* Background Decorative Elements Consistentes con Nexus */}
-                <div className="absolute inset-0 opacity-10 pointer-events-none">
-                    <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#FFD700] rounded-full blur-[150px]" />
-                    <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-[#FFA500] rounded-full blur-[150px]" />
-                </div>
-
-                <div className="max-w-7xl mx-auto relative z-10 text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        <div className="inline-block mb-6 px-4 py-2 rounded-full border border-[#FFD700]/30 bg-[#FFD700]/5">
-                            <span className="text-sm font-semibold text-[#FFD700] tracking-wider uppercase flex items-center gap-2">
-                                <Terminal className="w-4 h-4" /> Planes de Desarrollo
-                            </span>
+            {/* Hero */}
+            <section className="relative pt-48 pb-32 px-4 bg-[#0a0a0a]">
+                <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(circle_at_50%_50%,rgba(255,215,0,0.08)_0%,transparent_60%)]" />
+                <div className="max-w-7xl mx-auto text-center relative z-10">
+                    <motion.div initial="hidden" animate="visible" variants={fadeInVariants}>
+                        <div className="inline-block mb-4 px-4 py-2 rounded-full border border-[#FFD700]/30 bg-[#FFD700]/5 text-sm font-semibold text-[#FFD700] uppercase tracking-wider">
+                            Presencia Digital
                         </div>
-                        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
-                            Eleva tu <span className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">Presencia Digital</span>
+                        <h1 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
+                            Estrategias de <span className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">Inversión Web</span>
                         </h1>
-                        <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-light px-4 text-balance">
-                            Soluciones web de alto rendimiento con el sello de calidad <span className="text-white font-medium">Nexus</span> e impulsadas por nuestro aliado tecnológico <span className="text-white font-medium">InZidium</span>.
+                        <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-light mb-12">
+                            Fusionamos el diseño de <span className="text-white font-medium">NE<span className="text-[#FFD700] font-black">X</span>US</span> con la tecnología de <span className="font-[family-name:var(--font-orbitron)] bg-gradient-to-r from-purple-500 to-cyan-400 bg-clip-text text-transparent font-bold">InZidium</span>.
                         </p>
+                        <div className="flex flex-wrap justify-center gap-6">
+                            {['Velocidad', 'SEO', 'Conversión', 'Seguridad'].map(tag => (
+                                <div key={tag} className="flex items-center gap-2 text-slate-500 text-[10px] font-black uppercase tracking-widest font-[family-name:var(--font-orbitron)]">
+                                    <CheckCircle2 className="w-4 h-4 text-[#FFD700]" /> {tag}
+                                </div>
+                            ))}
+                        </div>
                     </motion.div>
                 </div>
             </section>
 
-            {/* InZidium Official Branding Plans Grid */}
-            <section className="py-20 px-4 relative">
-                <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-                    {webPlans.map((plan, idx) => (
-                        <motion.div
-                            key={idx}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: idx * 0.1, duration: 0.6 }}
-                            className={`relative group bg-[#050505]/80 backdrop-blur-xl border transition-all duration-500 rounded-[2.5rem] p-7 flex flex-col justify-between hover:shadow-[0_0_50px_rgba(188,19,254,0.15)] ${plan.popular ? 'border-[#bc13fe]/40 ring-1 ring-[#06b6d4]/20' : 'border-white/5 hover:border-[#06b6d4]/30'
-                                }`}
-                        >
-                            {plan.popular && (
-                                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#bc13fe] to-[#06b6d4] text-white text-[8px] font-black uppercase tracking-[0.2em] px-5 py-2 rounded-full shadow-[0_0_20px_rgba(188,19,254,0.4)] whitespace-nowrap z-20">
-                                    Más Popular
-                                </div>
-                            )}
+            {/* Plans List */}
+            <div>
+                {webPlans.map((plan, idx) => {
+                    const isEven = idx % 2 === 0;
+                    return (
+                        <section key={plan.id} id={plan.id} className={`py-24 md:py-40 px-4 border-b border-white/5 relative overflow-hidden ${isEven ? 'bg-[#030014]' : 'bg-[#05001a]'}`}>
+                            <div className={`absolute inset-0 pointer-events-none opacity-10 blur-[120px] rounded-full w-1/2 h-full ${isEven ? 'right-0' : 'left-0'}`} style={{ backgroundColor: plan.bgGlow }} />
 
-                            <div>
-                                <div className="flex justify-between items-start mb-8">
-                                    <div className={`w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-[#bc13fe]/20 to-[#06b6d4]/20 border border-white/10 flex items-center justify-center text-white shadow-inner group-hover:scale-110 transition-transform duration-500 relative overflow-hidden group-hover:border-[#bc13fe]/50`}>
-                                        <div className="absolute inset-0 bg-gradient-to-br from-[#bc13fe]/10 to-[#06b6d4]/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        {React.cloneElement(plan.icon as React.ReactElement<any>, { className: 'w-8 h-8 relative z-10 text-[#06b6d4] group-hover:text-white transition-colors' })}
-                                    </div>
-                                    <div className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl">
-                                        <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">{plan.time}</span>
-                                    </div>
-                                </div>
+                            <div className="max-w-7xl mx-auto relative z-10">
+                                <div className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-16 items-center`}>
 
-                                <h2 className="text-xl font-black text-white mb-2 tracking-tight group-hover:bg-gradient-to-r group-hover:from-[#bc13fe] group-hover:to-[#06b6d4] group-hover:bg-clip-text group-hover:text-transparent transition-all uppercase italic">{plan.title}</h2>
-                                <div className="mb-4">
-                                    <p className="text-2xl font-black text-white tracking-tight">{plan.price}</p>
-                                    <p className="text-[9px] font-mono text-slate-500">Mantenimiento anual: <span className="text-cyan-500/70">{plan.annual}</span></p>
-                                </div>
-
-                                <p className="text-slate-400 mb-6 leading-tight font-light text-[11px] min-h-[40px]">
-                                    {plan.description}
-                                </p>
-
-                                <div className="space-y-3 mb-8">
-                                    {plan.features.map((feature, fIdx) => (
-                                        <div key={fIdx} className="flex items-start gap-2 text-[10px] text-slate-300 group/item">
-                                            <div className="w-1 h-1 rounded-full bg-cyan-500 mt-1.5 shrink-0 group-hover/item:scale-150 transition-transform" />
-                                            <span className="group-hover/item:text-white transition-colors capitalize">{feature}</span>
+                                    {/* Visual Card */}
+                                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cardVariants(isEven)} className="flex-1 w-full max-w-xl">
+                                        <div className="relative aspect-square md:aspect-[4/3] group">
+                                            <div className={`absolute inset-0 bg-gradient-to-br ${plan.color} opacity-10 blur-[80px] rounded-[3rem] animate-pulse`} />
+                                            <div className="absolute inset-0 bg-[#0f0b1f]/60 backdrop-blur-2xl border border-white/10 rounded-[3rem] p-8 md:p-12 flex flex-col justify-center items-center text-center transition-all duration-500 hover:border-white/20 hover:bg-[#0f0b1f]/80">
+                                                {plan.popular && (
+                                                    <div className={`absolute -top-1 right-10 bg-gradient-to-r ${plan.color} text-white text-[9px] font-black uppercase tracking-widest px-6 py-3 rounded-b-xl shadow-lg font-[family-name:var(--font-orbitron)]`}>
+                                                        Recomendado
+                                                    </div>
+                                                )}
+                                                <div className={`w-24 h-24 md:w-32 md:h-32 mb-8 rounded-3xl bg-gradient-to-br ${plan.color} flex items-center justify-center text-white shadow-2xl transition-transform duration-700 group-hover:scale-110 group-hover:rotate-6`}>
+                                                    <plan.icon className="w-12 h-12 md:w-16 md:h-16" />
+                                                </div>
+                                                <h3 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50 mb-6">{plan.price}</h3>
+                                                <div className="px-6 py-2.5 rounded-full bg-white/5 border border-white/10 text-xs md:text-sm uppercase font-bold tracking-wider text-slate-300">
+                                                    Anualidad: <span className="text-white font-black">{plan.annual}</span>
+                                                </div>
+                                                <div className="mt-4 flex items-center gap-1.5 text-[9px] font-bold text-emerald-400 uppercase tracking-[0.2em] animate-pulse">
+                                                    <CheckCircle2 className="w-3.5 h-3.5" /> 1er Año Incluido
+                                                </div>
+                                            </div>
                                         </div>
-                                    ))}
+                                    </motion.div>
+
+                                    {/* Content */}
+                                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInVariants} className="flex-1">
+                                        {plan.idealFor && (
+                                            <div className="flex items-center gap-2 mb-4 font-bold text-xs uppercase tracking-widest font-[family-name:var(--font-orbitron)]">
+                                                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: plan.shadowColor, boxShadow: `0 0 8px ${plan.shadowColor}` }} />
+                                                <span style={{ color: plan.shadowColor }}>Ideal:</span>
+                                                <span className="text-white">{plan.idealFor}</span>
+                                            </div>
+                                        )}
+                                        <h2 className="text-4xl md:text-6xl font-bold mb-6 tracking-tighter">
+                                            {plan.title.split(' ').slice(0, plan.splitAt || 1).join(' ')} <span className={`bg-gradient-to-r ${plan.color} bg-clip-text text-transparent`}>{plan.title.split(' ').slice(plan.splitAt || 1).join(' ')}</span>
+                                        </h2>
+                                        <p className="text-lg text-slate-400 font-light leading-relaxed mb-8 font-[family-name:var(--font-orbitron)]">{plan.description}</p>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+                                            {plan.features.map(f => <FeatureItem key={f} text={f} colorClass={plan.color} />)}
+                                        </div>
+                                        <button onClick={() => openWhatsApp(plan.title)} className="group w-full sm:w-auto px-10 py-5 rounded-full flex items-center justify-center gap-3 font-bold uppercase text-[11px] tracking-widest transition-all glass-panel-inz hover:bg-white/10 hover:scale-105 border-white/20 font-[family-name:var(--font-orbitron)]">
+                                            Solicitar Plan <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                        </button>
+                                    </motion.div>
+
                                 </div>
                             </div>
+                        </section>
+                    );
+                })}
+            </div>
 
-                            <div className="mt-auto">
-                                <div className="mb-6 p-3 bg-white/[0.03] rounded-2xl border border-white/5 relative overflow-hidden group/maint">
-                                    <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-[#bc13fe] to-[#06b6d4] opacity-50" />
-                                    <p className="text-[9px] text-slate-500 leading-tight pl-2 font-mono italic">
-                                        // {plan.maintenance}
-                                    </p>
-                                </div>
-                                <button
-                                    onClick={() => openWhatsApp(plan.title)}
-                                    className={`w-full py-4.5 rounded-2xl flex items-center justify-center gap-3 font-black tracking-[0.15em] uppercase text-[10px] transition-all duration-500 relative overflow-hidden shadow-xl ${plan.popular
-                                        ? 'bg-gradient-to-r from-[#bc13fe] to-[#06b6d4] text-white hover:scale-[1.02] active:scale-95'
-                                        : 'bg-white/5 text-white hover:bg-white/10 border border-white/10 hover:border-[#06b6d4]/50'
-                                        }`}
-                                >
-                                    <span className="relative z-10 flex items-center gap-2">
-                                        Solicitar Plan <ArrowRight className="w-4 h-4" />
-                                    </span>
-                                </button>
+            {/* InZidium Link */}
+            <section className="py-32 bg-[#030014]">
+                <div className="max-w-7xl mx-auto flex flex-col items-center">
+                    <a href="https://inzidium.com" target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
+                            className="relative w-48 h-48 md:w-64 md:h-64 mb-8"
+                        >
+                            <div className="premium-float w-full h-full group-hover:scale-110 transition-transform duration-700 relative">
+                                {/* Imagen Base - Siempre visible */}
+                                <Image src="/logo-inzidium.webp" alt="InZidium" fill className="object-contain" priority />
+
+                                {/* Capa de Destello con Máscara */}
+                                <div className="absolute inset-0 logo-shimmer-container pointer-events-none" />
                             </div>
                         </motion.div>
-                    ))}
+                        <h3 className="relative text-5xl md:text-8xl font-medium font-[family-name:var(--font-orbitron)] tracking-[0.2em] select-none text-center py-10">
+                            {/* Capa 1: Texto Blanco Sólido (Base) */}
+                            <span className="relative z-10 text-white transition-opacity duration-700 group-hover:opacity-0">
+                                InZidium
+                            </span>
+
+                            {/* Capa 2: Texto con Gradiente (Superior) */}
+                            <span className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-700 group-hover:opacity-100 bg-gradient-to-r from-purple-500 via-cyan-400 to-blue-500 bg-clip-text text-transparent pointer-events-none">
+                                InZidium
+                            </span>
+                        </h3>
+                    </a>
+                </div>
+            </section>
+
+            {/* Final CTA - Nexus Style */}
+            <section className="py-40 px-4 relative overflow-hidden bg-[#0a0a0a] text-center border-t border-[#FFD700]/10">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_100%,rgba(255,215,0,0.05)_0%,transparent_50%)] pointer-events-none" />
+                <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tighter relative z-10">
+                    ¿Listo para <span className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">Crecer?</span>
+                </h2>
+
+                <div className="relative z-10">
+                    <button
+                        onClick={() => openWhatsApp('información sobre los planes web')}
+                        className="group relative px-12 py-6 rounded-full font-black uppercase tracking-widest text-sm transition-all duration-500 bg-[#FFD700] text-black hover:scale-105 hover:shadow-[0_0_50px_rgba(255,215,0,0.4)] overflow-hidden"
+                    >
+                        <span className="relative z-10">Hablar con un Experto</span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    </button>
+                    <div className="mt-8 flex justify-center items-center gap-6 opacity-30">
+                        {['Branding', 'Estrategia', 'Resultados'].map((item) => (
+                            <span key={item} className="text-[10px] font-black uppercase tracking-[0.3em] font-[family-name:var(--font-orbitron)]">{item}</span>
+                        ))}
+                    </div>
                 </div>
             </section>
 

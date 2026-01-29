@@ -54,7 +54,7 @@ const BusinessCard = () => {
                         Tu tarjeta dice <span className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">quién eres...</span>
                     </h2>
                     <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto font-light px-4">
-                        No es solo un papel, es tu marca en manos de otros. En <span className="text-white font-medium">Nexus</span> diseñamos tarjetas inolvidables y materiales premium.
+                        No es solo un papel, es tu marca en manos de otros. En <span className="text-white font-medium italic-none">NE<span className="text-[#FFD700] font-black">X</span>US</span> diseñamos tarjetas inolvidables y materiales premium.
                     </p>
                 </motion.div>
             </div>
@@ -73,7 +73,7 @@ const BusinessCard = () => {
                                 <div className="flex items-center gap-2 md:gap-3">
                                     <img src="/X.webp" className="w-8 h-8 md:w-12 md:h-12 filter drop-shadow-gold" alt="Nexus" />
                                     <div>
-                                        <h3 className="text-lg md:text-2xl font-black text-white tracking-widest uppercase leading-tight">NEXUS</h3>
+                                        <h3 className="text-lg md:text-2xl font-black text-white tracking-widest leading-tight italic-none">NE<span className="text-[#FFD700]">X</span>US</h3>
                                         <p className="text-[8px] md:text-[10px] text-[#FFD700] font-bold tracking-[0.4em] opacity-80">EST. {new Date().getFullYear()}</p>
                                     </div>
                                 </div>
