@@ -231,6 +231,13 @@ const BrowserMockup = () => {
     );
 };
 
+const features = [
+    { icon: <Zap className="text-[#FFD700]" />, text: "Velocidad Ultra Rápida", desc: "< 1s Carga" },
+    { icon: <Smartphone className="text-[#FFD700]" />, text: "100% Mobile Friendly", desc: "Adaptive UI" },
+    { icon: <Search className="text-[#FFD700]" />, text: "SEO Optimizado", desc: "Google Ready" },
+    { icon: <ShieldCheck className="text-[#FFD700]" />, text: "Seguridad SSL", desc: "HTTPS Active" }
+];
+
 const WebServices = () => {
 
     return (
@@ -267,21 +274,20 @@ const WebServices = () => {
 
                 {/* Features Row - Reimagined */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-24 max-w-5xl mx-auto">
-                    {[
-                        { icon: <Zap className="text-[#FFD700]" />, text: "Velocidad Ultra Rápida", desc: "< 1s Carga" },
-                        { icon: <Smartphone className="text-[#FFD700]" />, text: "100% Mobile Friendly", desc: "Adaptive UI" },
-                        { icon: <Search className="text-[#FFD700]" />, text: "SEO Optimizado", desc: "Google Ready" },
-                        { icon: <ShieldCheck className="text-[#FFD700]" />, text: "Seguridad SSL", desc: "HTTPS Active" }
-                    ].map((item, idx) => (
+                    {features.map((item, idx) => (
                         <motion.div
-                            key={idx}
+                            key={item.text}
                             initial={{ opacity: 0, scale: 0.9 }}
                             whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: idx * 0.1 }}
-                            className="group flex flex-col items-center p-8 bg-white/[0.03] border border-white/5 rounded-[2rem] backdrop-blur-md hover:bg-white/[0.05] hover:border-[#FFD700]/30 transition-all duration-300"
+                            viewport={{ once: true, margin: "-50px" }}
+                            transition={{
+                                duration: 0.5,
+                                delay: idx * 0.1,
+                                ease: [0.21, 0.47, 0.32, 0.98]
+                            }}
+                            className="group flex flex-col items-center p-8 bg-white/[0.03] border border-white/5 rounded-[2rem] backdrop-blur-md hover:bg-white/[0.05] hover:border-[#FFD700]/30 transition-colors duration-300"
                         >
-                            <div className="mb-4 p-3 bg-white/5 rounded-2xl group-hover:scale-110 transition-transform">{item.icon}</div>
+                            <div className="mb-4 p-3 bg-white/5 rounded-2xl group-hover:scale-110 transition-transform duration-500">{item.icon}</div>
                             <span className="text-white text-sm font-bold text-center mb-1">{item.text}</span>
                             <span className="text-[10px] text-gray-500 font-black uppercase tracking-widest">{item.desc}</span>
                         </motion.div>

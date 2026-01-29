@@ -177,7 +177,7 @@ export default function PlansPage() {
                                     <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cardVariants(isEven)} className="flex-1 w-full max-w-xl">
                                         <div className="relative aspect-square md:aspect-[4/3] group">
                                             <div className={`absolute inset-0 bg-gradient-to-br ${plan.color} opacity-10 blur-[80px] rounded-[3rem] animate-pulse`} />
-                                            <div className="absolute inset-0 bg-[#0f0b1f]/60 backdrop-blur-2xl border border-white/10 rounded-[3rem] p-8 md:p-12 flex flex-col justify-center items-center text-center transition-all duration-500 hover:border-white/20 hover:bg-[#0f0b1f]/80">
+                                            <div className="absolute inset-0 bg-[#0f0b1f]/60 backdrop-blur-2xl border border-white/10 rounded-[3rem] p-8 md:p-12 flex flex-col justify-center items-center text-center transition-colors duration-500 hover:border-white/20 hover:bg-[#0f0b1f]/80">
                                                 {plan.popular && (
                                                     <div className={`absolute -top-1 right-10 bg-gradient-to-r ${plan.color} text-white text-[9px] font-black uppercase tracking-widest px-6 py-3 rounded-b-xl shadow-lg font-[family-name:var(--font-orbitron)]`}>
                                                         Recomendado
@@ -198,7 +198,7 @@ export default function PlansPage() {
                                     </motion.div>
 
                                     {/* Content */}
-                                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInVariants} className="flex-1">
+                                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeInVariants} className="flex-1">
                                         {plan.idealFor && (
                                             <div className="flex items-center gap-2 mb-4 font-bold text-xs uppercase tracking-widest font-[family-name:var(--font-orbitron)]">
                                                 <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: plan.shadowColor, boxShadow: `0 0 8px ${plan.shadowColor}` }} />
