@@ -51,8 +51,8 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between">
-          {/* Brand/Logo Placeholder or Social Icons as current */}
-          <div className="flex items-center gap-4">
+          {/* Brand/Logo */}
+          <div className="flex items-center gap-4 relative z-[60]">
             <Link href="/" className="group flex items-center gap-2">
               <span className="text-xl font-black tracking-tighter text-white">
                 NE<span className="text-[#FFD700]">X</span>US
@@ -91,9 +91,11 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`lg:hidden relative z-[60] w-11 h-11 flex items-center justify-center rounded-xl border transition-all duration-300 ${isMobileMenuOpen
-                ? 'bg-[#FFD700]/10 border-[#FFD700]/20 text-[#FFD700]'
-                : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
+            className={`lg:hidden relative z-[60] w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-300 border ${isMobileMenuOpen
+                ? 'bg-[#FFD700] border-[#FFD700] text-black shadow-[0_0_30px_rgba(255,215,0,0.5)]'
+                : isScrolled
+                  ? 'bg-[#0a0a0a]/80 border-white/10 text-white'
+                  : 'bg-black/60 border-white/40 text-white backdrop-blur-md hover:bg-black/80'
               }`}
             aria-label="Toggle menu"
           >
@@ -105,7 +107,7 @@ export default function Navbar() {
                   animate={{ opacity: 1, rotate: 0 }}
                   exit={{ opacity: 0, rotate: 90 }}
                 >
-                  <X className="w-6 h-6 text-[#FFD700]" />
+                  <X className="w-6 h-6 text-black" />
                 </motion.div>
               ) : (
                 <motion.div
