@@ -289,26 +289,50 @@ export default function PlansPage() {
             </section>
 
             {/* Final CTA - Nexus Style */}
-            <section className="py-40 px-4 relative overflow-hidden bg-[#0a0a0a] text-center border-t border-[#FFD700]/10">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_100%,rgba(255,215,0,0.05)_0%,transparent_50%)] pointer-events-none" />
-                <h2 className="text-5xl md:text-7xl font-bold mb-8 tracking-tighter relative z-10">
-                    ¿Listo para <span className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">Crecer?</span>
-                </h2>
+            <section className="py-40 px-4 relative overflow-hidden bg-[#050505] text-center border-t border-white/5">
+                {/* Decorative backgrounds */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-4xl opacity-10 blur-[120px] pointer-events-none bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] rounded-full" />
 
-                <div className="relative z-10">
-                    <button
-                        onClick={() => openWhatsApp('información sobre los planes web')}
-                        className="group relative px-12 py-6 rounded-full font-black uppercase tracking-widest text-sm transition-all duration-500 bg-[#FFD700] text-black hover:scale-105 hover:shadow-[0_0_50px_rgba(255,215,0,0.4)] overflow-hidden"
-                    >
-                        <span className="relative z-10">Hablar con un Experto</span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                    </button>
-                    <div className="mt-8 flex justify-center items-center gap-6 opacity-30">
-                        {['Branding', 'Estrategia', 'Resultados'].map((item) => (
-                            <span key={item} className="text-[10px] font-black uppercase tracking-[0.3em] font-[family-name:var(--font-orbitron)]">{item}</span>
-                        ))}
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={fadeInVariants}
+                    className="relative z-10 max-w-5xl mx-auto"
+                >
+                    <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-[#FFD700]/30 bg-[#FFD700]/5 text-[#FFD700] text-[10px] font-black uppercase tracking-[0.3em] font-[family-name:var(--font-orbitron)]">
+                        <Rocket className="w-3.5 h-3.5" /> El momento es ahora
                     </div>
-                </div>
+
+                    <h2 className="text-4xl md:text-8xl font-black mb-10 tracking-[ -0.05em] leading-[1.1] md:leading-[0.9]">
+                        ¿Quieres subir <br className="md:hidden" /> de <span className="bg-gradient-to-r from-[#FFD700] via-[#FDB931] to-[#FFA500] bg-clip-text text-transparent">Nivel?</span>
+                    </h2>
+
+                    <div className="flex flex-col items-center gap-12">
+                        <button
+                            onClick={() => openWhatsApp('información sobre los planes web')}
+                            className="group relative px-10 md:px-16 py-6 md:py-8 rounded-full font-black uppercase tracking-widest text-xs md:text-sm transition-all duration-500 bg-[#FFD700] text-black hover:scale-105 hover:shadow-[0_20px_60px_rgba(255,215,0,0.4)] overflow-hidden"
+                        >
+                            <span className="relative z-10 flex items-center gap-3">
+                                Hablar con un Experto <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+                            </span>
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                        </button>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-20 opacity-40">
+                            {[
+                                { t: 'Branding', d: 'Identidad que Impacta' },
+                                { t: 'Estrategia', d: 'Crecimiento' },
+                                { t: 'Resultados', d: 'Conversión Real' }
+                            ].map((item) => (
+                                <div key={item.t} className="flex flex-col items-center gap-1">
+                                    <span className="text-[12px] font-black uppercase tracking-[0.4em] font-[family-name:var(--font-orbitron)] text-white">{item.t}</span>
+                                    <span className="text-[10px] text-gray-400 font-light">{item.d}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </motion.div>
             </section>
 
             <Footer />
