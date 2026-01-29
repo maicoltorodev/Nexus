@@ -121,8 +121,8 @@ const fadeInVariants = {
 };
 
 const cardVariants = (isEven: boolean) => ({
-    hidden: { opacity: 0, scale: 0.9, x: isEven ? 50 : -50 },
-    visible: { opacity: 1, scale: 1, x: 0, transition: { duration: 0.8 } }
+    hidden: { opacity: 0, scale: 0.9, y: 30 },
+    visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.8 } }
 });
 
 // --- Main Page ---
@@ -145,10 +145,10 @@ export default function PlansPage() {
                         <div className="inline-block mb-4 px-4 py-2 rounded-full border border-[#FFD700]/30 bg-[#FFD700]/5 text-sm font-semibold text-[#FFD700] uppercase tracking-wider">
                             Presencia Digital
                         </div>
-                        <h1 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
+                        <h1 className="text-4xl md:text-7xl font-bold mb-6 md:mb-8 tracking-tight">
                             Estrategias de <span className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">Inversión Web</span>
                         </h1>
-                        <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-light mb-12">
+                        <p className="text-base md:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-light mb-8 md:mb-12">
                             Fusionamos el diseño de <span className="text-white font-medium">NE<span className="text-[#FFD700] font-black">X</span>US</span> con la tecnología de <span className="font-[family-name:var(--font-orbitron)] bg-gradient-to-r from-purple-500 to-cyan-400 bg-clip-text text-transparent font-bold">InZidium</span>.
                         </p>
                         <div className="flex flex-wrap justify-center gap-6">
@@ -198,22 +198,22 @@ export default function PlansPage() {
                                     </motion.div>
 
                                     {/* Content */}
-                                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeInVariants} className="flex-1">
+                                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeInVariants} className="flex-1 text-center lg:text-left">
                                         {plan.idealFor && (
-                                            <div className="flex items-center gap-2 mb-4 font-bold text-xs uppercase tracking-widest font-[family-name:var(--font-orbitron)]">
-                                                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: plan.shadowColor, boxShadow: `0 0 8px ${plan.shadowColor}` }} />
+                                            <div className="flex items-center justify-center lg:justify-start gap-2 mb-4 font-bold text-[10px] md:text-xs uppercase tracking-widest font-[family-name:var(--font-orbitron)]">
+                                                <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full animate-pulse" style={{ backgroundColor: plan.shadowColor, boxShadow: `0 0 8px ${plan.shadowColor}` }} />
                                                 <span style={{ color: plan.shadowColor }}>Ideal:</span>
                                                 <span className="text-white">{plan.idealFor}</span>
                                             </div>
                                         )}
-                                        <h2 className="text-4xl md:text-6xl font-bold mb-6 tracking-tighter">
+                                        <h2 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6 tracking-tighter">
                                             {plan.title.split(' ').slice(0, plan.splitAt || 1).join(' ')} <span className={`bg-gradient-to-r ${plan.color} bg-clip-text text-transparent`}>{plan.title.split(' ').slice(plan.splitAt || 1).join(' ')}</span>
                                         </h2>
-                                        <p className="text-lg text-slate-400 font-light leading-relaxed mb-8 font-[family-name:var(--font-orbitron)]">{plan.description}</p>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+                                        <p className="text-sm md:text-lg text-slate-400 font-light leading-relaxed mb-6 md:mb-8 font-[family-name:var(--font-orbitron)] max-w-2xl mx-auto lg:mx-0">{plan.description}</p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-8 md:mb-10 text-left">
                                             {plan.features.map(f => <FeatureItem key={f} text={f} colorClass={plan.color} />)}
                                         </div>
-                                        <button onClick={() => openWhatsApp(plan.title)} className="group w-full sm:w-auto px-10 py-5 rounded-full flex items-center justify-center gap-3 font-bold uppercase text-[11px] tracking-widest transition-all glass-panel-inz hover:bg-white/10 hover:scale-105 border-white/20 font-[family-name:var(--font-orbitron)]">
+                                        <button onClick={() => openWhatsApp(plan.title)} className="group w-full sm:w-auto px-8 md:px-10 py-4 md:py-5 rounded-full flex items-center justify-center gap-3 font-bold uppercase text-[10px] md:text-[11px] tracking-widest transition-all glass-panel-inz hover:bg-white/10 hover:scale-105 border-white/20 font-[family-name:var(--font-orbitron)]">
                                             Solicitar Plan <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                         </button>
                                     </motion.div>

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X, Instagram, Facebook, MessageCircle, ArrowRight, ExternalLink } from 'lucide-react';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -15,130 +17,191 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Prevent scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [isMobileMenuOpen]);
+
   const navLinks = [
-    { href: '/#inicio', label: 'Inicio' },
-    { href: '/#tarjeta', label: 'Tarjetas' },
-    { href: '/#web-design', label: 'Webs' },
-    { href: '/#servicios', label: 'Impresión' },
-    { href: '/#calculadora', label: 'Calculadora' },
-    { href: '/#testimonios', label: 'Opiniones' },
-    { href: '/#contacto', label: 'Contacto' }
+    { href: '/#inicio', label: 'Inicio', desc: 'Volver arriba' },
+    { href: '/#tarjeta', label: 'Tarjetas', desc: 'Presentación premium' },
+    { href: '/#web-design', label: 'Webs', desc: 'Tu sitio profesional' },
+    { href: '/#servicios', label: 'Impresión', desc: 'Calidad litográfica' },
+    { href: '/#calculadora', label: 'Calculadora', desc: 'Cotiza al instante' },
+    { href: '/#testimonios', label: 'Opiniones', desc: 'Qué dicen de nosotros' },
+    { href: '/#contacto', label: 'Contacto', desc: 'Hablemos de tu idea' }
+  ];
+
+  const socialLinks = [
+    { icon: <Facebook className="w-5 h-5" />, href: "https://facebook.com", label: "Facebook", color: "#1877F2" },
+    { icon: <Instagram className="w-5 h-5" />, href: "https://instagram.com/nexus.col", label: "Instagram", color: "#E4405F" },
+    { icon: <MessageCircle className="w-5 h-5" />, href: "https://wa.me/573184022999", label: "WhatsApp", color: "#25D366" }
   ];
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-        ? 'bg-[#0a0a0a]/95 backdrop-blur-md shadow-lg border-b border-[#FFD700]/20'
-        : 'bg-transparent'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
+        ? 'py-3 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-white/10 shadow-2xl'
+        : 'py-6 bg-transparent'
         }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          {/* Iconos de redes sociales */}
-          <div className="flex items-center gap-3 md:gap-5">
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center w-6 h-6 md:w-10 md:h-10 rounded-full transition-all duration-300 hover:scale-110"
-              aria-label="Facebook"
-            >
-              <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24" style={{ color: '#1877F2' }}>
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-              </svg>
-            </a>
-            <a
-              href="https://instagram.com/nexus.col"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center w-6 h-6 md:w-10 md:h-10 rounded-full transition-all duration-300 hover:scale-110"
-              aria-label="Instagram"
-            >
-              <svg className="w-full h-full" fill="url(#instagram-gradient-navbar)" viewBox="0 0 24 24">
-                <defs>
-                  <linearGradient id="instagram-gradient-navbar" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#f09433" />
-                    <stop offset="25%" stopColor="#e6683c" />
-                    <stop offset="50%" stopColor="#dc2743" />
-                    <stop offset="75%" stopColor="#cc2366" />
-                    <stop offset="100%" stopColor="#bc1888" />
-                  </linearGradient>
-                </defs>
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-              </svg>
-            </a>
-            <a
-              href="https://wa.me/573184022999?text=Hola,%20me%20gustaría%20obtener%20más%20información%20sobre%20sus%20servicios."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center w-6 h-6 md:w-10 md:h-10 rounded-full transition-all duration-300 hover:scale-110"
-              aria-label="WhatsApp"
-            >
-              <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24" style={{ color: '#25D366' }}>
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-              </svg>
-            </a>
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex items-center justify-between">
+          {/* Brand/Logo Placeholder or Social Icons as current */}
+          <div className="flex items-center gap-4">
+            <Link href="/" className="group flex items-center gap-2">
+              <span className="text-xl font-black tracking-tighter text-white">
+                NE<span className="text-[#FFD700]">X</span>US
+              </span>
+            </Link>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`font-medium transition-colors hover:text-[#FFD700] ${isScrolled ? 'text-white' : 'text-white'
-                  }`}
+                className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-[#FFD700] transition-colors relative group"
               >
                 {link.label}
+                <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-[#FFD700] scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
               </Link>
             ))}
+            <div className="ml-6 pl-6 border-l border-white/10 flex items-center gap-4">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-white transition-all hover:scale-110"
+                  aria-label={social.label}
+                >
+                  {social.icon}
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`md:hidden p-2 rounded-lg transition-colors ${isScrolled
-              ? 'text-white hover:bg-white/10'
-              : 'text-white hover:bg-white/10'
-              }`}
+            className="lg:hidden relative z-[60] w-12 h-12 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-colors"
             aria-label="Toggle menu"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+            <AnimatePresence mode="wait">
               {isMobileMenuOpen ? (
-                <path d="M6 18L18 6M6 6l12 12" />
+                <motion.div
+                  key="close"
+                  initial={{ opacity: 0, rotate: -90 }}
+                  animate={{ opacity: 1, rotate: 0 }}
+                  exit={{ opacity: 0, rotate: 90 }}
+                >
+                  <X className="w-6 h-6 text-[#FFD700]" />
+                </motion.div>
               ) : (
-                <path d="M4 6h16M4 12h16M4 18h16" />
+                <motion.div
+                  key="menu"
+                  initial={{ opacity: 0, rotate: 90 }}
+                  animate={{ opacity: 1, rotate: 0 }}
+                  exit={{ opacity: 0, rotate: -90 }}
+                >
+                  <Menu className="w-6 h-6" />
+                </motion.div>
               )}
-            </svg>
+            </AnimatePresence>
           </button>
         </div>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-[#FFD700]/20 bg-[#0a0a0a]/98 backdrop-blur-md">
-            <div className="flex flex-col space-y-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-white font-medium hover:text-[#FFD700] transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 lg:hidden bg-[#0a0a0a]"
+          >
+            {/* Background elements */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div className="absolute -top-[10%] -right-[10%] w-[70%] h-[70%] bg-[#FFD700]/5 rounded-full blur-[120px]" />
+              <div className="absolute -bottom-[10%] -left-[10%] w-[70%] h-[70%] bg-[#FFD700]/5 rounded-full blur-[120px]" />
+            </div>
+
+            <div className="relative h-full flex flex-col px-8 pt-32 pb-12 overflow-y-auto">
+              <div className="flex flex-col space-y-6">
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#FFD700]/60 mb-2">Navegación</p>
+                {navLinks.map((link, idx) => (
+                  <motion.div
+                    key={link.href}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 + idx * 0.05 }}
+                  >
+                    <Link
+                      href={link.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="group flex items-center justify-between py-2"
+                    >
+                      <div className="flex flex-col">
+                        <span className="text-3xl font-bold text-white group-hover:text-[#FFD700] transition-colors">{link.label}</span>
+                        <span className="text-xs text-gray-500 mt-1">{link.desc}</span>
+                      </div>
+                      <ArrowRight className="w-6 h-6 text-[#FFD700] opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all" />
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+
+              <div className="mt-auto space-y-8">
+                <div className="pt-8 border-t border-white/5">
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#FFD700]/60 mb-6">Conecta con nosotros</p>
+                  <div className="flex gap-6">
+                    {socialLinks.map((social, idx) => (
+                      <motion.a
+                        key={social.label}
+                        href={social.href}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.5 + idx * 0.1 }}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-[#FFD700] hover:text-black transition-all"
+                        aria-label={social.label}
+                      >
+                        {social.icon}
+                      </motion.a>
+                    ))}
+                  </div>
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 }}
+                  className="p-6 rounded-[2rem] bg-gradient-to-br from-[#FFD700]/10 to-transparent border border-[#FFD700]/20"
+                >
+                  <h4 className="text-lg font-bold text-white mb-2">¿Listo para empezar?</h4>
+                  <p className="text-sm text-gray-400 mb-4">Transformamos tus ideas en realidades visuales impactantes.</p>
+                  <Link
+                    href="/planes"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 py-4 bg-[#FFD700] text-black rounded-xl font-bold uppercase text-[10px] tracking-widest hover:scale-105 transition-transform"
+                  >
+                    Ver Planes <ExternalLink className="w-4 h-4" />
+                  </Link>
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
