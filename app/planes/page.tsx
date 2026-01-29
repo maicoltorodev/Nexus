@@ -103,7 +103,7 @@ const webPlans: Plan[] = [
 // --- Sub-components ---
 
 const FeatureItem = React.memo(({ text, colorClass }: { text: string, colorClass: string }) => (
-    <div className="flex items-start gap-3 group/item text-left">
+    <div className="flex items-start justify-center lg:justify-start gap-3 group/item text-center lg:text-left">
         <div className={`mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-gradient-to-br ${colorClass} flex items-center justify-center p-0.5`}>
             <CheckCircle2 className="w-full h-full text-white" />
         </div>
@@ -121,8 +121,8 @@ const fadeInVariants = {
 };
 
 const cardVariants = (isEven: boolean) => ({
-    hidden: { opacity: 0, scale: 0.9, y: 30 },
-    visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.8 } }
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8 } }
 });
 
 // --- Main Page ---
@@ -168,15 +168,31 @@ export default function PlansPage() {
                     const isEven = idx % 2 === 0;
                     return (
                         <section key={plan.id} id={plan.id} className={`py-24 md:py-40 px-4 border-b border-white/5 relative overflow-hidden ${isEven ? 'bg-[#030014]' : 'bg-[#05001a]'}`}>
-                            <div className={`absolute inset-0 pointer-events-none opacity-10 blur-[120px] rounded-full w-1/2 h-full ${isEven ? 'right-0' : 'left-0'}`} style={{ backgroundColor: plan.bgGlow }} />
+                            <div className={`absolute inset-0 pointer-events-none opacity-[0.05] md:opacity-10 blur-[60px] md:blur-[120px] rounded-full w-1/2 h-full ${isEven ? 'right-0' : 'left-0'}`} style={{ backgroundColor: plan.bgGlow }} />
 
                             <div className="max-w-7xl mx-auto relative z-10">
-                                <div className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-16 items-center`}>
+                                {/* Mobile-Only Header: Title & Ideal For */}
+                                <div className="lg:hidden w-full text-center mb-10">
+                                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeInVariants}>
+                                        {plan.idealFor && (
+                                            <div className="flex items-center justify-center gap-2 mb-4 font-bold text-[10px] uppercase tracking-widest font-[family-name:var(--font-orbitron)]">
+                                                <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: plan.shadowColor, boxShadow: `0 0 8px ${plan.shadowColor}` }} />
+                                                <span style={{ color: plan.shadowColor }}>Ideal:</span>
+                                                <span className="text-white">{plan.idealFor}</span>
+                                            </div>
+                                        )}
+                                        <h2 className="text-4xl md:text-6xl font-bold tracking-tighter">
+                                            {plan.title.split(' ').slice(0, plan.splitAt || 1).join(' ')} <span className={`bg-gradient-to-r ${plan.color} bg-clip-text text-transparent`}>{plan.title.split(' ').slice(plan.splitAt || 1).join(' ')}</span>
+                                        </h2>
+                                    </motion.div>
+                                </div>
 
-                                    {/* Visual Card */}
-                                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cardVariants(isEven)} className="flex-1 w-full max-w-xl">
+                                <div className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-12 md:gap-16 items-center`}>
+
+                                    {/* Visual Card (Price) */}
+                                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cardVariants(isEven)} className="flex-1 w-full max-w-xl order-1 lg:order-none">
                                         <div className="relative aspect-square md:aspect-[4/3] group">
-                                            <div className={`absolute inset-0 bg-gradient-to-br ${plan.color} opacity-10 blur-[80px] rounded-[3rem] animate-pulse`} />
+                                            <div className={`absolute inset-0 bg-gradient-to-br ${plan.color} opacity-10 blur-[40px] md:blur-[80px] rounded-[3rem] md:animate-pulse`} />
                                             <div className="absolute inset-0 bg-[#0f0b1f]/60 backdrop-blur-2xl border border-white/10 rounded-[3rem] p-8 md:p-12 flex flex-col justify-center items-center text-center transition-colors duration-500 hover:border-white/20 hover:bg-[#0f0b1f]/80">
                                                 {plan.popular && (
                                                     <div className={`absolute -top-1 right-10 bg-gradient-to-r ${plan.color} text-white text-[9px] font-black uppercase tracking-widest px-6 py-3 rounded-b-xl shadow-lg font-[family-name:var(--font-orbitron)]`}>
@@ -197,20 +213,24 @@ export default function PlansPage() {
                                         </div>
                                     </motion.div>
 
-                                    {/* Content */}
-                                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeInVariants} className="flex-1 text-center lg:text-left">
-                                        {plan.idealFor && (
-                                            <div className="flex items-center justify-center lg:justify-start gap-2 mb-4 font-bold text-[10px] md:text-xs uppercase tracking-widest font-[family-name:var(--font-orbitron)]">
-                                                <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full animate-pulse" style={{ backgroundColor: plan.shadowColor, boxShadow: `0 0 8px ${plan.shadowColor}` }} />
-                                                <span style={{ color: plan.shadowColor }}>Ideal:</span>
-                                                <span className="text-white">{plan.idealFor}</span>
-                                            </div>
-                                        )}
-                                        <h2 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6 tracking-tighter">
-                                            {plan.title.split(' ').slice(0, plan.splitAt || 1).join(' ')} <span className={`bg-gradient-to-r ${plan.color} bg-clip-text text-transparent`}>{plan.title.split(' ').slice(plan.splitAt || 1).join(' ')}</span>
-                                        </h2>
+                                    {/* Content Details */}
+                                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeInVariants} className="flex-1 text-center lg:text-left order-2 lg:order-none">
+                                        {/* Desktop-Only Header */}
+                                        <div className="hidden lg:block">
+                                            {plan.idealFor && (
+                                                <div className="flex items-center justify-start gap-2 mb-4 font-bold text-xs uppercase tracking-widest font-[family-name:var(--font-orbitron)]">
+                                                    <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: plan.shadowColor, boxShadow: `0 0 8px ${plan.shadowColor}` }} />
+                                                    <span style={{ color: plan.shadowColor }}>Ideal:</span>
+                                                    <span className="text-white">{plan.idealFor}</span>
+                                                </div>
+                                            )}
+                                            <h2 className="text-6xl font-bold mb-6 tracking-tighter">
+                                                {plan.title.split(' ').slice(0, plan.splitAt || 1).join(' ')} <span className={`bg-gradient-to-r ${plan.color} bg-clip-text text-transparent`}>{plan.title.split(' ').slice(plan.splitAt || 1).join(' ')}</span>
+                                            </h2>
+                                        </div>
+
                                         <p className="text-sm md:text-lg text-slate-400 font-light leading-relaxed mb-6 md:mb-8 font-[family-name:var(--font-orbitron)] max-w-2xl mx-auto lg:mx-0">{plan.description}</p>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-8 md:mb-10 text-left">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-8 md:mb-10 text-center lg:text-left">
                                             {plan.features.map(f => <FeatureItem key={f} text={f} colorClass={plan.color} />)}
                                         </div>
                                         <button onClick={() => openWhatsApp(plan.title)} className="group w-full sm:w-auto px-8 md:px-10 py-4 md:py-5 rounded-full flex items-center justify-center gap-3 font-bold uppercase text-[10px] md:text-[11px] tracking-widest transition-all glass-panel-inz hover:bg-white/10 hover:scale-105 border-white/20 font-[family-name:var(--font-orbitron)]">

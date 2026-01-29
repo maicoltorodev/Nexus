@@ -22,8 +22,9 @@ const MobileMockup = () => {
         <div className="lg:hidden relative w-full max-w-[280px] mx-auto mb-16 px-4">
             {/* Floating Performance Badge for Mobile */}
             <motion.div
+                initial={{ y: 0 }}
                 animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                transition={{ duration: 4, repeat: 2, ease: "easeInOut" }}
                 className="absolute -top-6 -right-4 z-40 bg-black/90 backdrop-blur-xl border border-green-500/30 p-2.5 rounded-xl flex items-center gap-2 shadow-[0_10px_30px_rgba(34,197,94,0.3)]"
             >
                 <div className="w-8 h-8 rounded-full border-2 border-[#22c55e] flex items-center justify-center font-black text-[#22c55e] text-xs">99</div>
@@ -91,8 +92,9 @@ const MobileMockup = () => {
                     {/* Floating Info Overlay */}
                     <div className="absolute bottom-6 left-4 right-4 z-40">
                         <motion.div
+                            initial={{ y: 0 }}
                             animate={{ y: [0, -4, 0] }}
-                            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                            transition={{ duration: 3, repeat: 2, ease: "easeInOut" }}
                             className="bg-gradient-to-br from-[#FFD700] to-[#FFA500] p-3 rounded-2xl text-black font-black text-[9px] flex items-center justify-center gap-2 shadow-2xl"
                         >
                             <Smartphone className="w-3.5 h-3.5" /> 100% RESPONSIVE

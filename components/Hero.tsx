@@ -28,7 +28,7 @@ export default function Hero() {
                   className="w-full h-full object-contain"
                   priority
                   sizes="(max-width: 768px) 100px, 160px"
-                  style={{ filter: 'drop-shadow(0 0 20px rgba(255, 215, 0, 0.3))' }}
+                  style={{ filter: 'drop-shadow(0 0 10px rgba(255, 215, 0, 0.3)) md:drop-shadow(0 0 20px rgba(255, 215, 0, 0.3))' }}
                 />
               </div>
               {/* X - aparece primero, luego gira */}
@@ -57,7 +57,7 @@ export default function Hero() {
                   className="w-full h-full object-contain"
                   priority
                   sizes="(max-width: 768px) 100px, 160px"
-                  style={{ filter: 'drop-shadow(0 0 20px rgba(255, 215, 0, 0.3))' }}
+                  style={{ filter: 'drop-shadow(0 0 10px rgba(255, 215, 0, 0.3)) md:drop-shadow(0 0 20px rgba(255, 215, 0, 0.3))' }}
                 />
               </div>
             </div>

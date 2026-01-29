@@ -41,8 +41,8 @@ const BusinessCard = () => {
     return (
         <section id="tarjeta" className="relative py-32 px-4 overflow-hidden bg-[#050505]">
             <div className="absolute inset-0 opacity-20 pointer-events-none">
-                <div className="absolute top-[10%] left-[10%] w-[40%] h-[40%] bg-[#FFD700] rounded-full blur-[80px] md:blur-[150px]" />
-                <div className="absolute bottom-[10%] right-[10%] w-[40%] h-[40%] bg-[#FFA500] rounded-full blur-[80px] md:blur-[150px]" />
+                <div className="absolute top-[10%] left-[10%] w-[40%] h-[40%] bg-[#FFD700] rounded-full blur-[40px] md:blur-[150px]" />
+                <div className="absolute bottom-[10%] right-[10%] w-[40%] h-[40%] bg-[#FFA500] rounded-full blur-[40px] md:blur-[150px]" />
             </div>
 
             <div className="max-w-4xl mx-auto text-center mb-16 relative z-10">
