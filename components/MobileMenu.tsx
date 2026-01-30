@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, ExternalLink } from 'lucide-react';
 import { NAV_LINKS, SOCIAL_LINKS } from '@/data/navigation';
@@ -24,9 +25,13 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     {/* Header */}
                     <div className="flex items-center justify-between px-6 py-6 border-b border-white/5 bg-[#0a0a0a]/50 backdrop-blur-md">
                         <Link href="/" onClick={onClose} className="group flex items-center gap-2">
-                            <span className="text-xl font-black tracking-tighter text-white">
-                                NE<span className="text-[#FFD700]">X</span>US
-                            </span>
+                            <Image
+                                src="/nexus-solo.webp"
+                                alt="Nexus"
+                                width={100}
+                                height={40}
+                                className="h-8 w-auto object-contain"
+                            />
                         </Link>
                         <button
                             onClick={onClose}
@@ -80,7 +85,8 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                                             transition={{ delay: 0.5 + idx * 0.1 }}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-[#FFD700] hover:text-black transition-all"
+                                            className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#FFD700] hover:text-black transition-all"
+                                            style={{ color: social.color }}
                                             aria-label={social.label}
                                         >
                                             {social.icon}
