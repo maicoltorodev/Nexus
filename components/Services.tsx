@@ -98,7 +98,7 @@ export default function Services() {
 
 
   return (
-    <section className="relative py-24 overflow-hidden" style={{ background: 'linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)' }}>
+    <section className="relative py-32 overflow-hidden" style={{ background: 'linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)' }}>
       {/* Efecto de fondo decorativo */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-0 right-1/4 w-72 md:w-96 h-72 md:h-96 bg-[#FFD700] rounded-full blur-xl md:blur-3xl"></div>

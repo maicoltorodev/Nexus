@@ -59,7 +59,7 @@ export default function Contact() {
   };
 
   return (
-    <section className="relative py-24 overflow-hidden" style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%)' }}>
+    <section className="relative py-32 overflow-hidden" style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%)' }}>
       {/* Efecto de fondo decorativo */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#FFD700] rounded-full blur-3xl"></div>
@@ -120,8 +120,8 @@ export default function Contact() {
               >
                 {/* Efecto de brillo al hover */}
                 <div className={`absolute inset-0 bg-gradient-to-br transition-all duration-500 md:group-hover:from-[#FFD700]/5 md:group-hover:to-[#FFA500]/5 ${isHovered
-                    ? 'from-[#FFD700]/5 to-[#FFA500]/5'
-                    : 'from-[#FFD700]/0 to-[#FFA500]/0'
+                  ? 'from-[#FFD700]/5 to-[#FFA500]/5'
+                  : 'from-[#FFD700]/0 to-[#FFA500]/0'
                   }`}></div>
 
                 {/* Línea superior dorada */}
@@ -132,8 +132,8 @@ export default function Contact() {
                 <div className="relative z-10 text-center">
                   <div className="mb-6 flex justify-center">
                     <div className={`p-4 rounded-xl bg-gradient-to-br from-[#FFD700]/10 to-[#FFA500]/10 border transition-all duration-300 text-[#FFD700] md:group-hover:border-[#FFD700]/40 md:group-hover:scale-110 ${isHovered
-                        ? 'border-[#FFD700]/40 scale-110'
-                        : 'border-[#FFD700]/20 scale-100'
+                      ? 'border-[#FFD700]/40 scale-110'
+                      : 'border-[#FFD700]/20 scale-100'
                       }`}>
                       {info.icon}
                     </div>
