@@ -39,12 +39,18 @@ export function useNavigation(controlledOpen?: boolean, onMenuToggle?: (open: bo
             e.preventDefault();
             setMenuOpen(false);
 
-            // Delay for mobile menu animation
-            const delay = isMenuOpen ? 300 : 0;
+            // Aumentamos el delay ligeramente para asegurar que el DOM se estabilice
+            const delay = isMenuOpen ? 400 : 100;
             setTimeout(() => {
                 scrollToHash(hash);
                 window.history.pushState(null, '', href);
             }, delay);
+
+            // "Pirueta final": Reforzamos la posición un segundo después por si hubo saltos de altura
+            setTimeout(() => {
+                const element = document.getElementById(hash);
+                if (element) scrollToHash(hash);
+            }, delay + 1000);
         } else {
             setMenuOpen(false);
         }

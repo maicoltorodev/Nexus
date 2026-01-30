@@ -49,16 +49,9 @@ body {
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
   text-rendering: optimizeLegibility;
 }
 
-/* Optimización de secciones pesadas */
-section {
-  content-visibility: auto;
-  contain-intrinsic-size: 0 500px;
-  scroll-margin-top: 100px;
-}
 
 /* El Hero siempre debe ser visible inmediatamente */
 #inicio,
@@ -73,9 +66,6 @@ header {
   will-change: transform;
 }
 
-html {
-  scroll-behavior: smooth;
-}
 
 /* Animaciones personalizadas */
 @keyframes fade-in {
