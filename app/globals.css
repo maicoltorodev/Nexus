@@ -312,6 +312,27 @@ header {
   animation: premium-float 4s ease-in-out infinite !important;
 }
 
+/* Floating Animation */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  25% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+
+  75% {
+    transform: translateY(-5px) rotate(-2deg);
+  }
+
+  50% {
+    transform: translateY(-15px) rotate(0deg);
+  }
+}
+
 .logo-shimmer-container {
   position: absolute;
   inset: 0;

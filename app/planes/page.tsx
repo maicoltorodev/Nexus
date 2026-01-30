@@ -64,11 +64,11 @@ const webPlans: Plan[] = [
         description: "Transforma tu sitio en una plataforma de gestión. Ideal para agendamiento o procesos automatizados.",
         features: ["Todo el Plan Funcional", "Arquitectura de Conversión", "Agendamiento o Catálogo", "Estrategia SEO Avanzada", "Reportes Mensuales", "Soporte x 2 meses", "Entrega: 5–7 días"],
         icon: CheckCircle2,
-        color: "from-yellow-400 via-amber-500 to-orange-500",
+        color: "from-red-500 to-rose-600",
         idealFor: "Clínicas, Agencias y Empresas de Servicios",
-        bgGlow: "rgba(245, 158, 11, 0.15)",
-        accentColor: "amber",
-        shadowColor: "#f59e0b"
+        bgGlow: "rgba(239, 68, 68, 0.15)",
+        accentColor: "red",
+        shadowColor: "#ef4444"
     },
     {
         id: "crecimiento",
@@ -92,10 +92,10 @@ const webPlans: Plan[] = [
         description: "Para proyectos con requerimientos técnicos específicos o aplicaciones web escalables.",
         features: ["Desarrollo a Medida", "Integraciones vía API", "Marketing Full Stack", "Dashboards de Datos", "Auditoría Accesibilidad", "Plan de Escalabilidad"],
         icon: Smartphone,
-        color: "from-slate-700 to-slate-900",
-        bgGlow: "rgba(71, 85, 105, 0.15)",
-        accentColor: "slate",
-        shadowColor: "#64748b",
+        color: "from-[#FFD700] to-[#FFA500]",
+        bgGlow: "rgba(255, 215, 0, 0.15)",
+        accentColor: "yellow",
+        shadowColor: "#FFD700",
         idealFor: "Startups y Proyectos Muy Específicos",
         splitAt: 2
     }
@@ -153,6 +153,44 @@ export default function PlansPage() {
                         <p className="text-base md:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-light mb-8 md:mb-12">
                             Fusionamos el diseño de <span className="text-white font-medium">NE<span className="text-[#FFD700] font-black">X</span>US</span> con la tecnología de <span className="font-[family-name:var(--font-orbitron)] bg-gradient-to-r from-purple-500 to-cyan-400 bg-clip-text text-transparent font-bold">InZidium</span>.
                         </p>
+
+                        {/* Alliance Visual */}
+                        <div className="flex justify-center mb-12">
+                            <div className="relative inline-flex items-center gap-6 md:gap-10 px-8 py-5 md:py-6 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-md hover:border-[#FFD700]/20 hover:bg-white/10 transition-all duration-500 group">
+                                {/* Label 'Alianza' flotante */}
+                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#0a0a0a] px-4 py-1 rounded-full border border-white/10 shadow-xl z-20">
+                                    <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] bg-gradient-to-r from-[#FFD700] via-white to-purple-500 bg-clip-text text-transparent">
+                                        Alianza
+                                    </span>
+                                </div>
+
+                                {/* Logo Nexus (X) */}
+                                <div className="relative w-10 h-10 md:w-14 md:h-14 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12">
+                                    <Image
+                                        src="/X.webp"
+                                        alt="Nexus"
+                                        fill
+                                        className="object-contain drop-shadow-[0_0_10px_rgba(255,215,0,0.2)]"
+                                        sizes="(max-width: 768px) 40px, 56px"
+                                    />
+                                </div>
+
+                                {/* Separador */}
+                                <span className="text-xl md:text-2xl text-white/20 font-light">✕</span>
+
+                                {/* Logo InZidium */}
+                                <div className="relative w-10 h-10 md:w-14 md:h-14 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-12">
+                                    <Image
+                                        src="/logo-inzidium.webp"
+                                        alt="InZidium"
+                                        fill
+                                        className="object-contain drop-shadow-[0_0_10px_rgba(168,85,247,0.4)]"
+                                        sizes="(max-width: 768px) 40px, 56px"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="flex flex-wrap justify-center gap-6">
                             {['Velocidad', 'SEO', 'Conversión', 'Seguridad'].map(tag => (
                                 <div key={tag} className="flex items-center gap-2 text-slate-500 text-[10px] font-black uppercase tracking-widest font-[family-name:var(--font-orbitron)]">
@@ -265,40 +303,6 @@ export default function PlansPage() {
                 })}
             </div>
 
-            {/* InZidium Link */}
-            <section className="py-32 bg-[#030014]">
-                <div className="max-w-7xl mx-auto flex flex-col items-center">
-                    <a href="https://inzidium.com" target="_blank" rel="noopener noreferrer" className="group flex flex-col items-center">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8 }}
-                            className="relative w-48 h-48 md:w-64 md:h-64 mb-8"
-                        >
-                            <div className="premium-float w-full h-full group-hover:scale-110 transition-transform duration-700 relative">
-                                {/* Imagen Base - Siempre visible */}
-                                <Image src="/logo-inzidium.webp" alt="InZidium" fill className="object-contain" priority />
-
-                                {/* Capa de Destello con Máscara */}
-                                <div className="absolute inset-0 logo-shimmer-container pointer-events-none" />
-                            </div>
-                        </motion.div>
-                        <h3 className="relative text-5xl md:text-8xl font-medium font-[family-name:var(--font-orbitron)] tracking-[0.2em] select-none text-center py-10">
-                            {/* Capa 1: Texto Blanco Sólido (Base) */}
-                            <span className="relative z-10 text-white transition-opacity duration-700 group-hover:opacity-0">
-                                InZidium
-                            </span>
-
-                            {/* Capa 2: Texto con Gradiente (Superior) */}
-                            <span className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-700 group-hover:opacity-100 bg-gradient-to-r from-purple-500 via-cyan-400 to-blue-500 bg-clip-text text-transparent pointer-events-none">
-                                InZidium
-                            </span>
-                        </h3>
-                    </a>
-                </div>
-            </section>
-
             {/* Final CTA - Nexus Style */}
             <section className="py-40 px-4 relative overflow-hidden bg-[#050505] text-center border-t border-white/5">
                 {/* Decorative backgrounds */}
@@ -311,12 +315,12 @@ export default function PlansPage() {
                     variants={fadeInVariants}
                     className="relative z-10 max-w-5xl mx-auto"
                 >
-                    <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-[#FFD700]/30 bg-[#FFD700]/5 text-[#FFD700] text-[10px] font-black uppercase tracking-[0.3em] font-[family-name:var(--font-orbitron)]">
-                        <Rocket className="w-3.5 h-3.5" /> El momento es ahora
+                    <div className="inline-block mb-4 px-4 py-2 rounded-full border border-[#FFD700]/30 bg-[#FFD700]/5">
+                        <span className="text-sm font-semibold text-[#FFD700] tracking-wider uppercase">El momento es ahora</span>
                     </div>
 
-                    <h2 className="text-4xl md:text-8xl font-black mb-10 tracking-[ -0.05em] leading-[1.1] md:leading-[0.9]">
-                        ¿Quieres subir <br className="md:hidden" /> de <span className="bg-gradient-to-r from-[#FFD700] via-[#FDB931] to-[#FFA500] bg-clip-text text-transparent">Nivel?</span>
+                    <h2 className="text-5xl md:text-6xl font-bold text-white mb-10 tracking-tight">
+                        ¿Quieres subir de <span className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">Nivel?</span>
                     </h2>
 
                     <div className="flex flex-col items-center gap-12">

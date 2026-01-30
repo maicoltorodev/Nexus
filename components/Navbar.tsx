@@ -7,6 +7,27 @@ import { NAV_LINKS, SOCIAL_LINKS } from '@/data/navigation';
 import MobileMenu from '@/components/MobileMenu';
 import { useNavigation } from '@/hooks/use-navigation';
 
+import { useState } from 'react';
+
+function SocialLink({ social }: { social: any }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <a
+      href={social.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-gray-400 transition-all hover:scale-110 duration-300"
+      aria-label={social.label}
+      style={{ color: isHovered ? social.color : undefined }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {social.icon}
+    </a>
+  );
+}
+
 interface NavbarProps {
   isMenuOpen?: boolean;
   onMenuToggle?: (open: boolean) => void;
@@ -30,11 +51,11 @@ export default function Navbar({ isMenuOpen: controlledOpen, onMenuToggle }: Nav
               <div className={`transition-opacity duration-300 ${isMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
                 <Link href="/" className="group flex items-center gap-2">
                   <Image
-                    src="/nexus.webp"
+                    src="/nexus-solo.webp"
                     alt="Nexus Logo"
                     width={100}
                     height={40}
-                    className="h-10 w-auto object-contain"
+                    className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
                     priority
                   />
                 </Link>
@@ -55,16 +76,7 @@ export default function Navbar({ isMenuOpen: controlledOpen, onMenuToggle }: Nav
 
                 <div className="ml-6 pl-6 border-l border-white/10 flex items-center gap-4">
                   {SOCIAL_LINKS.map((social) => (
-                    <a
-                      key={social.label}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-white transition-all hover:scale-110"
-                      aria-label={social.label}
-                    >
-                      {social.icon}
-                    </a>
+                    <SocialLink key={social.label} social={social} />
                   ))}
                 </div>
               </div>

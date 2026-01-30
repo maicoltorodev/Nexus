@@ -111,18 +111,20 @@ export default function Footer() {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Big Nexus Text Background */}
-        <div className="relative mt-20 mb-10 overflow-hidden py-6 border-y border-[#FFD700]/20 bg-[#FFD700]/5">
-          <div className="whitespace-nowrap flex animate-infinite-scroll">
-            {Array(10).fill(0).map((_, i) => (
-              <span key={i} className="text-7xl md:text-[10rem] font-black text-transparent stroke-text tracking-tighter mx-8 leading-none select-none">
-                NEXUS STUDIO
-              </span>
-            ))}
-          </div>
+      {/* Big Nexus Text Background - Full Width */}
+      <div className="relative mt-20 mb-10 overflow-hidden py-6 border-y border-[#FFD700]/20 bg-[#FFD700]/5 w-full">
+        <div className="whitespace-nowrap flex animate-infinite-scroll">
+          {Array(10).fill(0).map((_, i) => (
+            <span key={i} className="text-7xl md:text-[10rem] font-black text-transparent stroke-text tracking-tighter mx-8 leading-none select-none">
+              NEXUS STUDIO
+            </span>
+          ))}
         </div>
+      </div>
 
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Bottom Bar */}
         <div className="flex flex-col md:row items-center justify-between pt-12 border-t border-white/5 gap-6">
           <p className="text-gray-500 text-sm font-light">

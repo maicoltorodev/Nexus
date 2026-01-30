@@ -114,7 +114,7 @@ export default function FloatingButton({ isMenuOpen }: { isMenuOpen?: boolean })
   if (isMenuOpen) return null;
 
   return (
-    <div className="fixed bottom-8 right-8 z-50 flex items-center gap-3">
+    <div className={`fixed bottom-8 right-8 z-50 flex items-center gap-3 transition-all duration-500 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'}`}>
       {/* Texto de ayuda para servicios */}
       {(showHelpText && !showCalculatorText) && (
         <div className="relative transition-all duration-500 opacity-100 translate-x-0">
@@ -149,35 +149,35 @@ export default function FloatingButton({ isMenuOpen }: { isMenuOpen?: boolean })
       )}
 
       {/* Botón FAB */}
-      <button
-        onClick={openWhatsApp}
-        className={`w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-[#FFD700] to-[#FFA500] shadow-2xl border-2 border-[#FFD700]/50 transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
-          }`}
-        style={{
-          animation: isVisible ? 'float 3s ease-in-out infinite' : 'none',
-          boxShadow: '0 10px 40px rgba(255, 215, 0, 0.5), 0 0 60px rgba(255, 215, 0, 0.3)'
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.boxShadow = '0 15px 50px rgba(255, 215, 0, 0.8), 0 0 80px rgba(255, 215, 0, 0.5)';
-          e.currentTarget.style.transform = 'scale(1.1)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.boxShadow = '0 10px 40px rgba(255, 215, 0, 0.5), 0 0 60px rgba(255, 215, 0, 0.3)';
-          e.currentTarget.style.transform = 'scale(1)';
-        }}
-        aria-label="Contactar por WhatsApp"
-      >
-        <div className="relative w-full h-full flex items-center justify-center">
-          <Image
-            src="/X.webp"
-            alt="X"
-            fill
-            className="object-contain p-3"
-            priority
-            style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
-          />
-        </div>
-      </button>
+      <div style={{ animation: 'float 3s ease-in-out infinite' }}>
+        <button
+          onClick={openWhatsApp}
+          className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-[#FFD700] to-[#FFA500] shadow-2xl border-2 border-[#FFD700]/50 transition-transform duration-300"
+          style={{
+            boxShadow: '0 10px 40px rgba(255, 215, 0, 0.5), 0 0 60px rgba(255, 215, 0, 0.3)'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.boxShadow = '0 15px 50px rgba(255, 215, 0, 0.8), 0 0 80px rgba(255, 215, 0, 0.5)';
+            e.currentTarget.style.transform = 'scale(1.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.boxShadow = '0 10px 40px rgba(255, 215, 0, 0.5), 0 0 60px rgba(255, 215, 0, 0.3)';
+            e.currentTarget.style.transform = 'scale(1)';
+          }}
+          aria-label="Contactar por WhatsApp"
+        >
+          <div className="relative w-full h-full flex items-center justify-center">
+            <Image
+              src="/X.webp"
+              alt="X"
+              fill
+              className="object-contain p-3"
+              priority
+              style={{ filter: 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.5))' }}
+            />
+          </div>
+        </button>
+      </div>
     </div>
   );
 }

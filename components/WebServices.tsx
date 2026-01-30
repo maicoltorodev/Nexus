@@ -244,6 +244,9 @@ const WebServices = () => {
 
     return (
         <section className="relative py-32 px-4 overflow-hidden bg-[#0a0a0a]">
+            {/* Efecto de brillo dorado sutil optimizado */}
+            <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.08) 0%, transparent 60%)' }}></div>
+            {/* Background Decorative Elements - Keep or remove based on "consistency" but Hero has only radial. I will keep existing decorations but ensure base is same */}
             {/* Background Decorative Elements */}
             <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-[#FFD700]/5 rounded-full blur-[80px] md:blur-[150px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-[50%] h-[50%] bg-[#FFA500]/5 rounded-full blur-[80px] md:blur-[150px] translate-y-1/2 -translate-x-1/4 pointer-events-none" />

@@ -59,7 +59,9 @@ export default function Contact() {
   };
 
   return (
-    <section className="relative py-32 overflow-hidden" style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%)' }}>
+    <section className="relative py-32 overflow-hidden bg-[#0a0a0a]">
+      {/* Efecto de brillo dorado sutil optimizado */}
+      <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.08) 0%, transparent 60%)' }}></div>
       {/* Efecto de fondo decorativo */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#FFD700] rounded-full blur-3xl"></div>
