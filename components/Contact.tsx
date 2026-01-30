@@ -59,7 +59,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contacto" className="relative py-24 overflow-hidden" style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%)' }}>
+    <section className="relative py-24 overflow-hidden" style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%)' }}>
       {/* Efecto de fondo decorativo */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#FFD700] rounded-full blur-3xl"></div>
@@ -101,9 +101,8 @@ export default function Contact() {
                     openWhatsApp(info.content);
                   }
                 }}
-                className={`group relative bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] rounded-2xl p-8 border transition-all duration-500 overflow-hidden md:hover:border-[#FFD700]/40 ${
-                  isHovered ? 'border-[#FFD700]/40' : 'border-[#FFD700]/10'
-                } ${isPhoneCard ? 'cursor-pointer' : ''}`}
+                className={`group relative bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] rounded-2xl p-8 border transition-all duration-500 overflow-hidden md:hover:border-[#FFD700]/40 ${isHovered ? 'border-[#FFD700]/40' : 'border-[#FFD700]/10'
+                  } ${isPhoneCard ? 'cursor-pointer' : ''}`}
                 style={{
                   animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`,
                   transform: isHovered ? 'translateY(-4px)' : undefined
@@ -120,31 +119,27 @@ export default function Contact() {
                 }}
               >
                 {/* Efecto de brillo al hover */}
-                <div className={`absolute inset-0 bg-gradient-to-br transition-all duration-500 md:group-hover:from-[#FFD700]/5 md:group-hover:to-[#FFA500]/5 ${
-                  isHovered 
-                    ? 'from-[#FFD700]/5 to-[#FFA500]/5' 
+                <div className={`absolute inset-0 bg-gradient-to-br transition-all duration-500 md:group-hover:from-[#FFD700]/5 md:group-hover:to-[#FFA500]/5 ${isHovered
+                    ? 'from-[#FFD700]/5 to-[#FFA500]/5'
                     : 'from-[#FFD700]/0 to-[#FFA500]/0'
-                }`}></div>
-                
+                  }`}></div>
+
                 {/* Línea superior dorada */}
-                <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#FFD700] to-transparent transition-transform duration-500 md:group-hover:scale-x-100 ${
-                  isHovered ? 'scale-x-100' : 'scale-x-0'
-                }`}></div>
+                <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#FFD700] to-transparent transition-transform duration-500 md:group-hover:scale-x-100 ${isHovered ? 'scale-x-100' : 'scale-x-0'
+                  }`}></div>
 
                 {/* Contenido */}
                 <div className="relative z-10 text-center">
                   <div className="mb-6 flex justify-center">
-                    <div className={`p-4 rounded-xl bg-gradient-to-br from-[#FFD700]/10 to-[#FFA500]/10 border transition-all duration-300 text-[#FFD700] md:group-hover:border-[#FFD700]/40 md:group-hover:scale-110 ${
-                      isHovered 
-                        ? 'border-[#FFD700]/40 scale-110' 
+                    <div className={`p-4 rounded-xl bg-gradient-to-br from-[#FFD700]/10 to-[#FFA500]/10 border transition-all duration-300 text-[#FFD700] md:group-hover:border-[#FFD700]/40 md:group-hover:scale-110 ${isHovered
+                        ? 'border-[#FFD700]/40 scale-110'
                         : 'border-[#FFD700]/20 scale-100'
-                    }`}>
+                      }`}>
                       {info.icon}
                     </div>
                   </div>
-                  <h3 className={`text-lg font-bold mb-3 transition-colors duration-300 md:group-hover:text-[#FFD700] ${
-                    isHovered ? 'text-[#FFD700]' : 'text-white'
-                  }`}>
+                  <h3 className={`text-lg font-bold mb-3 transition-colors duration-300 md:group-hover:text-[#FFD700] ${isHovered ? 'text-[#FFD700]' : 'text-white'
+                    }`}>
                     {info.title}
                   </h3>
                   <p className="text-gray-300 font-medium mb-1 text-sm">{info.content}</p>
@@ -155,7 +150,7 @@ export default function Contact() {
               </div>
             );
           })}
-          
+
           {/* Mapa - En móvil es parte del grid, en desktop está oculto aquí */}
           <div className="md:hidden">
             <div
@@ -186,19 +181,19 @@ export default function Contact() {
 
         {/* Mapa - En desktop aparece debajo del grid */}
         <div className="hidden md:block mt-6">
-          <div 
-            className="group relative bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] rounded-2xl p-2 border-2 border-[#FFD700]/30 overflow-hidden shadow-2xl transition-all duration-500 hover:border-[#FFD700]/50" 
-            style={{ 
+          <div
+            className="group relative bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f] rounded-2xl p-2 border-2 border-[#FFD700]/30 overflow-hidden shadow-2xl transition-all duration-500 hover:border-[#FFD700]/50"
+            style={{
               height: '400px',
               boxShadow: '0 0 30px rgba(255, 215, 0, 0.1), inset 0 0 20px rgba(255, 215, 0, 0.05)'
             }}
           >
             {/* Efecto de brillo en el borde al hover */}
             <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FFD700]/10 to-[#FFA500]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-20"></div>
-            
+
             {/* Línea decorativa superior */}
             <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#FFD700] to-transparent opacity-50 z-20"></div>
-            
+
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.5037717737646!2d-74.09166590203546!3d4.682148050380403!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f9b175e0b947b%3A0xd3315c1cd8c20385!2sNEXUS%20ESTUDIO%20GRAFICO!5e0!3m2!1ses-419!2sco!4v1769066189707!5m2!1ses-419!2sco"
               width="100%"

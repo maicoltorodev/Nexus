@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, ExternalLink } from 'lucide-react';
 import { NAV_LINKS, SOCIAL_LINKS } from '@/data/navigation';
-import { scrollToHash, isInternalHashLink } from '@/utils/scroll-utils';
 
 interface MobileMenuProps {
     isOpen: boolean;

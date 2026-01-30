@@ -1,12 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import { scrollToHash, isInternalHashLink, lockScroll, unlockScroll } from '@/utils/scroll-utils';
+import { usePathname } from 'next/navigation';
 
 export function useNavigation(controlledOpen?: boolean, onMenuToggle?: (open: boolean) => void) {
     const [internalOpen, setInternalOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const pathname = usePathname();
-    const router = useRouter();
 
     const isMenuOpen = controlledOpen !== undefined ? controlledOpen : internalOpen;
 
@@ -23,7 +21,7 @@ export function useNavigation(controlledOpen?: boolean, onMenuToggle?: (open: bo
             setIsScrolled(window.scrollY > 50);
         };
         window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll(); // Initial check
+        handleScroll();
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -32,37 +30,9 @@ export function useNavigation(controlledOpen?: boolean, onMenuToggle?: (open: bo
     }, [isMenuOpen]);
 
     const handleLinkClick = useCallback((e: React.MouseEvent<HTMLElement>, href: string) => {
-        const [path, hash] = href.split('#');
-        const isInternal = isInternalHashLink(href, pathname);
-
-        if (hash && isInternal) {
-            e.preventDefault();
-            setMenuOpen(false);
-
-            // Bloqueamos la interacción del usuario para que no interrumpa el scroll
-            lockScroll();
-
-            // Aumentamos el delay ligeramente para asegurar que el DOM se estabilice
-            const delay = isMenuOpen ? 400 : 100;
-
-            setTimeout(() => {
-                scrollToHash(hash);
-                window.history.pushState(null, '', href);
-            }, delay);
-
-            // "Pirueta final": Reforzamos la posición un segundo después por si hubo saltos de altura
-            // Mantener el bloqueo hasta que termine esta fase
-            setTimeout(() => {
-                const element = document.getElementById(hash);
-                if (element) scrollToHash(hash);
-
-                // Desbloqueamos después de un breve momento tras la corrección final
-                setTimeout(unlockScroll, 100);
-            }, delay + 1000);
-        } else {
-            setMenuOpen(false);
-        }
-    }, [pathname, isMenuOpen, setMenuOpen]);
+        setMenuOpen(false);
+        // La navegación se maneja de forma nativa o por otro método externo
+    }, [setMenuOpen]);
 
     return {
         isMenuOpen,

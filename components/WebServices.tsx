@@ -243,7 +243,7 @@ const features = [
 const WebServices = () => {
 
     return (
-        <section id="web-design" className="relative py-32 px-4 overflow-hidden bg-[#0a0a0a]">
+        <section className="relative py-32 px-4 overflow-hidden bg-[#0a0a0a]">
             {/* Background Decorative Elements */}
             <div className="absolute top-0 right-0 w-[50%] h-[50%] bg-[#FFD700]/5 rounded-full blur-[80px] md:blur-[150px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-[50%] h-[50%] bg-[#FFA500]/5 rounded-full blur-[80px] md:blur-[150px] translate-y-1/2 -translate-x-1/4 pointer-events-none" />

@@ -8,7 +8,7 @@ export default function Hero() {
   const [isXHovered, setIsXHovered] = useState(false);
 
   return (
-    <section className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-[#0a0a0a]">
+    <section id="inicio" className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-[#0a0a0a]">
       {/* Efecto de brillo dorado sutil optimizado */}
       <div className="absolute inset-0 opacity-20 md:opacity-100 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.08) 0%, transparent 60%)' }}></div>
 
