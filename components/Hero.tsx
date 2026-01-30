@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { scrollToHash } from '@/utils/scroll-utils';
 
 export default function Hero() {
   const [isXHovered, setIsXHovered] = useState(false);
@@ -86,11 +85,6 @@ export default function Hero() {
       {/* Scroll indicator */}
       <a
         href="#tarjeta"
-        onClick={(e) => {
-          e.preventDefault();
-          scrollToHash('tarjeta');
-          window.history.pushState(null, '', '#tarjeta');
-        }}
         className="absolute bottom-16 right-4 sm:bottom-8 sm:right-8 z-20 animate-bounce cursor-pointer transition-transform duration-300 hover:scale-110"
         aria-label="Ir a servicios"
       >

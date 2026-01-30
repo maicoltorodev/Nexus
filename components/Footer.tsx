@@ -4,7 +4,6 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { scrollToHash, isInternalHashLink } from '@/utils/scroll-utils';
 import { usePathname } from 'next/navigation';
 import {
   Mail,
@@ -68,14 +67,6 @@ export default function Footer() {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      onClick={(e) => {
-                        const hash = link.href.split('#')[1];
-                        if (hash && isInternalHashLink(link.href, pathname)) {
-                          e.preventDefault();
-                          scrollToHash(hash);
-                          window.history.pushState(null, '', link.href);
-                        }
-                      }}
                       className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center group text-sm font-light"
                     >
                       {link.name}
@@ -92,14 +83,6 @@ export default function Footer() {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      onClick={(e) => {
-                        const hash = link.href.split('#')[1];
-                        if (hash && isInternalHashLink(link.href, pathname)) {
-                          e.preventDefault();
-                          scrollToHash(hash);
-                          window.history.pushState(null, '', link.href);
-                        }
-                      }}
                       className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center group text-sm font-light"
                     >
                       {link.name}

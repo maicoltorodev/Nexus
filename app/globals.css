@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
   /* Colores de fondo oscuros */
   --color-bg-primary: #0a0a0a;
