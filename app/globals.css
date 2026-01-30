@@ -145,13 +145,13 @@ header {
 
 .animate-slide-left {
   animation: slide-left 0.8s ease-out forwards;
-  animation-delay: 0.6s;
+  animation-delay: 0.1s;
   opacity: 0;
 }
 
 .animate-slide-right {
   animation: slide-right 0.8s ease-out forwards;
-  animation-delay: 0.6s;
+  animation-delay: 0.1s;
   opacity: 0;
 }
 

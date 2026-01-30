@@ -1,7 +1,4 @@
-'use client';
-
-import { useState } from 'react';
-import Navbar from '@/components/Navbar';
+import ClientShell from '@/components/ClientShell';
 import Hero from '@/components/Hero';
 import Services from '@/components/Services';
 import WebServices from '@/components/WebServices';
@@ -10,15 +7,11 @@ import Calculator from '@/components/Calculator';
 import Testimonials from '@/components/Testimonials';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
-import FloatingButton from '@/components/FloatingButton';
 import FadeInSection from '@/components/ui/FadeInSection';
 
 export default function Home() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   return (
-    <main className="relative">
-      <Navbar isMenuOpen={isMenuOpen} onMenuToggle={setIsMenuOpen} />
+    <ClientShell>
       <Hero />
       <FadeInSection id="tarjeta">
         <BusinessCard />
@@ -39,7 +32,6 @@ export default function Home() {
         <Contact />
       </FadeInSection>
       <Footer />
-      <FloatingButton isMenuOpen={isMenuOpen} />
-    </main>
+    </ClientShell>
   );
 }
