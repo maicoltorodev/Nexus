@@ -8,10 +8,9 @@ import { NAV_LINKS, SOCIAL_LINKS } from '@/data/navigation';
 interface MobileMenuProps {
     isOpen: boolean;
     onClose: () => void;
-    onLinkClick: (e: React.MouseEvent<HTMLElement>, href: string) => void;
 }
 
-export default function MobileMenu({ isOpen, onClose, onLinkClick }: MobileMenuProps) {
+export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     return (
         <AnimatePresence>
             {isOpen && (
@@ -55,7 +54,7 @@ export default function MobileMenu({ isOpen, onClose, onLinkClick }: MobileMenuP
                                 >
                                     <Link
                                         href={link.href}
-                                        onClick={(e) => onLinkClick(e, link.href)}
+                                        onClick={onClose}
                                         className="group flex items-center justify-between py-2"
                                     >
                                         <div className="flex flex-col">
@@ -100,7 +99,7 @@ export default function MobileMenu({ isOpen, onClose, onLinkClick }: MobileMenuP
                                 <p className="text-sm text-gray-400 mb-4">Transformamos tus ideas en realidades visuales impactantes.</p>
                                 <Link
                                     href="/planes"
-                                    onClick={(e) => onLinkClick(e, '/planes')}
+                                    onClick={onClose}
                                     className="flex items-center justify-center gap-2 py-4 bg-[#FFD700] text-black rounded-xl font-bold uppercase text-[10px] tracking-widest hover:scale-105 transition-transform"
                                 >
                                     Ver Planes <ExternalLink className="w-4 h-4" />

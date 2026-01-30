@@ -12,7 +12,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ isMenuOpen: controlledOpen, onMenuToggle }: NavbarProps) {
-  const { isMenuOpen, setMenuOpen, isScrolled, handleLinkClick } = useNavigation(controlledOpen, onMenuToggle);
+  const { isMenuOpen, setMenuOpen, isScrolled } = useNavigation(controlledOpen, onMenuToggle);
 
   return (
     <>
@@ -40,7 +40,6 @@ export default function Navbar({ isMenuOpen: controlledOpen, onMenuToggle }: Nav
                   <Link
                     key={link.href}
                     href={link.href}
-                    onClick={(e) => handleLinkClick(e, link.href)}
                     className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-[#FFD700] transition-colors relative group"
                   >
                     {link.label}
@@ -68,7 +67,7 @@ export default function Navbar({ isMenuOpen: controlledOpen, onMenuToggle }: Nav
               <button
                 onClick={() => setMenuOpen(!isMenuOpen)}
                 className={`lg:hidden relative z-[60] w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-500 border ${isMenuOpen ? 'opacity-0 pointer-events-none' :
-                    isScrolled ? 'bg-[#0a0a0a]/80 border-white/10 text-white' : 'bg-black/60 border-white/40 text-white backdrop-blur-md'
+                  isScrolled ? 'bg-[#0a0a0a]/80 border-white/10 text-white' : 'bg-black/60 border-white/40 text-white backdrop-blur-md'
                   }`}
                 aria-label="Toggle menu"
               >
@@ -82,7 +81,6 @@ export default function Navbar({ isMenuOpen: controlledOpen, onMenuToggle }: Nav
       <MobileMenu
         isOpen={isMenuOpen}
         onClose={() => setMenuOpen(false)}
-        onLinkClick={handleLinkClick}
       />
     </>
   );

@@ -29,15 +29,9 @@ export function useNavigation(controlledOpen?: boolean, onMenuToggle?: (open: bo
         document.body.style.overflow = isMenuOpen ? 'hidden' : 'unset';
     }, [isMenuOpen]);
 
-    const handleLinkClick = useCallback((e: React.MouseEvent<HTMLElement>, href: string) => {
-        setMenuOpen(false);
-        // La navegación se maneja de forma nativa o por otro método externo
-    }, [setMenuOpen]);
-
     return {
         isMenuOpen,
         setMenuOpen,
-        isScrolled,
-        handleLinkClick
+        isScrolled
     };
 }

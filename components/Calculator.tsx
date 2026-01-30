@@ -421,7 +421,7 @@ export default function Calculator() {
           const resultsPanel = document.getElementById('calculator-results');
           if (resultsPanel) {
             resultsPanel.scrollIntoView({
-              behavior: 'smooth',
+              behavior: 'auto',
               block: 'center'
             });
           }
