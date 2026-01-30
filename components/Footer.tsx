@@ -4,6 +4,8 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { scrollToHash, isInternalHashLink } from '@/utils/scroll-utils';
+import { usePathname } from 'next/navigation';
 import {
   Mail,
   Phone,
@@ -13,6 +15,7 @@ import {
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
 
   const footerLinks = {
     servicios: [
@@ -63,7 +66,18 @@ export default function Footer() {
               <ul className="space-y-4">
                 {footerLinks.servicios.map((link) => (
                   <li key={link.name}>
-                    <Link href={link.href} className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center group text-sm font-light">
+                    <Link
+                      href={link.href}
+                      onClick={(e) => {
+                        const hash = link.href.split('#')[1];
+                        if (hash && isInternalHashLink(link.href, pathname)) {
+                          e.preventDefault();
+                          scrollToHash(hash);
+                          window.history.pushState(null, '', link.href);
+                        }
+                      }}
+                      className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center group text-sm font-light"
+                    >
                       {link.name}
                       <ArrowUpRight className="w-3 h-3 ml-1 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" />
                     </Link>
@@ -76,7 +90,18 @@ export default function Footer() {
               <ul className="space-y-4">
                 {footerLinks.empresa.map((link) => (
                   <li key={link.name}>
-                    <Link href={link.href} className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center group text-sm font-light">
+                    <Link
+                      href={link.href}
+                      onClick={(e) => {
+                        const hash = link.href.split('#')[1];
+                        if (hash && isInternalHashLink(link.href, pathname)) {
+                          e.preventDefault();
+                          scrollToHash(hash);
+                          window.history.pushState(null, '', link.href);
+                        }
+                      }}
+                      className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center group text-sm font-light"
+                    >
                       {link.name}
                       <ArrowUpRight className="w-3 h-3 ml-1 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" />
                     </Link>

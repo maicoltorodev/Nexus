@@ -57,6 +57,7 @@ body {
 section {
   content-visibility: auto;
   contain-intrinsic-size: 0 500px;
+  scroll-margin-top: 100px;
 }
 
 /* El Hero siempre debe ser visible inmediatamente */

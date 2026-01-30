@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { scrollToHash } from '@/utils/scroll-utils';
 
 type ServiceType = 'tarjetas' | 'volantes' | 'gran-formato' | 'papeleria';
 
@@ -651,6 +652,11 @@ export default function Calculator() {
 
                   <a
                     href="#contacto"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      scrollToHash('contacto');
+                      window.history.pushState(null, '', '#contacto');
+                    }}
                     className="mt-6 w-full block text-center px-6 py-3 rounded-xl bg-gradient-to-r from-[#FFD700]/10 to-[#FFA500]/10 border border-[#FFD700]/30 hover:border-[#FFD700] hover:from-[#FFD700]/20 hover:to-[#FFA500]/20 transition-all duration-300 text-white font-semibold"
                   >
                     Solicitar Cotización

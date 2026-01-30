@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Orbitron } from "next/font/google";
 import "./globals.css";
 import MouseTrail from "@/components/MouseTrail";
 import CustomCursor from "@/components/CustomCursor";
+import ScrollHandler from "@/components/ScrollHandler";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -208,6 +209,7 @@ export default function RootLayout({
       >
         <CustomCursor />
         <MouseTrail />
+        <ScrollHandler />
         {children}
       </body>
     </html>
