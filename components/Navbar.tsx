@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu } from 'lucide-react';
 import { NAV_LINKS, SOCIAL_LINKS } from '@/data/navigation';
 import MobileMenu from '@/components/MobileMenu';
@@ -28,9 +29,14 @@ export default function Navbar({ isMenuOpen: controlledOpen, onMenuToggle }: Nav
               {/* Logo */}
               <div className={`transition-opacity duration-300 ${isMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
                 <Link href="/" className="group flex items-center gap-2">
-                  <span className="text-xl font-black tracking-tighter text-white">
-                    NE<span className="text-[#FFD700]">X</span>US
-                  </span>
+                  <Image
+                    src="/nexus.webp"
+                    alt="Nexus Logo"
+                    width={100}
+                    height={40}
+                    className="h-10 w-auto object-contain"
+                    priority
+                  />
                 </Link>
               </div>
 

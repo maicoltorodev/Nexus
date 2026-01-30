@@ -32,6 +32,12 @@ export default function CustomCursor() {
         }
 
         const moveCursor = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (target?.tagName === 'IFRAME') {
+                setIsVisible(false);
+                return;
+            }
+
             cursorX.set(e.clientX);
             cursorY.set(e.clientY);
             if (!isVisible) setIsVisible(true);
@@ -40,6 +46,11 @@ export default function CustomCursor() {
         const handleMouseOver = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
             if (!target) return;
+
+            if (target.tagName === 'IFRAME') {
+                setIsVisible(false);
+                return;
+            }
 
             const style = window.getComputedStyle(target);
             const isInteractive =

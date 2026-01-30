@@ -113,10 +113,10 @@ export default function Footer() {
         </div>
 
         {/* Big Nexus Text Background */}
-        <div className="relative mt-20 mb-10 overflow-hidden py-4 border-y border-white/5">
+        <div className="relative mt-20 mb-10 overflow-hidden py-6 border-y border-[#FFD700]/20 bg-[#FFD700]/5">
           <div className="whitespace-nowrap flex animate-infinite-scroll">
             {Array(10).fill(0).map((_, i) => (
-              <span key={i} className="text-7xl md:text-[10rem] font-black text-transparent stroke-text tracking-tighter mx-4 opacity-10 leading-none">
+              <span key={i} className="text-7xl md:text-[10rem] font-black text-transparent stroke-text tracking-tighter mx-8 leading-none select-none">
                 NEXUS STUDIO
               </span>
             ))}
@@ -138,7 +138,7 @@ export default function Footer() {
 
       <style jsx>{`
                 .stroke-text {
-                    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4);
+                    -webkit-text-stroke: 1px rgba(255, 215, 0, 0.5);
                 }
                 @keyframes infinite-scroll {
                     from { transform: translateX(0); }
