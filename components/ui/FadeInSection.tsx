@@ -11,15 +11,15 @@ interface FadeInSectionProps {
 
 export default function FadeInSection({ children, className, id }: FadeInSectionProps) {
     return (
-        <motion.div
-            id={id}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className={`scroll-section ${className || ''}`}
-        >
-            {children}
-        </motion.div>
+        <div id={id} className={`scroll-section ${className || ''} optimize-section w-full`}>
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+                {children}
+            </motion.div>
+        </div>
     );
 }
