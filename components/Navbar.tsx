@@ -9,7 +9,7 @@ import { useNavigation } from '@/hooks/use-navigation';
 
 import { useState } from 'react';
 
-function SocialLink({ social }: { social: any }) {
+function SocialLink({ social, forceColor = false }: { social: any, forceColor?: boolean }) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -19,7 +19,7 @@ function SocialLink({ social }: { social: any }) {
       rel="noopener noreferrer"
       className="text-gray-400 transition-all hover:scale-110 duration-300"
       aria-label={social.label}
-      style={{ color: isHovered ? social.color : undefined }}
+      style={{ color: isHovered || forceColor ? social.color : undefined }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -49,7 +49,8 @@ export default function Navbar({ isMenuOpen: controlledOpen, onMenuToggle }: Nav
             <div className="flex items-center justify-between">
               {/* Logo */}
               <div className={`transition-opacity duration-300 ${isMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-                <Link href="/" className="group flex items-center gap-2">
+                {/* Desktop Logo */}
+                <Link href="/" className="hidden lg:flex group items-center gap-2">
                   <Image
                     src="/nexus-solo.webp"
                     alt="Nexus Logo"
@@ -59,6 +60,13 @@ export default function Navbar({ isMenuOpen: controlledOpen, onMenuToggle }: Nav
                     priority
                   />
                 </Link>
+
+                {/* Mobile Social Icons */}
+                <div className="flex lg:hidden items-center gap-4">
+                  {SOCIAL_LINKS.map((social) => (
+                    <SocialLink key={social.label} social={social} forceColor={true} />
+                  ))}
+                </div>
               </div>
 
               {/* Desktop Menu */}
