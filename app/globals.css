@@ -4,6 +4,10 @@ html {
   scroll-behavior: smooth;
 }
 
+section[id] {
+  scroll-margin-top: 90px;
+}
+
 :root {
   /* Colores de fondo oscuros */
   --color-bg-primary: #0a0a0a;
