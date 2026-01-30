@@ -4,12 +4,6 @@
   scroll-margin-top: 100px;
 }
 
-/* Optimización de Renderizado */
-.optimize-section {
-  content-visibility: auto;
-  contain-intrinsic-size: 1000px;
-  /* Estimación de altura para evitar saltos bruscos */
-}
 
 :root {
   /* Colores de fondo oscuros */
