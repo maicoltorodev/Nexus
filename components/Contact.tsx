@@ -176,6 +176,7 @@ export default function Contact() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 className="w-full h-full rounded-xl relative z-10"
+                title="Mapa de ubicación de la oficina en móvil"
               />
             </div>
           </div>
@@ -205,6 +206,7 @@ export default function Contact() {
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               className="w-full h-full rounded-xl relative z-10"
+              title="Mapa de ubicación de la oficina en desktop"
             />
           </div>
         </div>

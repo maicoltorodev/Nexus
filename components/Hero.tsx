@@ -68,9 +68,9 @@ export default function Hero() {
                 </h1>
               </div>
             </div>
-            <h3 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-2 md:mb-3 max-w-2xl mx-auto font-semibold tracking-wide px-4 transition-all duration-500 ${isXHovered ? 'x-hover-text' : 'text-white'}`} style={{ animation: 'fadeInUp 0.8s ease-out 2.2s both' }}>
+            <h2 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-2 md:mb-3 max-w-2xl mx-auto font-semibold tracking-wide px-4 transition-all duration-500 ${isXHovered ? 'x-hover-text' : 'text-white'}`} style={{ animation: 'fadeInUp 0.8s ease-out 2.2s both' }}>
               ¿Tienes una idea?
-            </h3>
+            </h2>
             <p className={`text-sm sm:text-base md:text-lg lg:text-xl mb-4 md:mb-10 max-w-2xl mx-auto leading-relaxed font-light tracking-wide px-4 transition-all duration-500 ${isXHovered ? 'x-hover-text' : 'text-gray-400'}`} style={{ animation: 'fadeInUp 0.8s ease-out 2.4s both' }}>
               Realizamos todo tipo de impresión digital y litográfica, en diferentes materiales, tamaños y formas.
             </p>

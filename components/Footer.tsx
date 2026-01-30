@@ -52,7 +52,7 @@ export default function Footer() {
                 />
               </div>
             </Link>
-            <p className="text-gray-400 text-lg font-light leading-relaxed max-w-md">
+            <p className="text-gray-300 text-lg font-light leading-relaxed max-w-md">
               Elevamos la identidad de tu marca a través de diseño estratégico y tecnología de vanguardia. <span className="text-white font-medium">NE<span className="text-[#FFD700] font-black">X</span>US</span> es donde la creatividad se encuentra con el impacto.
             </p>
 
@@ -67,7 +67,7 @@ export default function Footer() {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center group text-sm font-light"
+                      className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group text-sm font-light"
                     >
                       {link.name}
                       <ArrowUpRight className="w-3 h-3 ml-1 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" />
@@ -83,7 +83,7 @@ export default function Footer() {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-gray-400 hover:text-white transition-colors duration-300 flex items-center group text-sm font-light"
+                      className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group text-sm font-light"
                     >
                       {link.name}
                       <ArrowUpRight className="w-3 h-3 ml-1 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all" />
@@ -95,15 +95,15 @@ export default function Footer() {
             <div className="col-span-2 md:col-span-1 space-y-6">
               <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#FFD700]">Contacto</h4>
               <ul className="space-y-4">
-                <li className="flex items-center gap-3 text-gray-400 text-sm font-light">
+                <li className="flex items-center gap-3 text-gray-300 text-sm font-light">
                   <Mail className="w-4 h-4 text-[#FFD700]" />
                   <span>info@nexusstudio.com</span>
                 </li>
-                <li className="flex items-center gap-3 text-gray-400 text-sm font-light">
+                <li className="flex items-center gap-3 text-gray-300 text-sm font-light">
                   <Phone className="w-4 h-4 text-[#FFD700]" />
                   <span>+57 318 4022999</span>
                 </li>
-                <li className="flex items-start gap-3 text-gray-400 text-sm font-light">
+                <li className="flex items-start gap-3 text-gray-300 text-sm font-light">
                   <MapPin className="w-4 h-4 text-[#FFD700] mt-1" />
                   <span>Bogotá, Colombia</span>
                 </li>
@@ -127,10 +127,10 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Bottom Bar */}
         <div className="flex flex-col md:row items-center justify-between pt-12 border-t border-white/5 gap-6">
-          <p className="text-gray-500 text-sm font-light">
+          <p className="text-gray-400 text-sm font-light">
             © {currentYear} <span className="text-white font-medium">NE<span className="text-[#FFD700] font-black">X</span>US</span>. Todos los derechos reservados.
           </p>
-          <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-gray-600">
+          <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-gray-400">
             <Link href="#" className="hover:text-[#FFD700] transition-colors">Privacidad</Link>
             <Link href="#" className="hover:text-[#FFD700] transition-colors">Términos</Link>
             <Link href="#" className="hover:text-[#FFD700] transition-colors">Cookies</Link>

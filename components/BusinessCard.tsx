@@ -67,11 +67,11 @@ const BusinessCard = () => {
                     {/* Front */}
                     <div className="absolute inset-0 rounded-[1.5rem] md:rounded-[2.5rem] bg-[#0a0a0a] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.9)] md:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.9)] overflow-hidden pointer-events-none border border-white/5">
                         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#FFD700_1px,transparent_1px)] [background-size:16px_16px] md:background-size:24px_24px]" />
-                        <img src="/X.webp" className="absolute right-[-10%] top-[-10%] w-[80%] h-[120%] opacity-20 rotate-12 filter brightness-200" alt="" />
+                        <img src="/X.webp" className="absolute right-[-10%] top-[-10%] w-[80%] h-[120%] object-contain opacity-20 rotate-12 filter brightness-200" alt="" />
                         <div className="relative h-full p-5 md:p-10 flex flex-col justify-between">
                             <div className="flex justify-between items-start" style={{ transform: "translateZ(40px) md:translateZ(60px)" }}>
                                 <div className="flex items-center gap-2 md:gap-3">
-                                    <img src="/X.webp" className="w-8 h-8 md:w-12 md:h-12 filter drop-shadow-gold" alt="Nexus" />
+                                    <img src="/X.webp" className="w-8 h-8 md:w-12 md:h-12 object-contain filter drop-shadow-gold" alt="Nexus" />
                                     <div>
                                         <h3 className="text-lg md:text-2xl font-black text-white tracking-widest leading-tight italic-none">NE<span className="text-[#FFD700]">X</span>US</h3>
                                         <p className="text-[8px] md:text-[10px] text-[#FFD700] font-bold tracking-[0.4em] opacity-80">EST. {new Date().getFullYear()}</p>
@@ -114,7 +114,7 @@ const BusinessCard = () => {
                     <div className="absolute inset-0 rounded-[1.5rem] md:rounded-[2.5rem] bg-[#0a0a0a] border border-[#FFD700]/10 flex flex-col items-center justify-center gap-4 md:gap-6"
                         style={{ transform: "rotateY(180deg) translateZ(1px)", backfaceVisibility: "hidden" }}
                     >
-                        <img src="/X.webp" className="w-20 h-20 md:w-32 md:h-32 filter drop-shadow-gold-big" alt="" />
+                        <img src="/X.webp" className="w-20 h-20 md:w-32 md:h-32 object-contain filter drop-shadow-gold-big" alt="" />
                         <div className="text-center px-6 md:px-10">
                             <p className="text-xs md:text-base text-[#FFD700] tracking-[0.5em] uppercase font-black opacity-60 leading-relaxed">Creatividad Sin Límites</p>
                             <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-[#FFD700]/40 to-transparent mt-4 md:mt-6" />

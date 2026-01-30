@@ -302,6 +302,7 @@ const CustomNumberInput = ({ label, value, onChange, min, step, placeholder }: {
           type="button"
           onClick={decrement}
           className="px-6 py-4 text-[#FFD700] transition-colors border-r border-[#FFD700]/10"
+          aria-label="Disminuir cantidad"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
@@ -325,6 +326,7 @@ const CustomNumberInput = ({ label, value, onChange, min, step, placeholder }: {
           type="button"
           onClick={increment}
           className="px-6 py-4 text-[#FFD700] transition-colors border-l border-[#FFD700]/10"
+          aria-label="Aumentar cantidad"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
