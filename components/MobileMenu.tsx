@@ -9,9 +9,10 @@ import { scrollToHash, isInternalHashLink } from '@/utils/scroll-utils';
 interface MobileMenuProps {
     isOpen: boolean;
     onClose: () => void;
+    onLinkClick: (e: React.MouseEvent<HTMLElement>, href: string) => void;
 }
 
-export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+export default function MobileMenu({ isOpen, onClose, onLinkClick }: MobileMenuProps) {
     return (
         <AnimatePresence>
             {isOpen && (
@@ -22,7 +23,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     transition={{ type: "spring", damping: 25, stiffness: 200 }}
                     className="fixed top-0 left-0 w-full h-[100dvh] z-[70] lg:hidden bg-[#0a0a0a] flex flex-col pointer-events-auto"
                 >
-                    {/* Mobile Menu Header - Logo & X Inside */}
+                    {/* Header */}
                     <div className="flex items-center justify-between px-6 py-6 border-b border-white/5 bg-[#0a0a0a]/50 backdrop-blur-md">
                         <Link href="/" onClick={onClose} className="group flex items-center gap-2">
                             <span className="text-xl font-black tracking-tighter text-white">
@@ -37,7 +38,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                         </button>
                     </div>
 
-                    {/* Background elements */}
+                    {/* Background decoration */}
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         <div className="absolute -top-[10%] -right-[10%] w-[70%] h-[70%] bg-[#FFD700]/5 rounded-full blur-[120px]" />
                         <div className="absolute -bottom-[10%] -left-[10%] w-[70%] h-[70%] bg-[#FFD700]/5 rounded-full blur-[120px]" />
@@ -55,20 +56,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                                 >
                                     <Link
                                         href={link.href}
-                                        onClick={(e) => {
-                                            const hash = link.href.split('#')[1];
-                                            if (hash && isInternalHashLink(link.href, window.location.pathname)) {
-                                                e.preventDefault();
-                                                onClose();
-                                                // Pequeño retraso para que la animación de cierre del menú no interfiera
-                                                setTimeout(() => {
-                                                    scrollToHash(hash);
-                                                    window.history.pushState(null, '', link.href);
-                                                }, 300);
-                                            } else {
-                                                onClose();
-                                            }
-                                        }}
+                                        onClick={(e) => onLinkClick(e, link.href)}
                                         className="group flex items-center justify-between py-2"
                                     >
                                         <div className="flex flex-col">
@@ -113,7 +101,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                                 <p className="text-sm text-gray-400 mb-4">Transformamos tus ideas en realidades visuales impactantes.</p>
                                 <Link
                                     href="/planes"
-                                    onClick={onClose}
+                                    onClick={(e) => onLinkClick(e, '/planes')}
                                     className="flex items-center justify-center gap-2 py-4 bg-[#FFD700] text-black rounded-xl font-bold uppercase text-[10px] tracking-widest hover:scale-105 transition-transform"
                                 >
                                     Ver Planes <ExternalLink className="w-4 h-4" />
@@ -126,3 +114,4 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         </AnimatePresence>
     );
 }
+
