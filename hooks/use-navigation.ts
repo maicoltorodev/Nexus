@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { scrollToHash, isInternalHashLink } from '@/utils/scroll-utils';
+import { scrollToHash, isInternalHashLink, lockScroll, unlockScroll } from '@/utils/scroll-utils';
 
 export function useNavigation(controlledOpen?: boolean, onMenuToggle?: (open: boolean) => void) {
     const [internalOpen, setInternalOpen] = useState(false);
@@ -39,17 +39,25 @@ export function useNavigation(controlledOpen?: boolean, onMenuToggle?: (open: bo
             e.preventDefault();
             setMenuOpen(false);
 
+            // Bloqueamos la interacción del usuario para que no interrumpa el scroll
+            lockScroll();
+
             // Aumentamos el delay ligeramente para asegurar que el DOM se estabilice
             const delay = isMenuOpen ? 400 : 100;
+
             setTimeout(() => {
                 scrollToHash(hash);
                 window.history.pushState(null, '', href);
             }, delay);
 
             // "Pirueta final": Reforzamos la posición un segundo después por si hubo saltos de altura
+            // Mantener el bloqueo hasta que termine esta fase
             setTimeout(() => {
                 const element = document.getElementById(hash);
                 if (element) scrollToHash(hash);
+
+                // Desbloqueamos después de un breve momento tras la corrección final
+                setTimeout(unlockScroll, 100);
             }, delay + 1000);
         } else {
             setMenuOpen(false);
