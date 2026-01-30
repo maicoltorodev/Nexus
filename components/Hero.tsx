@@ -63,9 +63,9 @@ export default function Hero() {
             {/* Card blanca con texto ESTUDIO GRÁFICO */}
             <div className={`relative w-full max-w-[300px] sm:max-w-[420px] md:max-w-[500px] mx-auto mb-10 md:mb-16 px-4 transition-all duration-700 ${isXHovered ? 'x-hover-card' : ''}`} style={{ animation: 'fadeInUp 0.8s ease-out 1.2s both' }}>
               <div className="rounded-xl px-4 py-3 sm:px-6 sm:py-3 md:px-9 md:py-4 border bg-white shadow-xl animate-hero-card group cursor-pointer transition-all duration-500">
-                <p className="text-black text-center font-bold text-sm sm:text-base md:text-lg lg:text-xl uppercase relative z-10 transition-all duration-300 group-hover:text-[#FFD700]" style={{ letterSpacing: '0.3em' }}>
+                <h1 className="text-black text-center font-bold text-sm sm:text-base md:text-lg lg:text-xl uppercase relative z-10 transition-all duration-300 group-hover:text-[#FFD700]" style={{ letterSpacing: '0.3em' }}>
                   · ESTUDIO GRÁFICO ·
-                </p>
+                </h1>
               </div>
             </div>
             <h3 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-2 md:mb-3 max-w-2xl mx-auto font-semibold tracking-wide px-4 transition-all duration-500 ${isXHovered ? 'x-hover-text' : 'text-white'}`} style={{ animation: 'fadeInUp 0.8s ease-out 2.2s both' }}>
