@@ -5,13 +5,9 @@ export const scrollToHash = (hash: string) => {
     const element = document.getElementById(id);
 
     if (element) {
-        const offset = 80; // Compensates for the fixed navbar
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-        window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
+        element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
         });
     }
 };
