@@ -101,6 +101,31 @@ header {
   animation: fade-in 1s ease-out;
 }
 
+/* Animations that only apply on Desktop to improve Mobile LCP */
+.animate-fade-in-up-desktop {
+  opacity: 1;
+  /* Always visible on mobile by default */
+}
+
+@media (min-width: 768px) {
+  .animate-fade-in-up-desktop {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  .delay-500 {
+    animation-delay: 0.5s;
+  }
+}
+
 /* Animación de aparición de la X */
 @keyframes x-appear {
   0% {
