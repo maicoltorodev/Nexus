@@ -1,12 +1,5 @@
 @import "tailwindcss";
 
-html {
-  scroll-behavior: smooth;
-}
-
-
-
-
 .scroll-section {
   scroll-margin-top: 100px;
 }
