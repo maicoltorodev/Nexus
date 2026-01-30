@@ -13,10 +13,10 @@ export default function FadeInSection({ children, className, id }: FadeInSection
     return (
         <div id={id} className={`scroll-section ${className || ''} w-full`}>
             <motion.div
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-10%" }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+                viewport={{ once: true, margin: "-5%" }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
             >
                 {children}
             </motion.div>

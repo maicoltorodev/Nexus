@@ -168,7 +168,7 @@ header {
 .animate-spin-slow {
   animation: spin-clean 12s linear infinite;
   will-change: transform;
-  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+  /* Removed heavy drop-shadow for mobile */
 }
 
 @media (min-width: 768px) {
@@ -210,6 +210,17 @@ header {
   .energy-flow-css {
     animation: energy-flow 10s linear infinite;
     will-change: background-position;
+  }
+}
+
+.premium-shadow {
+  filter: none;
+  will-change: filter;
+}
+
+@media (min-width: 768px) {
+  .premium-shadow {
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
   }
 }
 
