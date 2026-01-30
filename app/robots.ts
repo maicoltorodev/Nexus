@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: ['/private/', '/admin/'],
         },
-        sitemap: 'https://nexustoprint.com/sitemap.xml',
+        sitemap: 'https://nexustoprint.vercel.app/sitemap.xml',
     };
 }

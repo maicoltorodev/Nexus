@@ -21,7 +21,7 @@ const orbitron = Orbitron({
 
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://nexustoprint.com'),
+  metadataBase: new URL('https://nexustoprint.vercel.app'),
   title: "Nexus Estudio Gráfico | Impresión Digital y Litográfica en Bogotá | Diseño Gráfico Profesional",
   description: "Nexus Estudio Gráfico ofrece soluciones profesionales en diseño e impresión digital y litográfica en Bogotá, Colombia. Tarjetas de presentación, volantes, gran formato, papelería comercial, promocionales y más. Servicio rápido, calidad premium y atención personalizada. Calle 71 # 69M - 05, Barrio La Estrada.",
   keywords: [
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "es_CO",
-    url: "https://nexustoprint.com",
+    url: "https://nexustoprint.vercel.app",
     siteName: "Nexus Estudio Gráfico",
     title: "Nexus Estudio Gráfico | Impresión Digital y Litográfica en Bogotá",
     description: "Soluciones profesionales en diseño e impresión digital y litográfica. Tarjetas, volantes, gran formato, papelería comercial y promocionales. Servicio rápido y calidad premium en Bogotá, Colombia.",
@@ -92,7 +92,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://nexustoprint.com",
+    canonical: "https://nexustoprint.vercel.app",
   },
   verification: {
     // Agregar códigos de verificación si los tienes
@@ -119,7 +119,7 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "Nexus Estudio Gráfico",
-    "image": "https://nexustoprint.com/imagen-meta-data.jpg",
+    "image": "https://nexustoprint.vercel.app/imagen-meta-data.jpg",
     "description": "Soluciones profesionales en diseño e impresión digital y litográfica en Bogotá, Colombia",
     "address": {
       "@type": "PostalAddress",
@@ -133,7 +133,7 @@ export default function RootLayout({
       "latitude": 4.682148050380403,
       "longitude": -74.09166590203546
     },
-    "url": "https://nexustoprint.com",
+    "url": "https://nexustoprint.vercel.app",
     "telephone": "+57-318-402-2999",
     "priceRange": "$$",
     "openingHoursSpecification": [

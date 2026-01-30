@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://nexustoprint.com';
+    const baseUrl = 'https://nexustoprint.vercel.app';
 
     return [
         {
