@@ -369,6 +369,51 @@ header {
   }
 }
 
+/* Crazy shake animation for FAB easter egg */
+@keyframes crazy-shake {
+
+  0%,
+  100% {
+    transform: translateX(0) translateY(0) rotate(0deg);
+  }
+
+  10% {
+    transform: translateX(-10px) translateY(-5px) rotate(-5deg);
+  }
+
+  20% {
+    transform: translateX(10px) translateY(5px) rotate(5deg);
+  }
+
+  30% {
+    transform: translateX(-8px) translateY(8px) rotate(-8deg);
+  }
+
+  40% {
+    transform: translateX(8px) translateY(-8px) rotate(8deg);
+  }
+
+  50% {
+    transform: translateX(-12px) translateY(3px) rotate(-3deg);
+  }
+
+  60% {
+    transform: translateX(12px) translateY(-3px) rotate(3deg);
+  }
+
+  70% {
+    transform: translateX(-6px) translateY(6px) rotate(-6deg);
+  }
+
+  80% {
+    transform: translateX(6px) translateY(-6px) rotate(6deg);
+  }
+
+  90% {
+    transform: translateX(-4px) translateY(4px) rotate(-4deg);
+  }
+}
+
 .logo-shimmer-container {
   position: absolute;
   inset: 0;

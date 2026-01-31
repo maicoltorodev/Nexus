@@ -167,7 +167,7 @@ export default function FloatingButton({ isMenuOpen }: { isMenuOpen?: boolean })
       )}
 
       {/* Botón FAB */}
-      <div style={{ animation: 'float 3s ease-in-out infinite' }}>
+      <div style={{ animation: showWaazaaaText ? 'crazy-shake 0.5s ease-in-out infinite' : 'float 3s ease-in-out infinite' }}>
         <button
           onClick={openWhatsApp}
           className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-[#FFD700] to-[#FFA500] shadow-2xl border-2 border-[#FFD700]/50 transition-transform duration-300"
