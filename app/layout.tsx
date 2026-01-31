@@ -237,7 +237,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} antialiased selection:bg-[#FFD700] selection:text-black`}
       >
         <CustomCursor />
         <MouseTrail />
