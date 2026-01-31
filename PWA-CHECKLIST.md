@@ -15,10 +15,16 @@
   - ✅ `icons` (múltiples tamaños incluyendo 192x192 y 512x512)
   - ✅ `shortcuts` (Servicios y Contacto)
 
-### 2. ✅ Service Worker
+### 2. ✅ Service Worker - **MEJORADO 2026-01-30**
 - **Ubicación**: `/public/sw.js`
 - **Estrategia**: Network First con fallback a Cache
 - **Registro**: Automático en `layout.tsx`
+- **Mejoras aplicadas**:
+  - ✅ Corregidas rutas de caché (eliminadas referencias a archivos inexistentes)
+  - ✅ Mejorado manejo de errores
+  - ✅ Solo cachea peticiones GET
+  - ✅ Fallback mejorado para navegación offline
+  - ✅ Versión actualizada: `nexus-pwa-v1`
 
 ### 3. ✅ Meta Tags PWA
 - ✅ `viewport` configurado correctamente
@@ -91,6 +97,22 @@ Application → Manifest
 
 Application → Service Workers
 - Debe mostrar "activated and is running"
+```
+
+### **4. Herramienta de Diagnóstico Integrada** ⭐ NUEVO
+```
+Accede a: https://nexustoprint.vercel.app/pwa-diagnostic.html
+
+Esta herramienta verifica automáticamente:
+- ✅ HTTPS habilitado
+- ✅ Service Worker registrado
+- ✅ Manifest válido y accesible
+- ✅ Iconos correctos
+- ✅ Display mode
+- ✅ Meta tags (viewport, theme-color)
+- ✅ Instalabilidad
+
+Muestra un score de 0-100% y detalles de cada verificación.
 ```
 
 ---

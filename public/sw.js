@@ -1,10 +1,9 @@
-// Service Worker para PWA
-const CACHE_NAME = 'nexus-v1';
+// Service Worker para PWA - Nexus Estudio Gráfico
+const CACHE_NAME = 'nexus-pwa-v1';
 const urlsToCache = [
     '/',
-    '/manifest.json',
-    '/icon-192x192.png',
-    '/icon-512x512.png',
+    '/planes',
+    '/manifest.webmanifest',
 ];
 
 // Instalación del Service Worker
@@ -38,21 +37,37 @@ self.addEventListener('activate', (event) => {
 
 // Estrategia: Network First, fallback to Cache
 self.addEventListener('fetch', (event) => {
+    // Solo cachear peticiones GET
+    if (event.request.method !== 'GET') return;
+
     event.respondWith(
         fetch(event.request)
             .then((response) => {
-                // Si la respuesta es válida, clonarla y guardarla en cache
-                if (response && response.status === 200) {
-                    const responseToCache = response.clone();
-                    caches.open(CACHE_NAME).then((cache) => {
-                        cache.put(event.request, responseToCache);
-                    });
+                // Solo cachear respuestas exitosas
+                if (!response || response.status !== 200 || response.type === 'error') {
+                    return response;
                 }
+
+                // Clonar la respuesta porque es un stream que solo se puede usar una vez
+                const responseToCache = response.clone();
+
+                caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, responseToCache);
+                });
+
                 return response;
             })
             .catch(() => {
                 // Si falla la red, intentar obtener desde cache
-                return caches.match(event.request);
+                return caches.match(event.request).then((cachedResponse) => {
+                    if (cachedResponse) {
+                        return cachedResponse;
+                    }
+                    // Si no hay cache, retornar una respuesta básica para navegación
+                    if (event.request.mode === 'navigate') {
+                        return caches.match('/');
+                    }
+                });
             })
     );
 });

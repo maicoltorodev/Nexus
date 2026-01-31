@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Diagnostic Tool - Nexus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .check-item {
+            background: #f8f9fa;
+            border-left: 4px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .check-item.success {
+            border-left-color: #10b981;
+            background: #ecfdf5;
+        }
+
+        .check-item.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .check-item.warning {
+            border-left-color: #f59e0b;
+            background: #fffbeb;
+        }
+
+        .check-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .check-description {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+        }
+
+        .icon.success::before {
+            content: '✅';
+        }
+
+        .icon.error::before {
+            content: '❌';
+        }
+
+        .icon.warning::before {
+            content: '⚠️';
+        }
+
+        .icon.loading::before {
+            content: '⏳';
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            margin-top: 30px;
+        }
+
+        .summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .summary h2 {
+            margin-bottom: 10px;
+        }
+
+        .summary .score {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        .install-prompt {
+            background: #10b981;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .install-prompt button {
+            background: white;
+            color: #10b981;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 PWA Diagnostic Tool</h1>
+        <p class="subtitle">Nexus Estudio Gráfico - Verificación de Instalabilidad</p>
+
+        <button onclick="runDiagnostics()">🚀 Ejecutar Diagnóstico</button>
+
+        <div id="results" class="results" style="display: none;">
+            <div class="summary">
+                <h2>Resultado del Diagnóstico</h2>
+                <div class="score" id="score">-</div>
+                <p id="scoreText">Ejecuta el diagnóstico para ver el resultado</p>
+            </div>
+
+            <div id="checks"></div>
+        </div>
+
+        <div id="installPrompt" class="install-prompt">
+            <h3>✨ ¡Tu PWA está lista para instalar!</h3>
+            <p>Haz click en el botón para instalar Nexus en tu dispositivo</p>
+            <button onclick="installPWA()">📱 Instalar Aplicación</button>
+        </div>
+    </div>
+
+    <script>
+        let deferredPrompt;
+        const checks = [];
+
+        // Capturar el evento de instalación
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').style.display = 'block';
+        });
+
+        function addCheck(title, status, description, details = '') {
+            checks.push({ title, status, description, details });
+        }
+
+        async function runDiagnostics() {
+            checks.length = 0;
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('checks').innerHTML = '';
+
+            // 1. Verificar HTTPS
+            const isHTTPS = window.location.protocol === 'https:';
+            addCheck(
+                'HTTPS Habilitado',
+                isHTTPS ? 'success' : 'error',
+                isHTTPS ? 'El sitio está servido sobre HTTPS' : 'El sitio debe estar en HTTPS para ser una PWA',
+                `Protocolo actual: ${window.location.protocol}`
+            );
+
+            // 2. Verificar Service Worker
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    if (registration) {
+                        addCheck(
+                            'Service Worker Registrado',
+                            'success',
+                            'El Service Worker está registrado y activo',
+                            `Scope: ${registration.scope}`
+                        );
+                    } else {
+                        addCheck(
+                            'Service Worker',
+                            'error',
+                            'No se encontró un Service Worker registrado',
+                            'Verifica que /sw.js esté accesible y se registre correctamente'
+                        );
+                    }
+                } catch (error) {
+                    addCheck(
+                        'Service Worker',
+                        'error',
+                        'Error al verificar el Service Worker',
+                        error.message
+                    );
+                }
+            } else {
+                addCheck(
+                    'Service Worker',
+                    'error',
+                    'Este navegador no soporta Service Workers',
+                    'Prueba en Chrome, Firefox, Edge o Safari moderno'
+                );
+            }
+
+            // 3. Verificar Manifest
+            try {
+                const manifestLink = document.querySelector('link[rel="manifest"]');
+                if (manifestLink) {
+                    const manifestUrl = manifestLink.href;
+                    const response = await fetch(manifestUrl);
+                    if (response.ok) {
+                        const manifest = await response.json();
+                        addCheck(
+                            'Web App Manifest',
+                            'success',
+                            'El manifest está accesible y es válido',
+                            `Name: ${manifest.name || manifest.short_name}`
+                        );
+
+                        // Verificar propiedades críticas
+                        if (manifest.icons && manifest.icons.length > 0) {
+                            const has192 = manifest.icons.some(icon => icon.sizes.includes('192'));
+                            const has512 = manifest.icons.some(icon => icon.sizes.includes('512'));
+                            
+                            if (has192 && has512) {
+                                addCheck(
+                                    'Iconos del Manifest',
+                                    'success',
+                                    'El manifest incluye iconos de 192x192 y 512x512',
+                                    `Total de iconos: ${manifest.icons.length}`
+                                );
+                            } else {
+                                addCheck(
+                                    'Iconos del Manifest',
+                                    'warning',
+                                    'Faltan iconos de tamaño requerido (192x192 o 512x512)',
+                                    'Se recomienda incluir ambos tamaños'
+                                );
+                            }
+                        }
+
+                        if (manifest.display === 'standalone' || manifest.display === 'fullscreen' || manifest.display === 'minimal-ui') {
+                            addCheck(
+                                'Display Mode',
+                                'success',
+                                `Display mode configurado correctamente: ${manifest.display}`,
+                                'La app se abrirá sin la barra del navegador'
+                            );
+                        } else {
+                            addCheck(
+                                'Display Mode',
+                                'warning',
+                                'Display mode no está optimizado para PWA',
+                                `Actual: ${manifest.display || 'no definido'}`
+                            );
+                        }
+                    } else {
+                        addCheck(
+                            'Web App Manifest',
+                            'error',
+                            'El manifest no es accesible',
+                            `HTTP ${response.status}: ${manifestUrl}`
+                        );
+                    }
+                } else {
+                    addCheck(
+                        'Web App Manifest',
+                        'error',
+                        'No se encontró el link al manifest en el HTML',
+                        'Agrega <link rel="manifest" href="/manifest.webmanifest">'
+                    );
+                }
+            } catch (error) {
+                addCheck(
+                    'Web App Manifest',
+                    'error',
+                    'Error al verificar el manifest',
+                    error.message
+                );
+            }
+
+            // 4. Verificar si es instalable
+            if (deferredPrompt) {
+                addCheck(
+                    'Instalabilidad',
+                    'success',
+                    '¡La app es instalable! El navegador ofrece la opción de instalación',
+                    'Haz click en el botón verde abajo para instalar'
+                );
+            } else {
+                addCheck(
+                    'Instalabilidad',
+                    'warning',
+                    'El navegador aún no ofrece la opción de instalación',
+                    'Navega por el sitio al menos 30 segundos o verifica los criterios anteriores'
+                );
+            }
+
+            // 5. Verificar viewport
+            const viewport = document.querySelector('meta[name="viewport"]');
+            if (viewport) {
+                addCheck(
+                    'Viewport Meta Tag',
+                    'success',
+                    'El viewport está configurado correctamente',
+                    viewport.content
+                );
+            } else {
+                addCheck(
+                    'Viewport Meta Tag',
+                    'warning',
+                    'No se encontró el meta tag viewport',
+                    'Recomendado para responsive design'
+                );
+            }
+
+            // 6. Verificar theme-color
+            const themeColor = document.querySelector('meta[name="theme-color"]');
+            if (themeColor) {
+                addCheck(
+                    'Theme Color',
+                    'success',
+                    'El theme color está definido',
+                    themeColor.content
+                );
+            } else {
+                addCheck(
+                    'Theme Color',
+                    'warning',
+                    'No se encontró el meta tag theme-color',
+                    'Recomendado para personalizar la barra de estado'
+                );
+            }
+
+            // Renderizar resultados
+            renderResults();
+        }
+
+        function renderResults() {
+            const checksContainer = document.getElementById('checks');
+            checksContainer.innerHTML = '';
+
+            const successCount = checks.filter(c => c.status === 'success').length;
+            const totalCount = checks.length;
+            const score = Math.round((successCount / totalCount) * 100);
+
+            document.getElementById('score').textContent = `${score}%`;
+            
+            let scoreText = '';
+            if (score >= 90) {
+                scoreText = '🎉 ¡Excelente! Tu PWA está lista';
+            } else if (score >= 70) {
+                scoreText = '👍 Bien, pero hay mejoras pendientes';
+            } else if (score >= 50) {
+                scoreText = '⚠️ Necesitas corregir algunos problemas';
+            } else {
+                scoreText = '❌ Hay problemas críticos que resolver';
+            }
+            document.getElementById('scoreText').textContent = scoreText;
+
+            checks.forEach(check => {
+                const checkDiv = document.createElement('div');
+                checkDiv.className = `check-item ${check.status}`;
+                
+                checkDiv.innerHTML = `
+                    <div class="check-title">
+                        <span class="icon ${check.status}"></span>
+                        ${check.title}
+                    </div>
+                    <div class="check-description">${check.description}</div>
+                    ${check.details ? `<div class="code-block">${check.details}</div>` : ''}
+                `;
+                
+                checksContainer.appendChild(checkDiv);
+            });
+        }
+
+        async function installPWA() {
+            if (!deferredPrompt) {
+                alert('La instalación no está disponible en este momento. Asegúrate de cumplir todos los criterios de PWA.');
+                return;
+            }
+
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            
+            if (outcome === 'accepted') {
+                alert('¡Gracias por instalar Nexus! 🎉');
+            }
+            
+            deferredPrompt = null;
+            document.getElementById('installPrompt').style.display = 'none';
+        }
+
+        // Auto-ejecutar al cargar
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                runDiagnostics();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
