@@ -198,9 +198,42 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
+        {/* PWA Meta Tags */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
+        <meta name="theme-color" content="#8b5cf6" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Nexus" />
+
+        {/* Apple Touch Icons - Next.js los genera automáticamente desde /app/apple-icon.png */}
+        <link rel="apple-touch-icon" href="/apple-icon.png" />
+
+
+        {/* Schema.org JSON-LD */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+
+        {/* Service Worker Registration */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').then(
+                    function(registration) {
+                      console.log('Service Worker registrado con éxito:', registration.scope);
+                    },
+                    function(err) {
+                      console.log('Fallo al registrar Service Worker:', err);
+                    }
+                  );
+                });
+              }
+            `,
+          }}
         />
       </head>
       <body
