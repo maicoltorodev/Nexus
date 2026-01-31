@@ -7,6 +7,7 @@ export const SECTION_IDS = {
     SERVICIOS: 'servicios',
     CALCULADORA: 'calculadora',
     TESTIMONIOS: 'testimonios',
+    SEGUIMIENTO: 'seguimiento',
     CONTACTO: 'contacto',
 };
 
@@ -17,6 +18,7 @@ export const NAV_LINKS = [
     { href: `/#${SECTION_IDS.SERVICIOS}`, label: 'Impresión', desc: 'Calidad litográfica' },
     { href: `/#${SECTION_IDS.CALCULADORA}`, label: 'Calculadora', desc: 'Cotiza al instante' },
     { href: `/#${SECTION_IDS.TESTIMONIOS}`, label: 'Opiniones', desc: 'Qué dicen de nosotros' },
+    { href: `/#${SECTION_IDS.SEGUIMIENTO}`, label: 'Proyectos', desc: 'Estado de tu proyecto' },
     { href: `/#${SECTION_IDS.CONTACTO}`, label: 'Contacto', desc: 'Hablemos de tu idea' }
 ];
 

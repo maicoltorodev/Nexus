@@ -111,4 +111,3 @@ export default function Navbar({ isMenuOpen: controlledOpen, onMenuToggle }: Nav
     </>
   );
 }
-

@@ -48,7 +48,9 @@
   --font-orbitron: var(--font-orbitron);
 }
 
+html,
 body {
+  scrollbar-gutter: stable;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
@@ -202,22 +204,41 @@ header {
   }
 }
 
-/* Scrollbar Styles */
+/* Scrollbar Styles - Ghost & Minimalist */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg-secondary);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-gold);
-  border-radius: 5px;
+  background: rgba(255, 215, 0, 0);
+  /* Invisible por defecto */
+  border-radius: 10px;
+  transition: background 0.3s ease;
 }
 
+/* Solo se ve el thumb cuando el usuario interactúa con el área */
+*:hover> ::-webkit-scrollbar-thumb,
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-orange);
+  background: rgba(255, 215, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgba(255, 215, 0, 0.6);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+*:hover {
+  scrollbar-color: rgba(255, 215, 0, 0.3) transparent;
 }
 
 /* InZidium Effects */
@@ -239,6 +260,24 @@ header {
 }
 
 /* Gradient animation for price */
+/* Línea de energía que fluye verticalmente */
+.sidebar-flow-line {
+  background: linear-gradient(to bottom,
+      #FFD700, #a855f7, #22d3ee, #FFD700, #a855f7, #22d3ee, #FFD700);
+  background-size: 100% 400%;
+  animation: sidebar-flow-logic 8s linear infinite;
+}
+
+@keyframes sidebar-flow-logic {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  100% {
+    background-position: 0% 100%;
+  }
+}
+
 @keyframes gradient {
   0% {
     background-position: 0% 50%;
@@ -247,6 +286,10 @@ header {
   100% {
     background-position: 200% 50%;
   }
+}
+
+.animate-gradient {
+  animation: gradient 3s linear infinite;
 }
 
 .premium-shadow {
@@ -461,5 +504,15 @@ header {
   *::before,
   *::after {
     cursor: none !important;
+  }
+}
+
+@keyframes move-bg {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 1rem 0;
   }
 }

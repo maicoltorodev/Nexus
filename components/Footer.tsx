@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -14,7 +14,6 @@ import {
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const pathname = usePathname();
 
   const footerLinks = {
     servicios: [
@@ -133,7 +132,6 @@ export default function Footer() {
           <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-gray-400">
             <Link href="#" className="hover:text-[#FFD700] transition-colors">Privacidad</Link>
             <Link href="#" className="hover:text-[#FFD700] transition-colors">Términos</Link>
-            <Link href="#" className="hover:text-[#FFD700] transition-colors">Cookies</Link>
           </div>
         </div>
       </div>

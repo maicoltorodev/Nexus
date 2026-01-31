@@ -2,9 +2,26 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function Hero() {
   const [isXHovered, setIsXHovered] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
+  const router = useRouter();
+
+  const handleSecretX = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const next = clickCount + 1;
+    setClickCount(next);
+
+    // Resetear contador si pasa mucho tiempo entre clicks (opcional, pero buena práctica)
+    // Por simplicidad, solo contaremos clicks directos
+
+    if (next >= 10) {
+      router.push('/admin');
+      setClickCount(0);
+    }
+  };
 
   return (
     <section id="inicio" className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-[#0a0a0a]">
@@ -35,6 +52,7 @@ export default function Hero() {
                 className="relative z-10 flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 animate-x-appear cursor-pointer"
                 onMouseEnter={() => setIsXHovered(true)}
                 onMouseLeave={() => setIsXHovered(false)}
+                onClick={handleSecretX}
               >
                 <Image
                   src="/X.webp"
