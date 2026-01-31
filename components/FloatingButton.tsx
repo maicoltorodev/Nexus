@@ -8,6 +8,7 @@ export default function FloatingButton({ isMenuOpen }: { isMenuOpen?: boolean })
   const [showHelpText, setShowHelpText] = useState(false);
   const [showCardText, setShowCardText] = useState(false);
   const [showCalculatorText, setShowCalculatorText] = useState(false);
+  const [showWaazaaaText, setShowWaazaaaText] = useState(false);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -36,10 +37,16 @@ export default function FloatingButton({ isMenuOpen }: { isMenuOpen?: boolean })
     const handleScroll = () => {
       const heroHeight = window.innerHeight;
       const scrollPosition = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      // Detectar si está en el fondo de la página (con un margen de 50px)
+      const isAtBottom = scrollPosition + windowHeight >= documentHeight - 50;
+      setShowWaazaaaText(isAtBottom);
 
       setIsVisible(scrollPosition > heroHeight * 0.8);
 
-      if (!showCalculatorText && !showCardText) {
+      if (!showCalculatorText && !showCardText && !isAtBottom) {
         const serviciosSection = document.getElementById('servicios');
         if (serviciosSection) {
           const serviciosTop = serviciosSection.offsetTop;
@@ -142,6 +149,17 @@ export default function FloatingButton({ isMenuOpen }: { isMenuOpen?: boolean })
         <div className="relative transition-all duration-500 opacity-100 translate-x-0">
           <div className="relative bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-[#0a0a0a] px-4 py-2 rounded-lg shadow-xl border-2 border-[#FFD700]/50 font-semibold text-sm md:text-base whitespace-nowrap">
             ¡Click y hacemos tu tarjeta!
+          </div>
+          {/* Flecha apuntando al botón */}
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full w-0 h-0 border-t-[6px] border-t-transparent border-l-[8px] border-l-[#FFD700] border-b-[6px] border-b-transparent"></div>
+        </div>
+      )}
+
+      {/* Easter Egg: Mensaje cuando llega al final */}
+      {showWaazaaaText && (
+        <div className="relative transition-all duration-500 opacity-100 translate-x-0 animate-bounce">
+          <div className="relative bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-[#0a0a0a] px-4 py-2 rounded-lg shadow-xl border-2 border-[#FFD700]/50 font-black text-sm md:text-base whitespace-nowrap">
+            WaaZaaaaa
           </div>
           {/* Flecha apuntando al botón */}
           <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full w-0 h-0 border-t-[6px] border-t-transparent border-l-[8px] border-l-[#FFD700] border-b-[6px] border-b-transparent"></div>

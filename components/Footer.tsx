@@ -126,7 +126,7 @@ export default function Footer() {
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* Bottom Bar */}
-        <div className="flex flex-col md:row items-center justify-between pt-12 border-t border-white/5 gap-6">
+        <div className="flex flex-col md:flex-row items-center justify-between pt-12 pb-16 border-t border-white/5 gap-6">
           <p className="text-gray-400 text-sm font-light">
             © {currentYear} <span className="text-white font-medium">NE<span className="text-[#FFD700] font-black">X</span>US</span>. Todos los derechos reservados.
           </p>
