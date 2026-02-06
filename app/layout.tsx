@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Orbitron } from "next/font/google";
+import { Geist, Geist_Mono, Orbitron, Jost } from "next/font/google";
 import "./globals.css";
 import MouseTrail from "@/components/MouseTrail";
 import CustomCursor from "@/components/CustomCursor";
 import { ToastProvider } from "./providers/ToastProvider";
+
+const jost = Jost({
+  variable: "--font-jost",
+  subsets: ["latin"],
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,7 +27,7 @@ const orbitron = Orbitron({
 
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://nexustoprint.vercel.app'),
+  metadataBase: new URL('https://www.nexustoprint.com'),
   title: "Nexus Estudio Gráfico | Impresión Digital y Litográfica en Bogotá | Diseño Gráfico Profesional",
   description: "Nexus Estudio Gráfico ofrece soluciones profesionales en diseño e impresión digital y litográfica en Bogotá, Colombia. Tarjetas de presentación, volantes, gran formato, papelería comercial, promocionales y más. Servicio rápido, calidad premium y atención personalizada. Calle 71 # 69M - 05, Barrio La Estrada.",
   keywords: [
@@ -61,7 +66,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "es_CO",
-    url: "https://nexustoprint.vercel.app",
+    url: "https://www.nexustoprint.com",
     siteName: "Nexus Estudio Gráfico",
     title: "Nexus Estudio Gráfico | Impresión Digital y Litográfica en Bogotá",
     description: "Soluciones profesionales en diseño e impresión digital y litográfica. Tarjetas, volantes, gran formato, papelería comercial y promocionales. Servicio rápido y calidad premium en Bogotá, Colombia.",
@@ -93,7 +98,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://nexustoprint.vercel.app",
+    canonical: "https://www.nexustoprint.com",
   },
   verification: {
     // Agregar códigos de verificación si los tienes
@@ -105,7 +110,7 @@ export const metadata: Metadata = {
   classification: "Estudio Gráfico",
   other: {
     "contact:phone_number": "+57 318 402 2999",
-    "contact:email": "nexustoprint@gmail.com",
+    "contact:email": "info@nexustoprint.com",
     "contact:address": "Calle 71 # 69M - 05, Barrio La Estrada, Bogotá, Colombia",
     "contact:business_hours": "Lunes a Viernes: 8:00 - 13:00 y 14:00 - 18:00",
   },
@@ -120,7 +125,7 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "Nexus Estudio Gráfico",
-    "image": "https://nexustoprint.vercel.app/imagen-meta-data.jpg",
+    "image": "https://www.nexustoprint.com/imagen-meta-data.jpg",
     "description": "Soluciones profesionales en diseño e impresión digital y litográfica en Bogotá, Colombia",
     "address": {
       "@type": "PostalAddress",
@@ -134,7 +139,7 @@ export default function RootLayout({
       "latitude": 4.682148050380403,
       "longitude": -74.09166590203546
     },
-    "url": "https://nexustoprint.vercel.app",
+    "url": "https://www.nexustoprint.com",
     "telephone": "+57-318-402-2999",
     "priceRange": "$$",
     "openingHoursSpecification": [
@@ -238,7 +243,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} antialiased selection:bg-[#FFD700] selection:text-black`}
+        className={`${jost.variable} ${geistSans.variable} ${geistMono.variable} ${orbitron.variable} antialiased selection:bg-[#FFD700] selection:text-black`}
       >
         <CustomCursor />
         <MouseTrail />

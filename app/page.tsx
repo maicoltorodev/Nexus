@@ -33,7 +33,7 @@ export default function Home() {
         <ProjectStatusSearch />
       </FadeInSection>
       <FadeInSection id="contacto">
-        <Contact />
+        <Contact key="contact-unified-v1" />
       </FadeInSection>
       <Footer />
     </ClientShell>

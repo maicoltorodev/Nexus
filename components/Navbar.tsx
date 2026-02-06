@@ -34,7 +34,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ isMenuOpen: controlledOpen, onMenuToggle }: NavbarProps) {
-  const { isMenuOpen, setMenuOpen, isScrolled } = useNavigation(controlledOpen, onMenuToggle);
+  const { isMenuOpen, setMenuOpen, isScrolled, activeSection } = useNavigation(controlledOpen, onMenuToggle);
 
   return (
     <>
@@ -71,16 +71,24 @@ export default function Navbar({ isMenuOpen: controlledOpen, onMenuToggle }: Nav
 
               {/* Desktop Menu */}
               <div className="hidden lg:flex items-center space-x-1">
-                {NAV_LINKS.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-[#FFD700] transition-colors relative group"
-                  >
-                    {link.label}
-                    <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-[#FFD700] scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
-                  </Link>
-                ))}
+                {NAV_LINKS.map((link) => {
+                  // Extraer el ID del href (ej: "/#inicio" -> "inicio")
+                  const linkId = link.href.replace('/#', '');
+                  const isActive = activeSection === linkId;
+                  
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={`px-4 py-2 text-sm font-medium transition-all duration-300 relative rounded-full ${isActive 
+                        ? 'bg-[#FFD700] text-black shadow-[0_0_15px_rgba(255,215,0,0.3)] font-bold scale-105' 
+                        : 'text-gray-300 hover:text-[#FFD700] hover:bg-white/5'
+                        }`}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
 
                 <div className="ml-6 pl-6 border-l border-white/10 flex items-center gap-4">
                   {SOCIAL_LINKS.map((social) => (

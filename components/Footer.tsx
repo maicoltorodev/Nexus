@@ -96,7 +96,7 @@ export default function Footer() {
               <ul className="space-y-4">
                 <li className="flex items-center gap-3 text-gray-300 text-sm font-light">
                   <Mail className="w-4 h-4 text-[#FFD700]" />
-                  <span>info@nexusstudio.com</span>
+                  <span>info@nexustoprint.com</span>
                 </li>
                 <li className="flex items-center gap-3 text-gray-300 text-sm font-light">
                   <Phone className="w-4 h-4 text-[#FFD700]" />
@@ -130,8 +130,8 @@ export default function Footer() {
             © {currentYear} <span className="text-white font-medium">NE<span className="text-[#FFD700] font-black">X</span>US</span>. Todos los derechos reservados.
           </p>
           <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-gray-400">
-            <Link href="#" className="hover:text-[#FFD700] transition-colors">Privacidad</Link>
-            <Link href="#" className="hover:text-[#FFD700] transition-colors">Términos</Link>
+            <Link href="/privacidad" className="hover:text-[#FFD700] transition-colors">Privacidad</Link>
+            <Link href="/terminos" className="hover:text-[#FFD700] transition-colors">Términos</Link>
           </div>
         </div>
       </div>
