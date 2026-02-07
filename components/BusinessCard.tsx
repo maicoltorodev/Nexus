@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useAnimationFrame } from 'framer-motion';
 import { QrCode } from 'lucide-react';
+import HoloXOverlay from './HoloXOverlay';
 
 const BusinessCard = () => {
     const [isRotating, setIsRotating] = useState(false);
@@ -46,6 +47,13 @@ const BusinessCard = () => {
         const r = img.naturalWidth / img.naturalHeight;
         if (Number.isFinite(r) && r > 0) setRatio(r);
     };
+
+    const XOverlay = () => (
+        <HoloXOverlay
+            src="/X.webp"
+            style={{ left: '-15%', top: '50%', width: '62%', height: '100%', transform: 'translateZ(2px) translateY(-50%)' }}
+        />
+    );
 
     return (
         <section className="relative py-32 px-4 overflow-hidden bg-[#050505]">
@@ -123,6 +131,7 @@ const BusinessCard = () => {
                                 </div>
                             </div>
                         )}
+                        <XOverlay />
                     </div>
 
                     <div className="absolute inset-0 rounded-none bg-[#0a0a0a] border border-[#FFD700]/10 flex flex-col items-center justify-center gap-4 md:gap-6 pointer-events-none"
