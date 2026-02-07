@@ -49,7 +49,7 @@ export default function Hero() {
               </div>
               {/* X - aparece primero, luego gira */}
               <div
-                className="relative z-10 flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 animate-x-appear cursor-pointer"
+                className="relative z-10 flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 md:w-24 md:h-24 animate-x-appear cursor-pointer"
                 onMouseEnter={() => setIsXHovered(true)}
                 onMouseLeave={() => setIsXHovered(false)}
                 onClick={handleSecretX}
@@ -57,11 +57,11 @@ export default function Hero() {
                 <Image
                   src="/X.webp"
                   alt="X"
-                  width={112}
-                  height={112}
+                  width={96}
+                  height={96}
                   className={`w-full h-full object-contain animate-spin-slow transition-[filter] duration-500 x-filter-base ${isXHovered ? 'x-hover-x' : ''}`}
                   priority
-                  sizes="(max-width: 768px) 80px, 112px"
+                  sizes="(max-width: 768px) 64px, 96px"
                 />
               </div>
               {/* US - se desliza desde el centro hacia la derecha */}
