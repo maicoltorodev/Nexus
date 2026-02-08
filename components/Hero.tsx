@@ -1,100 +1,45 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 
 export default function Hero() {
-  const [isXHovered, setIsXHovered] = useState(false);
-  const [clickCount, setClickCount] = useState(0);
-  const router = useRouter();
-
-  const handleSecretX = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const next = clickCount + 1;
-    setClickCount(next);
-
-    // Resetear contador si pasa mucho tiempo entre clicks (opcional, pero buena práctica)
-    // Por simplicidad, solo contaremos clicks directos
-
-    if (next >= 10) {
-      router.push('/admin');
-      setClickCount(0);
-    }
-  };
 
   return (
     <section id="inicio" className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-[#0a0a0a]">
       {/* Efecto de brillo dorado sutil optimizado */}
       <div className="absolute inset-0 opacity-20 md:opacity-100 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.08) 0%, transparent 60%)' }}></div>
 
-      {/* Contenido principal */}
+      {/* Contenido principal (solo texto) */}
       <div className="relative z-10 w-full h-full flex flex-col items-center justify-center text-center px-4">
-        <div className="max-w-4xl mx-auto space-y-3 md:space-y-8 pt-2 md:pt-0 pb-8 md:pb-0">
-          {/* Container para todos los elementos excepto el botón */}
-          <div className="relative w-full rounded-2xl p-6 md:p-8 x-container-base">
-            {/* Logo dividido en 3 partes */}
-            <div className="relative w-full max-w-xl mx-auto mb-0 md:mb-2 flex items-center justify-center gap-1 md:gap-4">
-              {/* NE - se desliza desde el centro hacia la izquierda */}
-              <div className={`relative flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 md:w-40 md:h-40 animate-slide-left transition-all duration-500 ${isXHovered ? 'x-hover-ne' : ''}`}>
-                <Image
-                  src="/NE.webp"
-                  alt="NE"
-                  width={160}
-                  height={160}
-                  className="w-full h-full object-contain premium-shadow"
-                  priority
-                  sizes="(max-width: 768px) 100px, 160px"
-                />
-              </div>
-              {/* X - aparece primero, luego gira */}
-              <div
-                className="relative z-10 flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 md:w-24 md:h-24 animate-x-appear cursor-pointer"
-                onMouseEnter={() => setIsXHovered(true)}
-                onMouseLeave={() => setIsXHovered(false)}
-                onClick={handleSecretX}
-              >
-                <Image
-                  src="/X.webp"
-                  alt="X"
-                  width={96}
-                  height={96}
-                  className={`w-full h-full object-contain animate-spin-slow transition-[filter] duration-500 x-filter-base ${isXHovered ? 'x-hover-x' : ''}`}
-                  priority
-                  sizes="(max-width: 768px) 64px, 96px"
-                />
-              </div>
-              {/* US - se desliza desde el centro hacia la derecha */}
-              <div className={`relative flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 md:w-40 md:h-40 animate-slide-right transition-all duration-500 ${isXHovered ? 'x-hover-us' : ''}`}>
-                <Image
-                  src="/US.webp"
-                  alt="US"
-                  width={160}
-                  height={160}
-                  className="w-full h-full object-contain premium-shadow"
-                  priority
-                  sizes="(max-width: 768px) 100px, 160px"
-                />
-              </div>
+        <div className="max-w-4xl mx-auto space-y-0 group">
+          <div className="relative mx-auto w-[55vw] sm:w-[50vw] md:w-[42vw] lg:w-[36vw] max-w-[640px]">
+            <Image
+              src="/hero-logo.webp"
+              alt="Nexus"
+              width={800}
+              height={800}
+              className="w-full h-auto object-contain block"
+              priority
+              sizes="(max-width: 640px) 55vw, (max-width: 768px) 50vw, (max-width: 1024px) 42vw, 36vw"
+            />
+            <div className="absolute inset-0 pointer-events-none flex items-center justify-center -translate-y-7">
+              <Image
+                src="/X.webp"
+                alt="X"
+                width={256}
+                height={256}
+                className="w-[28%] sm:w-[24%] md:w-[20%] lg:w-[18%] h-auto object-contain animate-spin-slow transition-all duration-300 group-hover:drop-shadow-[0_0_30px_rgba(255,215,0,0.8)]"
+                priority
+                sizes="(max-width: 640px) 28vw, (max-width: 768px) 24vw, (max-width: 1024px) 20vw, 18vw"
+              />
             </div>
-
-            {/* Card blanca con texto ESTUDIO GRÁFICO */}
-            <div className={`relative w-full max-w-[300px] sm:max-w-[420px] md:max-w-[500px] mx-auto mb-10 md:mb-16 px-4 transition-all duration-700 animate-fade-in-up-desktop delay-200 ${isXHovered ? 'x-hover-card' : ''}`}>
-              <div className="rounded-xl px-4 py-3 sm:px-6 sm:py-3 md:px-9 md:py-4 border bg-white shadow-xl animate-hero-card group cursor-pointer transition-all duration-500">
-                <h1 className="text-black text-center font-bold text-sm sm:text-base md:text-lg lg:text-xl uppercase relative z-10 transition-all duration-300 group-hover:text-[#FFD700]" style={{ letterSpacing: '0.3em' }}>
-                  · ESTUDIO GRÁFICO ·
-                </h1>
-              </div>
-            </div>
-            <h2 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-2 md:mb-3 max-w-2xl mx-auto font-semibold tracking-wide px-4 transition-all duration-500 animate-fade-in-up-desktop delay-400 ${isXHovered ? 'x-hover-text' : 'text-white'}`}>
-              ¿Tienes una idea?
-            </h2>
-            <p className={`text-sm sm:text-base md:text-lg lg:text-xl mb-4 md:mb-10 max-w-2xl mx-auto leading-relaxed font-light tracking-wide px-4 transition-all duration-500 animate-fade-in-up-desktop delay-500 ${isXHovered ? 'x-hover-text' : 'text-gray-400'}`}>
-              Realizamos todo tipo de impresión digital y litográfica, en diferentes materiales, tamaños y formas.
-            </p>
           </div>
-
-
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl mt-2 mb-0 max-w-2xl mx-auto font-semibold tracking-wide px-4 transition-all duration-500 animate-fade-in-up-desktop delay-400 text-white">
+            ¿Tienes una idea?
+          </h2>
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl mb-4 md:mb-10 max-w-2xl mx-auto leading-relaxed font-light tracking-wide px-4 transition-all duration-300 animate-fade-in-up-desktop delay-500 text-gray-400 group-hover:text-white">
+            Realizamos todo tipo de impresión digital y litográfica, en diferentes materiales, tamaños y formas.
+          </p>
         </div>
       </div>
 
