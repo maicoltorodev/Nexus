@@ -14,8 +14,8 @@ export default function CalculadoraCorte() {
     const [sheetH, setSheetH] = useState<number>(70);
     const [cutW, setCutW] = useState<number>(9);
     const [cutH, setCutH] = useState<number>(5);
-    const [margin, setMargin] = useState<number>(1);
-    const [gap, setGap] = useState<number>(0.3);
+    const [margin, setMargin] = useState<number>(0);
+    const [gap, setGap] = useState<number>(0);
     const [neededQty, setNeededQty] = useState<number>(1000);
     const [sheetPrice, setSheetPrice] = useState<number>(1500); // Cost per full sheet
     const [sellPrice, setSellPrice] = useState<number>(500); // Selling price per cut
