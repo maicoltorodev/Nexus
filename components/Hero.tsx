@@ -23,16 +23,16 @@ export default function Hero() {
               draggable={false}
               sizes="(max-width: 640px) 55vw, (max-width: 768px) 50vw, (max-width: 1024px) 42vw, 36vw"
             />
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-center -translate-y-7">
+            <div className="absolute inset-0 pointer-events-none flex items-center justify-center -translate-y-[10%]">
               <Image
                 src="/X.webp"
                 alt="X"
                 width={256}
                 height={256}
-                className="w-[28%] sm:w-[24%] md:w-[20%] lg:w-[18%] h-auto object-contain animate-spin-slow transition-all duration-300 group-hover:drop-shadow-[0_0_30px_rgba(255,215,0,0.8)] select-none pointer-events-none"
+                className="w-[18%] h-auto object-contain animate-spin-slow transition-all duration-300 group-hover:drop-shadow-[0_0_30px_rgba(255,215,0,0.8)] select-none pointer-events-none"
                 priority
                 draggable={false}
-                sizes="(max-width: 640px) 28vw, (max-width: 768px) 24vw, (max-width: 1024px) 20vw, 18vw"
+                sizes="(max-width: 640px) 15vw, (max-width: 768px) 12vw, 10vw"
               />
             </div>
           </div>
