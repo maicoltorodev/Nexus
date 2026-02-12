@@ -27,24 +27,52 @@ export default function CalculadoraCorte() {
 
         if (effW <= 0 || effH <= 0 || cutW <= 0 || cutH <= 0) return null;
 
-        const calcGrid = (sW: number, sH: number, cW: number, cH: number) => {
-            const cols = Math.floor((sW + gap) / (cW + gap));
-            const rows = Math.floor((sH + gap) / (cH + gap));
-            return { cols, rows, total: Math.max(0, cols * rows) };
+        const getLayout = (sW: number, sH: number, cW: number, cH: number) => {
+            const mainCols = Math.floor((sW + gap) / (cW + gap));
+            const mainRows = Math.floor((sH + gap) / (cH + gap));
+            if (mainCols <= 0 || mainRows <= 0) return { total: 0, parts: [] };
+
+            const mainTotal = mainCols * mainRows;
+            const usedW = mainCols * (cW + gap) - gap;
+            const usedH = mainRows * (cH + gap) - gap;
+            const mainPart = { type: 'main', cols: mainCols, rows: mainRows, w: cW, h: cH, total: mainTotal, x: 0, y: 0 };
+
+            // Extra Right
+            const remW = sW - usedW;
+            const extraR_Cols = Math.floor(remW / (cH + gap));
+            const extraR_Rows = Math.floor((sH + gap) / (cW + gap));
+            const extraR_Total = Math.max(0, extraR_Cols * extraR_Rows);
+
+            // Extra Bottom
+            const remH = sH - usedH;
+            const extraB_Rows = Math.floor(remH / (cW + gap));
+            const extraB_Cols = Math.floor((sW + gap) / (cH + gap));
+            const extraB_Total = Math.max(0, extraB_Cols * extraB_Rows);
+
+            if (extraR_Total > 0 && extraR_Total >= extraB_Total) {
+                return {
+                    total: mainTotal + extraR_Total,
+                    parts: [mainPart, { type: 'extra', cols: extraR_Cols, rows: extraR_Rows, w: cH, h: cW, total: extraR_Total, x: usedW + gap, y: 0 }]
+                };
+            } else if (extraB_Total > 0) {
+                return {
+                    total: mainTotal + extraB_Total,
+                    parts: [mainPart, { type: 'extra', cols: extraB_Cols, rows: extraB_Rows, w: cH, h: cW, total: extraB_Total, x: 0, y: usedH + gap }]
+                };
+            }
+            return { total: mainTotal, parts: [mainPart] };
         };
 
-        const opt1 = calcGrid(effW, effH, cutW, cutH);
-        const opt2 = calcGrid(effW, effH, cutH, cutW);
+        const layout1 = getLayout(effW, effH, cutW, cutH);
+        const layout2 = getLayout(effW, effH, cutH, cutW);
 
-        const best = opt1.total >= opt2.total
-            ? { ...opt1, orientation: 'normal' as const }
-            : { ...opt2, orientation: 'rotated' as const };
+        const best = layout1.total >= layout2.total ? layout1 : layout2;
 
         const totalArea = sheetW * sheetH;
         const usedArea = best.total * (cutW * cutH);
         const wastePercent = totalArea > 0 ? ((totalArea - usedArea) / totalArea) * 100 : 0;
 
-        const totalMaterialCost = Math.ceil(neededQty / best.total) * sheetPrice;
+        const totalMaterialCost = Math.ceil(neededQty / Math.max(1, best.total)) * sheetPrice;
         const totalRevenue = neededQty * sellPrice;
         const profit = totalRevenue - totalMaterialCost;
 
@@ -52,12 +80,10 @@ export default function CalculadoraCorte() {
             ...best,
             sheetW,
             sheetH,
-            cutW: best.orientation === 'normal' ? cutW : cutH,
-            cutH: best.orientation === 'normal' ? cutH : cutW,
             origCutW: cutW,
             origCutH: cutH,
             wastePercent,
-            pliegos: Math.ceil(neededQty / best.total) || 0,
+            pliegos: Math.ceil(neededQty / Math.max(1, best.total)) || 0,
             totalMaterialCost,
             totalRevenue,
             profit
@@ -346,7 +372,7 @@ export default function CalculadoraCorte() {
                                 <div className="bg-white/5 rounded-2xl p-4 border border-white/5 flex items-center gap-3">
                                     <Info className="w-4 h-4 text-gray-500" />
                                     <p className="text-[10px] text-gray-500 italic leading-snug">
-                                        Tip: Nexus optimiza la rotación para maximizar el ROI.
+                                        Tip: Nexus ahora utiliza algoritmos de corte mixto para maximizar el aprovechamiento.
                                     </p>
                                 </div>
 
@@ -463,8 +489,6 @@ function MainLayoutPreview({ data, gap, margin }: { data: any, gap: number, marg
     const vSheetH = data.sheetH * scale;
     const vMargin = margin * scale;
     const vGap = gap * scale;
-    const drawCutW = data.cutW * scale;
-    const drawCutH = data.cutH * scale;
 
     return (
         <div ref={containerRef} className="w-full h-full flex items-center justify-center">
@@ -475,40 +499,41 @@ function MainLayoutPreview({ data, gap, margin }: { data: any, gap: number, marg
                     <div className="absolute -bottom-10 left-10 right-10 h-2 bg-black/40 blur-2xl rounded-full"></div>
 
                     {/* Margin area */}
-                    <div className="absolute bg-[#F5F5F5] border-2 border-dashed border-gray-300"
+                    <div className="absolute bg-[#F5F5F5] border-2 border-dashed border-gray-300 overflow-hidden"
                         style={{ inset: vMargin }}>
-                    </div>
 
-                    {/* Grid of Cuts */}
-                    <div
-                        className="relative flex flex-wrap content-start"
-                        style={{
-                            width: data.cols * (drawCutW + vGap) - vGap,
-                            height: data.rows * (drawCutH + vGap) - vGap,
-                            gap: vGap
-                        }}
-                    >
-                        {Array.from({ length: Math.min(data.total, 400) }).map((_, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                whileHover={{
-                                    scale: 1.1,
-                                    zIndex: 50,
-                                    boxShadow: "0 10px 25px rgba(255, 215, 0, 0.4)"
-                                }}
-                                className="relative bg-[#FFD700] rounded-[2px] border-[0.5px] border-black/10 cursor-pointer overflow-hidden flex items-center justify-center group/cut"
-                                style={{ width: drawCutW, height: drawCutH }}
-                            >
-                                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
-                                <div className="absolute inset-0 bg-gradient-to-br from-[#FFD700] via-[#FFA500] to-[#FF4500] opacity-0 group-hover/cut:opacity-100 transition-all duration-300"></div>
-                                <span className="relative z-20 text-[7px] text-black font-black opacity-30 group-hover/cut:opacity-80 transition-all">
-                                    {i + 1}
-                                </span>
-                                <div className="absolute inset-0 translate-x-[-100%] group-hover/cut:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12"></div>
-                            </motion.div>
-                        ))}
+                        <div className="relative w-full h-full">
+                            {data.parts.map((part: any, pIdx: number) => (
+                                <div key={pIdx} className="absolute flex flex-wrap content-start" style={{
+                                    left: part.x * scale,
+                                    top: part.y * scale,
+                                    width: part.cols * (part.w * scale + vGap) + 1, // buffer
+                                    gap: vGap
+                                }}>
+                                    {Array.from({ length: Math.min(part.total, 400) }).map((_, i) => (
+                                        <motion.div
+                                            key={i}
+                                            initial={{ opacity: 0, scale: 0.8 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            whileHover={{
+                                                scale: 1.1,
+                                                zIndex: 50,
+                                                boxShadow: "0 10px 25px rgba(255, 215, 0, 0.4)"
+                                            }}
+                                            className={`relative ${part.type === 'main' ? 'bg-[#FFD700]' : 'bg-[#FFA500]'} rounded-[2px] border-[0.5px] border-black/10 cursor-pointer overflow-hidden flex items-center justify-center group/cut shadow-sm`}
+                                            style={{ width: part.w * scale, height: part.h * scale }}
+                                        >
+                                            <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+                                            <div className="absolute inset-0 bg-gradient-to-br from-[#FFD700] via-[#FFA500] to-[#FF4500] opacity-0 group-hover/cut:opacity-100 transition-all duration-300"></div>
+                                            <span className="relative z-20 text-[7px] text-black font-black opacity-30 group-hover/cut:opacity-80 transition-all">
+                                                {part.type === 'main' ? i + 1 : `+${i + 1}`}
+                                            </span>
+                                            <div className="absolute inset-0 translate-x-[-100%] group-hover/cut:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12"></div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 

@@ -1,8 +1,32 @@
 'use client';
 
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Hero() {
+  const [clickCount, setClickCount] = useState(0);
+  const router = useRouter();
+
+  const handleXClick = () => {
+    setClickCount((prev) => {
+      const next = prev + 1;
+      if (next === 7) {
+        router.push('/admin');
+        return 0;
+      }
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    if (clickCount > 0) {
+      const timer = setTimeout(() => {
+        setClickCount(0);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [clickCount]);
 
   return (
     <section id="inicio" className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-[#0a0a0a]">
@@ -29,10 +53,11 @@ export default function Hero() {
                 alt="X"
                 width={256}
                 height={256}
-                className="w-[18%] h-auto object-contain animate-spin-slow transition-all duration-300 group-hover:drop-shadow-[0_0_30px_rgba(255,215,0,0.8)] select-none pointer-events-none"
+                className="w-[18%] h-auto object-contain animate-spin-slow transition-all duration-300 group-hover:drop-shadow-[0_0_30px_rgba(255,215,0,0.8)] select-none pointer-events-auto cursor-default active:scale-95 transition-transform"
                 priority
                 draggable={false}
                 sizes="(max-width: 640px) 15vw, (max-width: 768px) 12vw, 10vw"
+                onClick={handleXClick}
               />
             </div>
           </div>
