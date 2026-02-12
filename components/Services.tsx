@@ -1,178 +1,182 @@
 'use client';
 
-import { useViewportCenter } from '@/hooks/useViewportCenter';
-import { useRef, useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Zap, Target, Layers, Layout, Maximize, Palette, ShieldCheck } from 'lucide-react';
 
 const services = [
   {
     id: 1,
-    title: 'Tarjetas',
-    description: 'Tarjetas de presentación de alta calidad en diferentes materiales y acabados. Visita, comerciales y corporativas con opciones en papel couché, reciclado, relieve y barniz UV.',
-    image: '/servicios/tarjetas.webp',
-    icon: (
-      <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-      </svg>
-    )
+    title: 'Impresión Digital',
+    description: 'Impresión de alta calidad para cuadernos, revistas, posters, adhesivos, habladores, tarjetas y volantes. Soluciones versátiles para cada proyecto.',
+    image: '/servicios/impresion-digital.webp',
+    icon: <Layers className="w-8 h-8" />,
+    tag: 'Versatilidad'
   },
   {
     id: 2,
-    title: 'Volantes',
-    description: 'Volantes publicitarios efectivos para promocionar tus productos y servicios. Impresión en una o dos caras, con opción de numeración para eventos y diseños impactantes.',
-    image: '/servicios/volantes.webp',
-    icon: (
-      <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
-    )
+    title: 'Impresión Gran Formato',
+    description: 'Banners, vinilos y microperforados de hasta 150cm de ancho. Incluimos servicios profesionales de laminado, terminados e instalación.',
+    image: '/servicios/impresion-gran-formato.webp',
+    icon: <Maximize className="w-8 h-8" />,
+    tag: 'Impacto'
   },
   {
     id: 3,
-    title: 'Impresión Digital',
-    description: 'Impresión digital de alta resolución para folletos, revistas, catálogos, adhesivos y materiales metalizados. Tecnología de vanguardia con colores vibrantes y acabados profesionales.',
-    image: '/servicios/impresion.webp',
-    icon: (
-      <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-      </svg>
-    )
+    title: 'Diseño Gráfico',
+    description: 'Diseño y diagramación experta: logotipos, piezas gráficas, folletos y carpetas corporativas. Creamos el ADN visual de tu marca.',
+    image: '/servicios/diseño-grafico.webp',
+    icon: <Palette className="w-8 h-8" />,
+    tag: 'Creatividad'
   },
   {
     id: 4,
-    title: 'Gran Formato',
-    description: 'Impresión en gran formato para máxima visibilidad. Banners, vinilos, panaflex, materiales microperforados y retablos. Perfectos para eventos, fachadas y publicidad exterior.',
-    image: '/servicios/gran-formato.webp',
-    icon: (
-      <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-      </svg>
-    )
+    title: 'Material P.O.P',
+    description: 'Impresión en rígidos, estampado y sublimación. Expertos en botones, manillas, agendas y habladores personalizados para tu marca.',
+    image: '/servicios/material-pop.webp',
+    icon: <Target className="w-8 h-8" />,
+    tag: 'Promoción'
   },
   {
     id: 5,
-    title: 'Papelería Comercial',
-    description: 'Papelería corporativa profesional para tu negocio. Facturas, recibos, membretes y documentos comerciales con diseño personalizado e impresión láser de alta calidad.',
-    image: '/servicios/papeleria.webp',
-    icon: (
-      <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
-    )
+    title: 'Plotter de Corte',
+    description: 'Semicorte preciso en vinilos textiles, frost, adhesivos y tornasol. Rotulación de color o impresa con acabados laminados profesionales.',
+    image: '/servicios/plotter-corte.webp',
+    icon: <Layout className="w-8 h-8" />,
+    tag: 'Precisión'
   },
   {
     id: 6,
-    title: 'Promocionales',
-    description: 'Artículos promocionales personalizados. Manillas VIP, esferos corporativos, bolsas ecológicas, termos y más para fortalecer tu marca.',
-    image: '/servicios/promocionales.webp',
-    icon: (
-      <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-      </svg>
-    )
+    title: 'Corte Láser',
+    description: 'Corte y grabado en acrílico, poliestireno y MDF. Creamos llaveros, trofeos y avisos con acabados industriales de alta definición.',
+    image: '/servicios/corte-laser.webp',
+    icon: <Zap className="w-8 h-8" />,
+    tag: 'Tecnología'
+  },
+  {
+    id: 7,
+    title: 'Troquelado',
+    description: 'Troqueles en madera con cuchillas de alta durabilidad. Cortes limpios con formas personalizadas que hacen tus trabajos únicos y llamativos.',
+    image: '/servicios/troquelado.webp',
+    icon: <ShieldCheck className="w-8 h-8" />,
+    tag: 'Acabados'
   }
 ];
 
 export default function Services() {
-  const { centeredId, registerElement } = useViewportCenter();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
   const openWhatsApp = (serviceTitle: string) => {
-    const phoneNumber = '573184022999'; // Número sin espacios, con código de país
-    const message = encodeURIComponent(`Hola, estoy interesado por el servicio ${serviceTitle}.`);
+    const phoneNumber = '573184022999';
+    const message = encodeURIComponent(`Hola Nexus, me interesa información premium sobre: ${serviceTitle}.`);
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
     window.open(whatsappUrl, '_blank');
   };
 
-
-
   return (
-    <section className="relative py-32 overflow-hidden bg-[#0a0a0a]">
-      {/* Efecto de brillo dorado sutil optimizado */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.08) 0%, transparent 60%)' }}></div>
-      {/* Efecto de fondo decorativo */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-0 right-1/4 w-72 md:w-96 h-72 md:h-96 bg-[#FFD700] rounded-full blur-xl md:blur-3xl"></div>
-        <div className="absolute bottom-0 left-1/4 w-72 md:w-96 h-72 md:h-96 bg-[#FFA500] rounded-full blur-xl md:blur-3xl"></div>
+    <section id="servicios" className="relative py-32 bg-[#050505] overflow-hidden">
+      {/* Background Ambience */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#FFD700]/5 rounded-full blur-[150px] opacity-30"></div>
+        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-[#FFA500]/5 rounded-full blur-[150px] opacity-30"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header mejorado */}
-        <div className="text-center mb-16">
-          <div className="inline-block mb-4 px-4 py-2 rounded-full border border-[#FFD700]/30 bg-[#FFD700]/5">
-            <span className="text-sm font-semibold text-[#FFD700] tracking-wider uppercase">Nuestro Portafolio</span>
-          </div>
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight">
-            Soluciones <span className="bg-gradient-to-r from-[#FFD700] to-[#FFA500] bg-clip-text text-transparent">Gráficas y Publicitarias</span>
-          </h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed font-light">
-            Desarrollamos soluciones de alto impacto diseñadas exclusivamente <span className="text-white font-medium">para ti y tu negocio</span>.
-          </p>
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="mb-24 text-center lg:text-left">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6"
+          >
+            <div className="w-2 h-2 rounded-full bg-[#FFD700] animate-pulse"></div>
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#FFD700]">High Impact Solutions</span>
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-5xl md:text-7xl font-black text-white italic tracking-tighter uppercase leading-none"
+          >
+            Ingeniería <span className="text-[#FFD700]">Visual</span>
+          </motion.h2>
+          <div className="w-24 h-1 bg-[#FFD700] mt-8 hidden lg:block rounded-full"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service) => {
-            const isCentered = isMobile && centeredId === service.id.toString();
-
-            return (
-              <div
-                key={service.id}
-                ref={(el) => registerElement(service.id.toString(), el)}
-                onClick={() => openWhatsApp(service.title)}
-                className={`group relative bg-[#111] rounded-3xl border transition-all duration-300 overflow-hidden cursor-pointer min-h-[460px] will-change-[border-color]
-                  ${isCentered
-                    ? 'border-[#FFD700]'
-                    : 'border-[#FFD700]/10 shadow-xl'} 
-                  md:shadow-2xl md:hover:border-[#FFD700]/40 md:hover:-translate-y-2 md:hover:shadow-[0_20px_60px_rgba(255,215,0,0.15)]`}
+        <div className="space-y-40">
+          {services.map((service, index) => (
+            <div
+              key={service.id}
+              className={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-12 lg:gap-24`}
+            >
+              {/* Image Container with 700x450 Aspect Ratio */}
+              <motion.div
+                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, ease: "circOut" }}
+                viewport={{ once: true, margin: "-100px" }}
+                className="w-full lg:w-3/5"
               >
-                <div className="absolute top-0 left-0 right-0 h-[40%] overflow-hidden">
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={service.image}
-                      alt={service.title}
-                      fill
-                      className={`object-cover transition-transform duration-700 md:group-hover:scale-110`}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/60 via-transparent to-transparent"></div>
-                    <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FFD700]/30 to-transparent"></div>
+                <div
+                  onClick={() => openWhatsApp(service.title)}
+                  className="relative aspect-[700/450] rounded-[40px] overflow-hidden group border border-white/5 cursor-pointer shadow-2xl"
+                >
+                  <Image
+                    src={service.image}
+                    alt={service.title}
+                    fill
+                    className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                    sizes="(max-width: 1024px) 100vw, 60vw"
+                  />
+                  {/* Premium Overlays */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+                  <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-[40px]"></div>
+
+                  {/* Dynamic Corner Detail */}
+                  <div className="absolute bottom-6 right-6 p-4 bg-black/40 backdrop-blur-md rounded-2xl border border-white/10 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                    <ArrowRight className="w-6 h-6 text-[#FFD700]" />
+                  </div>
+
+                  <div className="absolute top-6 left-6 px-4 py-2 bg-black/60 backdrop-blur-md rounded-xl border border-white/10">
+                    <span className="text-[10px] font-black text-white tracking-[0.2em] uppercase">Service {service.id.toString().padStart(2, '0')}</span>
                   </div>
                 </div>
+              </motion.div>
 
-                <div className="relative z-10 flex flex-col h-full pt-44 pb-8 px-8">
-                  <div className={`mb-6 p-4 w-fit rounded-2xl bg-gradient-to-br from-[#FFD700]/20 to-[#FFA500]/20 backdrop-blur-md border transition-all duration-500 text-[#FFD700] shadow-lg 
-                    ${isCentered ? 'border-[#FFD700]/50' : 'border-[#FFD700]/50 md:group-hover:scale-110 md:group-hover:border-[#FFD700]'}`}>
+              {/* Text Content */}
+              <motion.div
+                initial={{ opacity: 0, x: index % 2 === 0 ? 50 : -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, ease: "circOut", delay: 0.2 }}
+                viewport={{ once: true, margin: "-100px" }}
+                className="w-full lg:w-2/5 space-y-6 text-center lg:text-left"
+              >
+                <div className="flex items-center justify-center lg:justify-start gap-4">
+                  <div className="w-14 h-14 bg-[#FFD700] rounded-2xl flex items-center justify-center text-black shadow-[0_0_30px_rgba(255,215,0,0.3)]">
                     {service.icon}
                   </div>
-                  <h3 className={`text-2xl md:text-3xl font-bold mb-4 transition-colors tracking-tight 
-                    ${isCentered ? 'text-white' : 'text-white md:group-hover:text-[#FFD700]'}`}>
-                    {service.title}
-                  </h3>
-                  <div className={`h-1 bg-[#FFD700]/50 mb-6 transition-all duration-500 
-                    ${isCentered ? 'w-12' : 'w-12 md:group-hover:w-20 md:group-hover:bg-[#FFD700]'}`}></div>
-                  <p className="text-gray-400 leading-relaxed text-base font-light">
-                    {service.description}
-                  </p>
-                  <div className={`mt-auto pt-8 flex items-center gap-2 text-[#FFD700] text-xs font-black uppercase tracking-widest transition-opacity 
-                    ${isCentered ? 'opacity-100' : 'opacity-0 md:group-hover:opacity-100'}`}>
-                    Cotizar ahora <ArrowRight className="w-4 h-4" />
+                  <div>
+                    <span className="text-[10px] font-black text-[#FFD700] uppercase tracking-[0.3em]">{service.tag}</span>
+                    <h3 className="text-3xl md:text-4xl font-black text-white uppercase italic tracking-tight leading-none mt-1">
+                      {service.title}
+                    </h3>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+
+                <p className="text-xl text-gray-400 font-light leading-relaxed">
+                  {service.description}
+                </p>
+
+                <div className="pt-4">
+                  <button
+                    onClick={() => openWhatsApp(service.title)}
+                    className="inline-flex items-center gap-3 px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-white text-[11px] font-black uppercase tracking-[0.2em] hover:bg-[#FFD700] hover:text-black hover:border-[#FFD700] transition-all duration-300 group"
+                  >
+                    Solicitar Cotización
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

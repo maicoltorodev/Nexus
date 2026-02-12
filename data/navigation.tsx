@@ -2,6 +2,7 @@ import { Facebook, Instagram, MessageCircle } from 'lucide-react';
 
 export const SECTION_IDS = {
     INICIO: 'inicio',
+    PROPOSITO: 'proposito',
     TARJETA: 'tarjeta',
     WEB_DESIGN: 'web-design',
     SERVICIOS: 'servicios',
@@ -19,6 +20,7 @@ export const NAV_LINKS = [
     { href: `/#${SECTION_IDS.CALCULADORA}`, label: 'Calculadora', desc: 'Cotiza al instante' },
     { href: `/#${SECTION_IDS.TESTIMONIOS}`, label: 'Opiniones', desc: 'Qué dicen de nosotros' },
     { href: `/#${SECTION_IDS.SEGUIMIENTO}`, label: 'Proyectos', desc: 'Estado de tu proyecto' },
+    { href: `/#${SECTION_IDS.PROPOSITO}`, label: 'Esencia', desc: 'Nuestra misión y visión' },
     { href: `/#${SECTION_IDS.CONTACTO}`, label: 'Contacto', desc: 'Hablemos de tu idea' }
 ];
 
