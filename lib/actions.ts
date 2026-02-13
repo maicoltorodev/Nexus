@@ -138,6 +138,21 @@ export async function updateProyectoVisibilidad(id: string, visibilidad: boolean
     return { success: true };
 }
 
+// Wizard Onboarding
+export async function updateProyectoOnboarding(id: string, step: number, data: any) {
+    try {
+        await db.update(proyectos)
+            .set({ onboardingStep: step, onboardingData: data })
+            .where(eq(proyectos.id, id));
+
+        revalidatePath('/admin');
+        return { success: true };
+    } catch (e) {
+        console.error("Error onboarding:", e);
+        return { error: 'ERROR AL GUARDAR EL PROGRESO.' };
+    }
+}
+
 // Seguimiento Cliente (Búsqueda por cédula)
 export async function deleteProyecto(id: string) {
     try {
@@ -236,7 +251,7 @@ const ALLOWED_TYPES = [
 
 const PROJECT_STORAGE_LIMIT = 50 * 1024 * 1024; // 50MB por proyecto
 
-export async function uploadArchivo(formData: FormData, proyectoId: string, subidoPor: 'admin' | 'cliente') {
+export async function uploadArchivo(formData: FormData, proyectoId: string, subidoPor: 'admin' | 'cliente', context?: string) {
     const file = formData.get('file') as File;
     if (!file) return { error: 'No se detectó ningún archivo.' };
 
@@ -297,9 +312,14 @@ export async function uploadArchivo(formData: FormData, proyectoId: string, subi
     }
 
     try {
+        let finalName = file.name;
+        if (context) {
+            finalName = `[${context.toUpperCase()}] ${file.name}`;
+        }
+
         await db.insert(archivos).values({
             url: blob.url,
-            nombre: file.name,
+            nombre: finalName,
             tipo: file.type && file.type.startsWith('image/') ? 'imagen' : 'documento',
             tamano: file.size,
             subidoPor,

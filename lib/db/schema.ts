@@ -1,4 +1,4 @@
-import { pgTable, text, varchar, timestamp, integer, uuid, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, timestamp, integer, uuid, boolean, json } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 export const clientes = pgTable("clientes", {
@@ -20,6 +20,8 @@ export const proyectos = pgTable("proyectos", {
     fechaEntrega: timestamp("fecha_entrega"),
     visibilidad: boolean("visibilidad").default(true).notNull(),
     link: varchar("link", { length: 255 }).default("Próximamente").notNull(),
+    onboardingStep: integer("onboarding_step").default(0).notNull(),
+    onboardingData: json("onboarding_data").$type<Record<string, any>>().default({}),
     clienteId: uuid("cliente_id").references(() => clientes.id, { onDelete: "cascade" }).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });

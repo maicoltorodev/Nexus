@@ -109,13 +109,7 @@ export default function ArchivosPage() {
     const isSearching = searchTerm.length > 0;
 
     const getPlanColor = (planName: string) => {
-        const plan = NEXUS_PLANS_ARRAY.find(p => p.title === planName) || NEXUS_PLANS_ARRAY[0];
-        if (planName.toLowerCase().includes('lanzamiento')) return 'cyan-400';
-        if (planName.toLowerCase().includes('funcional')) return 'emerald-400';
-        if (planName.toLowerCase().includes('experiencia')) return 'purple-500';
-        if (planName.toLowerCase().includes('crecimiento')) return 'red-500';
-        if (planName.toLowerCase().includes('medida')) return '[#FFD700]';
-        return 'rose-500';
+        return 'cyan-400';
     };
 
     const formatSize = (bytes: number) => {

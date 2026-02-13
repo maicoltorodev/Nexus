@@ -38,8 +38,6 @@ export default function ProjectsAdmin() {
     const [isSelectOpen, setIsSelectOpen] = useState(false);
     const [selectedClient, setSelectedClient] = useState<any>(null);
     const [clientSearch, setClientSearch] = useState('');
-    const [isPlanOpen, setIsPlanOpen] = useState(false);
-    const [selectedPlan, setSelectedPlan] = useState<any>(null);
     const [deliveryDate, setDeliveryDate] = useState('');
 
     useEffect(() => {
@@ -86,7 +84,14 @@ export default function ProjectsAdmin() {
                         />
                     </div>
                     <button
-                        onClick={() => setIsAdding(true)}
+                        onClick={() => {
+                            setIsAdding(true);
+                            // Pre-setear fecha de entrega según el Plan Estándar
+                            const defaultPlan = NEXUS_PLANS_ARRAY[0];
+                            const date = new Date();
+                            date.setDate(date.getDate() + defaultPlan.days);
+                            setDeliveryDate(date.toISOString().split('T')[0]);
+                        }}
                         className="group relative px-6 py-3 rounded-2xl font-bold text-sm transition-all hover:scale-105 active:scale-95 overflow-hidden shadow-[0_0_20px_rgba(255,215,0,0.1)]"
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-[#FFD700] via-[#a855f7] to-[#22d3ee] animate-gradient bg-[length:200%_auto]" />
@@ -105,10 +110,7 @@ export default function ProjectsAdmin() {
                         <AnimatePresence mode="popLayout">
                             {filteredProjects.map((project, idx) => {
                                 const projectPlan = NEXUS_PLANS_ARRAY.find(p => p.title === project.plan) || NEXUS_PLANS_ARRAY[0];
-                                const PlanIcon = project.plan.toLowerCase().includes('lanzamiento') ? Rocket :
-                                    project.plan.toLowerCase().includes('funcional') ? Zap :
-                                        project.plan.toLowerCase().includes('experiencia') ? CheckCircle2 :
-                                            project.plan.toLowerCase().includes('crecimiento') ? Terminal : Smartphone;
+                                const PlanIcon = projectPlan.icon;
 
                                 return (
                                     <motion.div
@@ -242,10 +244,8 @@ export default function ProjectsAdmin() {
                                 onClick={() => {
                                     setIsAdding(false);
                                     setSelectedClient(null);
-                                    setSelectedPlan(null);
                                     setDeliveryDate('');
                                     setIsSelectOpen(false);
-                                    setIsPlanOpen(false);
                                 }}
                                 className="absolute top-4 right-4 md:top-10 md:right-10 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-gray-500 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl md:rounded-2xl transition-all duration-300 group/close z-50 fixed md:absolute"
                             >
@@ -264,7 +264,6 @@ export default function ProjectsAdmin() {
 
                                 if (!formData.get('nombre')) newErrors.nombre = 'Nombre requerido.';
                                 if (!formData.get('clienteId')) newErrors.clienteId = 'Selecciona un cliente.';
-                                if (!formData.get('plan')) newErrors.plan = 'Especifica el plan.';
                                 if (!formData.get('fechaEntrega')) newErrors.fechaEntrega = 'Fecha necesaria.';
 
                                 if (Object.keys(newErrors).length > 0) {
@@ -276,13 +275,12 @@ export default function ProjectsAdmin() {
                                 showToast('PROYECTO INICIALIZADO EXITOSAMENTE', 'success');
                                 setIsAdding(false);
                                 setSelectedClient(null);
-                                setSelectedPlan(null);
                                 setDeliveryDate('');
                                 setErrors({});
                                 loadData();
                             }} className="space-y-8">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <PremiumInput name="nombre" placeholder="Nombre de la Obra" icon={FolderKanban} error={errors.nombre} onFocus={() => setErrors({ ...errors, nombre: null })} />
+                                    <PremiumInput name="nombre" placeholder="Nombre del proyecto" icon={FolderKanban} error={errors.nombre} onFocus={() => setErrors({ ...errors, nombre: null })} />
                                     {/* Custom Premium Select */}
                                     <div className="relative group">
                                         <div className={`absolute -inset-0.5 rounded-2xl transition-opacity blur-[2px] ${errors.clienteId ? 'bg-red-500/40 opacity-100' : 'bg-[#FFD700]/10 opacity-0 group-focus-within:opacity-100'}`} />
@@ -347,72 +345,8 @@ export default function ProjectsAdmin() {
                                             </AnimatePresence>
                                         </div>
                                     </div>
-                                    {/* Selector de Planes Visual Premium */}
-                                    <div className="col-span-full">
-                                        <div className="flex items-center gap-3 mb-6">
-                                            <div className="w-8 h-8 rounded-lg bg-[#a855f7]/10 flex items-center justify-center text-[#a855f7]">
-                                                <Layers className="w-4 h-4" />
-                                            </div>
-                                            <div>
-                                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 block">Arquitectura Operativa</span>
-                                                <h3 className="text-sm font-black text-white uppercase tracking-tighter">Seleccionar Plan de Inversión</h3>
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                                            {NEXUS_PLANS_ARRAY.map((plan) => {
-                                                const isSelected = selectedPlan?.id === plan.id;
-                                                const Icon = plan.id === 'lanzamiento' ? Rocket :
-                                                    plan.id === 'funcional' ? Zap :
-                                                        plan.id === 'experiencia' ? CheckCircle2 :
-                                                            plan.id === 'crecimiento' ? Terminal : Smartphone;
-
-                                                return (
-                                                    <button
-                                                        key={plan.id}
-                                                        type="button"
-                                                        onClick={() => {
-                                                            setSelectedPlan(plan);
-                                                            const date = new Date();
-                                                            date.setDate(date.getDate() + plan.days);
-                                                            setDeliveryDate(date.toISOString().split('T')[0]);
-                                                            setErrors({ ...errors, plan: null, fechaEntrega: null });
-                                                        }}
-                                                        className={`relative group p-4 rounded-[2rem] border transition-all duration-500 flex flex-col items-center text-center gap-3 h-full overflow-hidden ${isSelected
-                                                            ? 'bg-white/5 border-white/20'
-                                                            : 'bg-black/40 border-white/5 hover:border-white/10 hover:bg-white/[0.02]'
-                                                            }`}
-                                                    >
-                                                        {/* Gradient Background on Selected */}
-                                                        {isSelected && (
-                                                            <div className={`absolute inset-0 bg-gradient-to-br ${plan.color} opacity-10 animate-pulse`} />
-                                                        )}
-                                                        <div className={`absolute inset-0 bg-gradient-to-br ${plan.color} opacity-0 group-hover:opacity-5 transition-opacity duration-700`} />
-
-                                                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${plan.color} flex items-center justify-center text-white shadow-lg transition-transform duration-500 ${isSelected ? 'scale-110 shadow-current/20' : 'opacity-40 grayscale group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105'}`}>
-                                                            <Icon className="w-6 h-6" />
-                                                        </div>
-
-                                                        <div>
-                                                            <p className={`text-[10px] font-black uppercase tracking-tight mb-1 transition-colors ${isSelected ? 'text-white' : 'text-gray-500'}`}>{plan.title.replace('Plan ', '')}</p>
-                                                            <div className={`text-[8px] font-bold px-2 py-0.5 rounded-full inline-block transition-all ${isSelected ? 'bg-white text-black' : 'bg-white/5 text-gray-600 group-hover:text-gray-400'}`}>
-                                                                {plan.days}D
-                                                            </div>
-                                                        </div>
-
-                                                        {isSelected && (
-                                                            <motion.div
-                                                                layoutId="activePlan"
-                                                                className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-gradient-to-r ${plan.color} rounded-full`}
-                                                            />
-                                                        )}
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-                                        {errors.plan && <p className="text-red-500 text-[10px] font-bold mt-3 uppercase tracking-widest">{errors.plan}</p>}
-                                        <input type="hidden" name="plan" value={selectedPlan?.title || ''} />
-                                    </div>
+                                    {/* Input Hidden para el Plan Estándar */}
+                                    <input type="hidden" name="plan" value={NEXUS_PLANS_ARRAY[0].title} />
 
                                     {/* Calculated Delivery Date (Modernizado) */}
                                     <div className="col-span-full">
@@ -435,18 +369,16 @@ export default function ProjectsAdmin() {
                                                         />
                                                     </div>
                                                 </div>
-                                                {selectedPlan && (
-                                                    <motion.div
-                                                        initial={{ opacity: 0, x: 20 }}
-                                                        animate={{ opacity: 1, x: 0 }}
-                                                        className="flex flex-col items-end"
-                                                    >
-                                                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#22d3ee]">
-                                                            <Sparkles className="w-3 h-3" /> Sugerencia Nexus
-                                                        </div>
-                                                        <span className="text-[10px] text-gray-600 font-bold uppercase mt-1">Garantía de {selectedPlan.days} días</span>
-                                                    </motion.div>
-                                                )}
+                                                <motion.div
+                                                    initial={{ opacity: 0, x: 20 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    className="flex flex-col items-end"
+                                                >
+                                                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#22d3ee]">
+                                                        <Sparkles className="w-3 h-3" /> Sugerencia Nexus
+                                                    </div>
+                                                    <span className="text-[10px] text-gray-600 font-bold uppercase mt-1">Garantía de {NEXUS_PLANS_ARRAY[0].days} días</span>
+                                                </motion.div>
                                             </div>
                                         </div>
                                     </div>

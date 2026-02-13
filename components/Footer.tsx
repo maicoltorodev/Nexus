@@ -9,7 +9,11 @@ import {
   Mail,
   Phone,
   MapPin,
-  ArrowUpRight
+  ArrowUpRight,
+  Instagram,
+  Facebook,
+  Linkedin,
+  Twitter
 } from 'lucide-react';
 
 export default function Footer() {
@@ -54,6 +58,23 @@ export default function Footer() {
             <p className="text-gray-300 text-lg font-light leading-relaxed max-w-md">
               Elevamos la identidad de tu marca a través de diseño estratégico y tecnología de vanguardia. <span className="text-white font-medium">NE<span className="text-[#FFD700] font-black">X</span>US</span> es donde la creatividad se encuentra con el impacto.
             </p>
+
+            <div className="flex gap-4 pt-4">
+              {[
+                { icon: Instagram, href: '#' },
+                { icon: Facebook, href: '#' },
+                { icon: Linkedin, href: '#' },
+                { icon: Twitter, href: '#' }
+              ].map((social, i) => (
+                <Link
+                  key={i}
+                  href={social.href}
+                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-[#FFD700] hover:text-black hover:border-[#FFD700] hover:-translate-y-1 transition-all duration-300"
+                >
+                  <social.icon className="w-5 h-5" />
+                </Link>
+              ))}
+            </div>
 
           </div>
 

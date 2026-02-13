@@ -141,10 +141,7 @@ export default function AdminDashboard() {
                                 <tbody>
                                     {recentProjects.map((proj, idx) => {
                                         // Búsqueda más robusta por ID o Título
-                                        const projectPlan = NEXUS_PLANS_ARRAY.find(p =>
-                                            proj.plan?.toLowerCase().includes(p.id) ||
-                                            p.title.toLowerCase().includes(proj.plan?.toLowerCase())
-                                        ) || NEXUS_PLANS_ARRAY[0];
+                                        const projectPlan = NEXUS_PLANS_ARRAY.find(p => p.title === proj.plan) || NEXUS_PLANS_ARRAY[0];
 
                                         return (
                                             <tr key={idx} className="group/row hover:bg-white/[0.02] transition-colors">

@@ -421,10 +421,7 @@ export default function ProyectoDetalle() {
     if (!project) return <div>Proyecto no encontrado...</div>;
 
     const projectPlan = NEXUS_PLANS_ARRAY.find(p => p.title === project.plan) || NEXUS_PLANS_ARRAY[0];
-    const PlanIcon = project.plan.toLowerCase().includes('lanzamiento') ? Rocket :
-        project.plan.toLowerCase().includes('funcional') ? Zap :
-            project.plan.toLowerCase().includes('experiencia') ? CheckCircle2 :
-                project.plan.toLowerCase().includes('crecimiento') ? Terminal : Smartphone;
+    const PlanIcon = projectPlan.icon;
 
     return (
         <div className="p-8 lg:p-12 max-w-7xl mx-auto space-y-12">
@@ -521,17 +518,7 @@ export default function ProyectoDetalle() {
                                                 var(--tw-gradient-to, #3b82f6), 
                                                 var(--tw-gradient-from, #22d3ee), 
                                                 var(--tw-gradient-to, #3b82f6), 
-                                                var(--tw-gradient-from, #22d3ee))`.replace(/var\(--tw-gradient-from, #22d3ee\)/g,
-                                                project.plan.toLowerCase().includes('lanzamiento') ? '#22d3ee' :
-                                                    project.plan.toLowerCase().includes('funcional') ? '#34d399' :
-                                                        project.plan.toLowerCase().includes('experiencia') ? '#a855f7' :
-                                                            project.plan.toLowerCase().includes('crecimiento') ? '#fb923c' : '#facc15'
-                                            ).replace(/var\(--tw-gradient-to, #3b82f6\)/g,
-                                                project.plan.toLowerCase().includes('lanzamiento') ? '#3b82f6' :
-                                                    project.plan.toLowerCase().includes('funcional') ? '#06b6d4' :
-                                                        project.plan.toLowerCase().includes('experiencia') ? '#ec4899' :
-                                                            project.plan.toLowerCase().includes('crecimiento') ? '#ef4444' : '#f97316'
-                                            ),
+                                                var(--tw-gradient-from, #22d3ee))`.replace(/var\(--tw-gradient-from, #22d3ee\)/g, '#22d3ee').replace(/var\(--tw-gradient-to, #3b82f6\)/g, '#3b82f6'),
                                             animation: 'gradient 3s linear infinite'
                                         }}
                                     >
@@ -712,6 +699,45 @@ export default function ProyectoDetalle() {
                     </div>
                 </section>
 
+                {/* Onboarding Data (Briefing) */}
+                {project.onboardingData && Object.keys(project.onboardingData as object).length > 0 && (
+                    <section className="bg-white/[0.02] border border-white/5 rounded-[3.5rem] p-12 mb-8 relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                        <div className="flex items-center gap-6 mb-10 relative z-10">
+                            <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.1)]">
+                                <FileText className="w-8 h-8" />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-black font-[family-name:var(--font-orbitron)] tracking-tighter text-white flex items-center gap-3">
+                                    Briefing Inicial
+                                    <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-black uppercase tracking-widest border border-blue-500/20">
+                                        Data Cliente
+                                    </span>
+                                </h2>
+                                <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.3em] mt-2">Información recopilada en el onboarding</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
+                            {Object.entries(project.onboardingData as Record<string, any>).map(([key, value]) => {
+                                if (key === 'step' || key === 'completed') return null;
+                                return (
+                                    <div key={key} className="bg-black/40 rounded-[2rem] p-6 border border-white/5 hover:border-white/10 transition-all duration-300 group/item hover:bg-white/[0.02]">
+                                        <div className="flex items-center gap-3 mb-3">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                                            <p className="text-[9px] text-gray-500 font-black uppercase tracking-[0.2em]">{key.replace(/([A-Z])/g, ' $1').trim()}</p>
+                                        </div>
+                                        <p className="text-sm font-medium text-gray-300 break-words leading-relaxed pl-4 border-l border-white/5 group-hover/item:border-white/20 transition-colors">
+                                            {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                                        </p>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </section>
+                )}
+
                 {/* Files Vault */}
                 <section
                     onDragEnter={handleDragEnter}
@@ -847,10 +873,7 @@ export default function ProyectoDetalle() {
                             <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
                                 {NEXUS_PLANS_ARRAY.map((planOption) => {
                                     const isCurrent = project.plan === planOption.title;
-                                    const Icon = planOption.id === 'lanzamiento' ? Rocket :
-                                        planOption.id === 'funcional' ? Zap :
-                                            planOption.id === 'experiencia' ? CheckCircle2 :
-                                                planOption.id === 'crecimiento' ? Terminal : Smartphone;
+                                    const Icon = planOption.icon;
 
                                     return (
                                         <button
