@@ -3,6 +3,7 @@ import Hero from '@/components/Hero';
 import Purpose from '@/components/Purpose';
 import Services from '@/components/Services';
 import WebServices from '@/components/WebServices';
+import WebPlans from '@/components/WebPlans';
 import BusinessCard from '@/components/BusinessCard';
 import Calculator from '@/components/Calculator';
 import Testimonials from '@/components/Testimonials';
@@ -20,6 +21,9 @@ export default function Home() {
       </FadeInSection>
       <FadeInSection id="web-design">
         <WebServices />
+      </FadeInSection>
+      <FadeInSection id="planes">
+        <WebPlans />
       </FadeInSection>
       <FadeInSection id="servicios">
         <Services />

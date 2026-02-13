@@ -9,18 +9,18 @@ export default function Hero() {
   const router = useRouter();
 
   const handleXClick = () => {
-    setClickCount((prev) => {
-      const next = prev + 1;
-      if (next === 7) {
-        router.push('/admin');
-        return 0;
-      }
-      return next;
-    });
+    setClickCount((prev) => prev + 1);
   };
 
   useEffect(() => {
-    if (clickCount > 0) {
+    if (clickCount === 7) {
+      router.push('/admin');
+      setClickCount(0);
+    }
+  }, [clickCount, router]);
+
+  useEffect(() => {
+    if (clickCount > 0 && clickCount < 7) {
       const timer = setTimeout(() => {
         setClickCount(0);
       }, 2000);

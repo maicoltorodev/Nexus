@@ -3,8 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useSpring, useMotionValue } from 'framer-motion';
 import { MousePointer2 } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export default function CustomCursor() {
+    const pathname = usePathname();
+    const isDemoPage = pathname?.includes('demo-estandar');
     const [isHovered, setIsHovered] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -85,7 +88,7 @@ export default function CustomCursor() {
         };
     }, [isVisible]);
 
-    if (!isVisible) return null;
+    if (!isVisible || isDemoPage) return null;
 
     return (
         <div className="fixed inset-0 pointer-events-none z-[10000]">

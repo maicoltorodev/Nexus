@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface Particle {
     x: number;
@@ -10,6 +11,8 @@ interface Particle {
 }
 
 export default function MouseTrail() {
+    const pathname = usePathname();
+    const isDemoPage = pathname?.includes('demo-estandar');
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const particles = useRef<Particle[]>([]);
     const lastAdded = useRef<number>(0);
@@ -83,6 +86,8 @@ export default function MouseTrail() {
             window.removeEventListener('mousemove', handleMouseMove);
         };
     }, []);
+
+    if (isDemoPage) return null;
 
     return (
         <canvas
