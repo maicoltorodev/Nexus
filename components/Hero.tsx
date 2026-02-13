@@ -47,7 +47,7 @@ export default function Hero() {
               draggable={false}
               sizes="(max-width: 640px) 55vw, (max-width: 768px) 50vw, (max-width: 1024px) 42vw, 36vw"
             />
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-center -translate-y-[10%]">
+            <div className="absolute inset-0 pointer-events-none flex items-center justify-center -translate-y-[13%]">
               <Image
                 src="/X.webp"
                 alt="X"
