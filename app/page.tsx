@@ -22,9 +22,6 @@ export default function Home() {
       <FadeInSection id="web-design">
         <WebServices />
       </FadeInSection>
-      <FadeInSection id="planes">
-        <WebPlans />
-      </FadeInSection>
       <FadeInSection id="servicios">
         <Services />
       </FadeInSection>
