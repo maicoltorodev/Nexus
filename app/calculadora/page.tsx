@@ -70,53 +70,90 @@ export default function CalculadoraCorte() {
         if (effW <= 0 || effH <= 0 || cutW <= 0 || cutH <= 0) return null;
 
         const getLayout = (sW: number, sH: number, cW: number, cH: number) => {
-            const mainCols = Math.floor((sW + gap) / (cW + gap));
-            const mainRows = Math.floor((sH + gap) / (cH + gap));
-            if (mainCols <= 0 || mainRows <= 0) return { total: 0, parts: [] };
+            const maxCols = Math.floor((sW + gap) / (cW + gap));
+            const maxRows = Math.floor((sH + gap) / (cH + gap));
 
-            const mainTotal = mainCols * mainRows;
-            const usedW = mainCols * (cW + gap) - gap;
-            const usedH = mainRows * (cH + gap) - gap;
-            const mainPart = { type: 'main', cols: mainCols, rows: mainRows, w: cW, h: cH, total: mainTotal, x: 0, y: 0 };
+            // Basic check
+            if (maxCols <= 0 || maxRows <= 0) return { total: 0, parts: [] };
 
-            // Extra Right
-            const remW = sW - usedW;
-            const remH = sH - usedH;
-
-            // Strategy 1: Right Strip (Full Height) + Bottom Left (Under Main)
-            const r1_Cols = Math.floor(remW / (cH + gap));
-            const r1_Rows = Math.floor((sH + gap) / (cW + gap));
-            const r1_Total = Math.max(0, r1_Cols * r1_Rows);
-
-            const b1_Cols = Math.floor((usedW + gap) / (cH + gap));
-            const b1_Rows = Math.floor(remH / (cW + gap));
-            const b1_Total = Math.max(0, b1_Cols * b1_Rows);
-
-            const total1 = mainTotal + r1_Total + b1_Total;
-
-            // Strategy 2: Bottom Strip (Full Width) + Top Right (Next to Main)
-            const b2_Cols = Math.floor((sW + gap) / (cH + gap));
-            const b2_Rows = Math.floor(remH / (cW + gap));
-            const b2_Total = Math.max(0, b2_Cols * b2_Rows);
-
-            const r2_Cols = Math.floor(remW / (cH + gap));
-            const r2_Rows = Math.floor((usedH + gap) / (cW + gap));
-            const r2_Total = Math.max(0, r2_Cols * r2_Rows);
-
-            const total2 = mainTotal + b2_Total + r2_Total;
-
-            if (total1 >= total2 && (r1_Total > 0 || b1_Total > 0)) {
-                const parts = [mainPart];
-                if (r1_Total > 0) parts.push({ type: 'extra', cols: r1_Cols, rows: r1_Rows, w: cH, h: cW, total: r1_Total, x: usedW + gap, y: 0 });
-                if (b1_Total > 0) parts.push({ type: 'extra', cols: b1_Cols, rows: b1_Rows, w: cH, h: cW, total: b1_Total, x: 0, y: usedH + gap });
-                return { total: total1, parts };
-            } else if (total2 > total1 && (b2_Total > 0 || r2_Total > 0)) {
-                const parts = [mainPart];
-                if (b2_Total > 0) parts.push({ type: 'extra', cols: b2_Cols, rows: b2_Rows, w: cH, h: cW, total: b2_Total, x: 0, y: usedH + gap });
-                if (r2_Total > 0) parts.push({ type: 'extra', cols: r2_Cols, rows: r2_Rows, w: cH, h: cW, total: r2_Total, x: usedW + gap, y: 0 });
-                return { total: total2, parts };
+            // If rotation is NOT allowed, the greedy max grid is always optimal 
+            // because we can't use the remainder for anything else.
+            if (!allowRotation) {
+                const mainTotal = maxCols * maxRows;
+                const mainPart = { type: 'main', cols: maxCols, rows: maxRows, w: cW, h: cH, total: mainTotal, x: 0, y: 0 };
+                return { total: mainTotal, parts: [mainPart] };
             }
-            return { total: mainTotal, parts: [mainPart] };
+
+            let bestResult = { total: -1, parts: [] as any[] };
+
+            // Iterative Optimization:
+            // Check all reasonable main grid sizes (from max down to 0).
+            // Sometimes a smaller main grid leaves a remainder that fits MORE rotated pieces.
+            for (let c = maxCols; c >= 0; c--) {
+                for (let r = maxRows; r >= 0; r--) {
+                    if (c === 0 && r === 0) continue;
+
+                    const currentMainTotal = c * r;
+                    const usedW = c > 0 ? c * (cW + gap) - gap : 0;
+                    const usedH = r > 0 ? r * (cH + gap) - gap : 0;
+
+                    const mainPart = { type: 'main', cols: c, rows: r, w: cW, h: cH, total: currentMainTotal, x: 0, y: 0 };
+
+                    // Coordinates for the remaining space
+                    // If main block exists (c>0), the remainder starts after (usedW + gap).
+                    // If no main block, remainder starts at 0.
+                    const rightX = c > 0 ? usedW + gap : 0;
+                    const rightW = Math.max(0, sW - rightX);
+
+                    const bottomY = r > 0 ? usedH + gap : 0;
+                    const bottomH = Math.max(0, sH - bottomY);
+
+                    // --- Strategy 1: Right Strip (Full Height) + Bottom Left (Under Main) ---
+                    // Right Strip: x=rightX, y=0, w=rightW, h=sH (Full Height)
+                    // Bottom Left: x=0, y=bottomY, w=usedW, h=bottomH 
+
+                    const s1_r_cols = Math.floor((rightW + gap) / (cH + gap));
+                    const s1_r_rows = Math.floor((sH + gap) / (cW + gap));
+                    const s1_r_total = Math.max(0, s1_r_cols * s1_r_rows);
+
+                    // Note: Bottom Left width is technically 'usedW', but we must ensure we don't overlap.
+                    // If c=0, usedW=0, so bottom left is empty. Correct.
+                    const s1_b_cols = Math.floor((usedW + gap) / (cH + gap));
+                    const s1_b_rows = Math.floor((bottomH + gap) / (cW + gap));
+                    const s1_b_total = Math.max(0, s1_b_cols * s1_b_rows);
+
+                    const total1 = currentMainTotal + s1_r_total + s1_b_total;
+
+                    // --- Strategy 2: Bottom Strip (Full Width) + Top Right (Next to Main) ---
+                    // Bottom Strip: x=0, y=bottomY, w=sW (Full Width), h=bottomH
+                    // Top Right: x=rightX, y=0, w=rightW, h=usedH
+
+                    const s2_b_cols = Math.floor((sW + gap) / (cH + gap));
+                    const s2_b_rows = Math.floor((bottomH + gap) / (cW + gap));
+                    const s2_b_total = Math.max(0, s2_b_cols * s2_b_rows);
+
+                    const s2_r_cols = Math.floor((rightW + gap) / (cH + gap));
+                    const s2_r_rows = Math.floor((usedH + gap) / (cW + gap));
+                    const s2_r_total = Math.max(0, s2_r_cols * s2_r_rows);
+
+                    const total2 = currentMainTotal + s2_b_total + s2_r_total;
+
+                    // Compare and update best
+                    if (total1 >= total2 && total1 >= bestResult.total) { // Prefer S1 if equal or better
+                        const parts = [mainPart];
+                        if (s1_r_total > 0) parts.push({ type: 'extra', cols: s1_r_cols, rows: s1_r_rows, w: cH, h: cW, total: s1_r_total, x: rightX, y: 0 });
+                        if (s1_b_total > 0) parts.push({ type: 'extra', cols: s1_b_cols, rows: s1_b_rows, w: cH, h: cW, total: s1_b_total, x: 0, y: bottomY });
+                        bestResult = { total: total1, parts };
+                    }
+                    else if (total2 > total1 && total2 > bestResult.total) {
+                        const parts = [mainPart];
+                        if (s2_b_total > 0) parts.push({ type: 'extra', cols: s2_b_cols, rows: s2_b_rows, w: cH, h: cW, total: s2_b_total, x: 0, y: bottomY });
+                        if (s2_r_total > 0) parts.push({ type: 'extra', cols: s2_r_cols, rows: s2_r_rows, w: cH, h: cW, total: s2_r_total, x: rightX, y: 0 });
+                        bestResult = { total: total2, parts };
+                    }
+                }
+            }
+            return bestResult.total !== -1 ? bestResult : { total: 0, parts: [] };
         };
 
         const layout1 = getLayout(effW, effH, cutW, cutH);
@@ -372,37 +409,37 @@ function MainLayoutPreview({ data, gap, margin, unit, strategyMode }: { data: an
                     <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: `radial-gradient(circle, #000 1px, transparent 1px)`, backgroundSize: `${1 * scale}px ${1 * scale}px` }}></div>
                     <div className={`absolute shadow-2xl overflow-hidden transition-all ${margin > 0 ? 'bg-white border-[1.5px] border-dashed border-pink-500/40' : ''}`} style={{ inset: vMargin }}>
                         <div className="relative w-full h-full bg-gray-900/5">
-                            {data.parts.map((part: any, pIdx: number) => (
-                                <div key={pIdx} className="absolute flex flex-wrap content-start" style={{ left: part.x * scale, top: part.y * scale, width: part.cols * (part.w * scale + vGap), gap: vGap }}>
-                                    {Array.from({ length: Math.min(part.total, 400) }).map((_, i) => (
-                                        <motion.div
-                                            key={i}
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            className={`relative ${part.type === 'main'
-                                                ? 'bg-[#FFD700] border-[#B8860B]/40'
-                                                : 'bg-[#FFA500] border-[#D2691E]/40'
-                                                } rounded-[1.5px] border-[1px] cursor-pointer overflow-hidden flex items-center justify-center group/cut shadow-[0_1px_3px_rgba(0,0,0,0.15),inset_0_1px_1px_rgba(255,255,255,0.3)] transition-all duration-300 hover:border-[#FF4500]/50`}
-                                            style={{ width: part.w * scale, height: part.h * scale }}
-                                        >
-                                            <div className="absolute inset-0 bg-gradient-to-br from-[#FF8C00] via-[#FF4500] to-[#E31E24] opacity-0 group-hover/cut:opacity-100 transition-opacity duration-300 ease-in-out" />
-                                            <div
-                                                className="absolute inset-0 pointer-events-none z-10 transition-all duration-500"
-                                                style={{
-                                                    opacity: strategyMode === 'manual' ? 0.22 : 0.1,
-                                                    backgroundImage: part.w > part.h
-                                                        ? 'repeating-linear-gradient(0deg, transparent, transparent 10px, rgba(0,0,0,0.5) 11px, rgba(0,0,0,0.5) 12px)'
-                                                        : 'repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(0,0,0,0.5) 11px, rgba(0,0,0,0.5) 12px)',
-                                                    backgroundSize: part.w > part.h ? '100% 12px' : '12px 100%'
-                                                }}
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent z-0"></div>
-                                            <div className="absolute bottom-1 right-1 opacity-0 group-hover/cut:opacity-100 transition-all duration-300 z-20 scale-90">{part.w > part.h ? <ArrowRight className="w-3 h-3 text-white" /> : <ArrowRight className="w-3 h-3 text-white rotate-90" />}</div>
-                                            <span className="relative z-20 text-[7px] text-black font-black opacity-30 group-hover/cut:opacity-100 group-hover/cut:text-white transition-all duration-300">{part.type === 'main' ? i + 1 : `+${i + 1}`}</span>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            ))}
+                            {data.parts.map((part: any, pIdx: number) => {
+                                const startOffset = data.parts.slice(0, pIdx).reduce((acc: number, p: any) => acc + p.total, 0);
+                                return (
+                                    <div key={pIdx} className="absolute flex flex-wrap content-start" style={{ left: part.x * scale, top: part.y * scale, width: part.cols * (part.w * scale + vGap), gap: vGap }}>
+                                        {Array.from({ length: Math.min(part.total, 400) }).map((_, i) => (
+                                            <motion.div
+                                                key={i}
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                className="relative bg-[#FFD700] border-[#B8860B]/40 rounded-[1.5px] border-[1px] cursor-pointer overflow-hidden flex items-center justify-center group/cut shadow-[0_1px_3px_rgba(0,0,0,0.15),inset_0_1px_1px_rgba(255,255,255,0.3)] transition-all duration-300 hover:border-[#FF4500]/50"
+                                                style={{ width: part.w * scale, height: part.h * scale }}
+                                            >
+                                                <div className="absolute inset-0 bg-gradient-to-br from-[#FF8C00] via-[#FF4500] to-[#E31E24] opacity-0 group-hover/cut:opacity-100 transition-opacity duration-300 ease-in-out" />
+                                                <div
+                                                    className="absolute inset-0 pointer-events-none z-10 transition-all duration-500"
+                                                    style={{
+                                                        opacity: strategyMode === 'manual' ? 0.22 : 0.1,
+                                                        backgroundImage: part.w > part.h
+                                                            ? 'repeating-linear-gradient(0deg, transparent, transparent 10px, rgba(0,0,0,0.5) 11px, rgba(0,0,0,0.5) 12px)'
+                                                            : 'repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(0,0,0,0.5) 11px, rgba(0,0,0,0.5) 12px)',
+                                                        backgroundSize: part.w > part.h ? '100% 12px' : '12px 100%'
+                                                    }}
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent z-0"></div>
+                                                <div className="absolute bottom-1 right-1 opacity-0 group-hover/cut:opacity-100 transition-all duration-300 z-20 scale-90">{part.w > part.h ? <ArrowRight className="w-3 h-3 text-white" /> : <ArrowRight className="w-3 h-3 text-white rotate-90" />}</div>
+                                                <span className="relative z-20 text-[7px] text-black font-black opacity-30 group-hover/cut:opacity-100 group-hover/cut:text-white transition-all duration-300">{startOffset + i + 1}</span>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

@@ -52,7 +52,7 @@ export default function Navbar({ isMenuOpen: controlledOpen, onMenuToggle }: Nav
                 {/* Desktop Logo */}
                 <Link href="/" className="hidden lg:flex group items-center gap-2">
                   <Image
-                    src="/nexus-solo.webp"
+                    src="/nexus.webp"
                     alt="Nexus Logo"
                     width={100}
                     height={40}
@@ -75,13 +75,13 @@ export default function Navbar({ isMenuOpen: controlledOpen, onMenuToggle }: Nav
                   // Extraer el ID del href (ej: "/#inicio" -> "inicio")
                   const linkId = link.href.replace('/#', '');
                   const isActive = activeSection === linkId;
-                  
+
                   return (
                     <Link
                       key={link.href}
                       href={link.href}
-                      className={`px-4 py-2 text-sm font-medium transition-all duration-300 relative rounded-full ${isActive 
-                        ? 'bg-[#FFD700] text-black shadow-[0_0_15px_rgba(255,215,0,0.3)] font-bold scale-105' 
+                      className={`px-4 py-2 text-sm font-medium transition-all duration-300 relative rounded-full ${isActive
+                        ? 'bg-[#FFD700] text-black shadow-[0_0_15px_rgba(255,215,0,0.3)] font-bold scale-105'
                         : 'text-gray-300 hover:text-[#FFD700] hover:bg-white/5'
                         }`}
                     >
