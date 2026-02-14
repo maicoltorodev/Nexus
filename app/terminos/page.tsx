@@ -12,8 +12,8 @@ export default function TerminosPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white pt-24 pb-12 px-6">
       <div className="max-w-4xl mx-auto">
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="inline-flex items-center gap-2 text-[#FFD700] hover:text-[#FFA500] transition-colors mb-8 group"
         >
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
@@ -40,7 +40,18 @@ export default function TerminosPage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-bold text-white">3. Pedidos y Pagos</h2>
+            <h2 className="text-2xl font-bold text-white">3. Servicios Web (Plan Estándar)</h2>
+            <ul className="list-disc pl-5 space-y-2">
+              <li><strong>Alcance:</strong> El servicio se basa en una plantilla de arquitectura fija. No se realizan modificaciones estructurales ni de diseño (CSS/HTML) fuera de la personalización de marca (Logotipo, colores, tipografías, imágenes y textos).</li>
+              <li><strong>Insumos:</strong> El plazo de entrega de 48 horas inicia <strong>únicamente</strong> cuando el cliente ha entregado la totalidad del contenido (textos, imágenes, logo).</li>
+              <li><strong>Renovación:</strong> El plan incluye Dominio (.com o .co) y Hosting por un (1) año. La renovación anual tiene un costo fijo de $250.000 COP.</li>
+              <li><strong>Garantía:</strong> Se ofrece 1 semana de soporte post-entrega para ajustes menores de contenido. No incluye mantenimiento mensual ni actualizaciones de código.</li>
+              <li><strong>Política de Reembolso Web:</strong> Una vez registrado el dominio, este costo no es reembolsable bajo ninguna circunstancia.</li>
+            </ul>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-2xl font-bold text-white">4. Pedidos y Pagos</h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>Todos los trabajos requieren un anticipo del 50% para iniciar la producción o diseño.</li>
               <li>El saldo restante debe ser cancelado contra entrega o antes del envío final de archivos digitales.</li>
@@ -49,28 +60,28 @@ export default function TerminosPage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-bold text-white">4. Entregas y Tiempos</h2>
+            <h2 className="text-2xl font-bold text-white">5. Entregas y Tiempos</h2>
             <p>
               Los tiempos de entrega son estimados y pueden variar según la complejidad del proyecto y la carga de trabajo. No nos hacemos responsables por retrasos causados por terceros (transportadoras) o fuerza mayor.
             </p>
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-bold text-white">5. Derechos de Autor</h2>
+            <h2 className="text-2xl font-bold text-white">6. Derechos de Autor</h2>
             <p>
               El cliente garantiza que tiene los derechos sobre las imágenes y textos proporcionados para el diseño. Nexus Estudio Gráfico se reserva el derecho de exhibir los trabajos realizados en su portafolio, a menos que exista un acuerdo de confidencialidad previo.
             </p>
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-bold text-white">6. Cambios y Devoluciones</h2>
+            <h2 className="text-2xl font-bold text-white">7. Cambios y Devoluciones</h2>
             <p>
               Debido a la naturaleza personalizada de nuestros productos, no se aceptan devoluciones una vez aprobado el diseño y realizada la impresión, salvo defectos de fabricación imputables a Nexus Estudio Gráfico.
             </p>
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-2xl font-bold text-white">7. Contacto</h2>
+            <h2 className="text-2xl font-bold text-white">8. Contacto</h2>
             <p>
               Si tienes dudas sobre estos términos, puedes contactarnos a través de nuestro correo electrónico o WhatsApp oficial.
             </p>

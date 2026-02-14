@@ -22,6 +22,8 @@ export const proyectos = pgTable("proyectos", {
     link: varchar("link", { length: 255 }).default("Próximamente").notNull(),
     onboardingStep: integer("onboarding_step").default(0).notNull(),
     onboardingData: json("onboarding_data").$type<Record<string, any>>().default({}),
+    notas: text("notas"),
+    notasData: json("notas_data").$type<{ images: string[] }>().default({ images: [] }),
     clienteId: uuid("cliente_id").references(() => clientes.id, { onDelete: "cascade" }).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -42,12 +44,30 @@ export const clientesRelations = relations(clientes, ({ many }) => ({
     proyectos: many(proyectos),
 }));
 
+export const notas = pgTable("notas", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    contenido: text("contenido").notNull(),
+    imagenes: json("imagenes").$type<string[]>().default([]),
+    autor: varchar("autor", { length: 20 }).notNull(), // 'cliente' | 'admin'
+    proyectoId: uuid("proyecto_id").references(() => proyectos.id, { onDelete: "cascade" }).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    leido: boolean("leido").default(false).notNull(),
+});
+
+export const notasRelations = relations(notas, ({ one }) => ({
+    proyecto: one(proyectos, {
+        fields: [notas.proyectoId],
+        references: [proyectos.id],
+    }),
+}));
+
 export const proyectosRelations = relations(proyectos, ({ one, many }) => ({
     cliente: one(clientes, {
         fields: [proyectos.clienteId],
         references: [clientes.id],
     }),
     archivos: many(archivos),
+    notas: many(notas),
 }));
 
 export const archivosCountRelations = relations(archivos, ({ one }) => ({
@@ -60,7 +80,7 @@ export const archivosCountRelations = relations(archivos, ({ one }) => ({
 export const usuariosAdmin = pgTable("usuarios_admin", {
     id: uuid("id").defaultRandom().primaryKey(),
     nombre: text("nombre").notNull(),
-    email: text("email").notNull().unique(),
+    username: text("username").notNull().unique(),
     password: text("password").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });

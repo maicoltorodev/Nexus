@@ -56,13 +56,13 @@ export default function PlansPage() {
                             Inversión <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600">Web Inteligente</span>
                         </h1>
                         <p className="text-lg md:text-2xl text-slate-400 max-w-3xl mx-auto leading-relaxed font-light mb-12">
-                            Hemos fusionado el diseño creativo de <span className="text-white font-bold">NEXUS</span> con la infraestructura de alta velocidad de <span className="text-cyan-400 font-black tracking-widest uppercase italic">InZidium</span>.
+                            Hemos fusionado el diseño creativo de <span className="text-white font-bold">NEXUS</span> con la infraestructura de alta velocidad de <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent font-black tracking-[0.2em] uppercase font-[family-name:var(--font-orbitron)]">InZidium</span>.
                         </p>
 
                         <div className="flex justify-center mb-16">
                             <div className="relative inline-flex items-center gap-6 md:gap-12 px-10 py-7 rounded-[2.5rem] border border-white/10 bg-white/5 backdrop-blur-md hover:border-cyan-500/30 transition-all duration-700 group">
                                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#020617] px-6 py-1.5 rounded-full border border-white/10 z-20">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-500">Alianza Tech</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-500 font-[family-name:var(--font-orbitron)]">Alianza Tech</span>
                                 </div>
                                 <div className="relative w-12 h-12 md:w-16 md:h-16 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
                                     <Image src="/X.webp" alt="Nexus" fill className="object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]" />
@@ -88,12 +88,25 @@ export default function PlansPage() {
 
                     <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
                         <motion.div initial="hidden" animate="visible" variants={fadeInVariants}>
-                            <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-[0.3em] mb-4 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                            <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-[0.3em] mb-8 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
                                 PÁGINA WEB ESTÁNDAR
                             </h2>
-                            <div className="flex items-center justify-center gap-5">
-                                <span className="text-5xl md:text-7xl font-black text-cyan-200 drop-shadow-[0_0_30px_rgba(34,211,238,0.5)]">$600.000</span>
-                                <span className="text-white/60 text-base font-bold uppercase tracking-[0.4em]">COP</span>
+                            <div className="flex flex-col items-center gap-2">
+                                <div className="flex items-center gap-3 mb-1">
+                                    <span className="text-xl md:text-2xl font-bold text-white/30 line-through decoration-red-500/60 decoration-2 italic tracking-widest">$800.000</span>
+                                    <motion.span
+                                        animate={{ scale: [1, 1.05, 1] }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                        className="bg-red-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-[0_0_20px_rgba(239,68,68,0.4)] tracking-widest uppercase"
+                                    >
+                                        PROMO LANZAMIENTO
+                                    </motion.span>
+                                </div>
+                                <div className="flex items-center justify-center gap-5">
+                                    <span className="text-7xl md:text-9xl font-black text-cyan-200 drop-shadow-[0_0_40px_rgba(34,211,238,0.6)] tracking-tighter">$499.000</span>
+                                    <span className="text-white/60 text-base font-bold uppercase tracking-[0.4em] mt-8">COP</span>
+                                </div>
+                                <p className="text-cyan-400 text-[10px] font-black uppercase tracking-[0.5em] mt-4 opacity-70">Hacemos tu pagina web en menos de 48 horas</p>
                             </div>
                         </motion.div>
                     </div>
@@ -121,7 +134,7 @@ export default function PlansPage() {
                                 icon: <Server className="w-9 h-9" />,
                                 items: [
                                     { t: "Dominio x 1 Año", d: "Tu dirección propia (.com o .co) sin costos extra iniciales." },
-                                    { t: "Cloud Hosting Fast", d: "Infraestructura de carga ultra rápida." },
+                                    { t: "Cloud Hosting x 1 Año", d: "Infraestructura de carga ultra rápida incluida por el primer año." },
                                     { t: "Seguridad SSL", d: "Encriptación de datos para la confianza de tus clientes." }
                                 ]
                             },
@@ -197,9 +210,11 @@ export default function PlansPage() {
                                 </div>
                                 <div className="grid md:grid-cols-2 gap-x-14 gap-y-12">
                                     {[
-                                        { t: "Arquitectura Fija", d: "Este es un plan basado en plantilla. El diseño y orden de secciones NO se pueden modificar." },
                                         { t: "Personalización", d: "Inyectamos tu marca (Logo, fotos, textos y colores) en nuestra estructura probada." },
                                         { t: "Plazo de 48 Horas", d: "Inicia únicamente cuando entregas la totalidad de insumos (Logo, colores, textos e imagenes de tus mejores servicios/productos). max (6)" },
+                                        { t: "Garantía de Contenido", d: "Cuentas con 1 semana de soporte para ajustes menores de tus propios datos (corrección de textos, cambio de fotos o teléfonos)." },
+                                        { t: "Arquitectura Fija", d: "Este es un plan basado en plantilla. La estructura de la pagina, el diseño y orden de secciones NO se pueden modificar." },
+                                        { t: "Anualidad Renovación", d: "Pasado el primer año, la renovación de Dominio + Hosting tiene un costo fijo de $250.000 COP." },
                                         { t: "Escalabilidad", d: "Si buscas diseño desde cero o funciones extras, cotiza un Proyecto Premium ($1.8M+)." }
                                     ].map((rule, i) => (
                                         <div key={i}>

@@ -103,62 +103,88 @@ export default function ClientsAdmin() {
             </header>
 
             {/* Content Table / Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <AnimatePresence mode="popLayout">
-                    {filteredClients.map((client, idx) => (
-                        <motion.div
-                            key={client.id}
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            transition={{ delay: idx * 0.05 }}
-                            className="group relative"
+            <div className="min-h-[400px]">
+                {filteredClients.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <AnimatePresence mode="popLayout">
+                            {filteredClients.map((client, idx) => (
+                                <motion.div
+                                    key={client.id}
+                                    initial={{ opacity: 0, y: 30 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    transition={{ delay: idx * 0.05 }}
+                                    className="group relative"
+                                >
+                                    {/* Glow de fondo tricolor en Hover */}
+                                    <div className="absolute inset-0 bg-gradient-to-br from-[#FFD700]/20 via-[#a855f7]/20 to-[#22d3ee]/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-[3rem]" />
+
+                                    <div className="relative bg-[#0a0a0a]/40 backdrop-blur-3xl border border-white/5 p-10 rounded-[3rem] hover:border-white/20 transition-all duration-500 h-full flex flex-col overflow-hidden">
+                                        {/* Línea de energía superior */}
+                                        <div className="absolute top-0 left-0 w-0 group-hover:w-full h-[2px] bg-gradient-to-r from-[#FFD700] via-[#a855f7] to-[#22d3ee] transition-all duration-700" />
+
+                                        <div className="flex justify-between items-start mb-10">
+                                            <div className="w-16 h-16 rounded-[2rem] bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 flex items-center justify-center text-[#FFD700] group-hover:bg-[#FFD700] group-hover:text-black group-hover:rotate-6 transition-all duration-500">
+                                                <Users className="w-7 h-7" />
+                                            </div>
+                                            <div className="flex flex-col items-end gap-1">
+                                                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-600">ID Identificador</span>
+                                                <span className="text-xs font-black text-gray-400 group-hover:text-[#FFD700] transition-colors">#{client.cedula}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="mb-10">
+                                            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#a855f7] mb-2 block">Cliente Visionario</span>
+                                            <h3 className="text-2xl font-black group-hover:bg-gradient-to-r group-hover:from-[#FFD700] group-hover:via-[#a855f7] group-hover:to-[#22d3ee] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-500 leading-none">{client.nombre}</h3>
+                                        </div>
+
+                                        <div className="space-y-5 flex-1">
+                                            <ClientInfo icon={Mail} label="Enlace Digital" text={client.email} />
+                                            <ClientInfo icon={Phone} label="Línea Directa" text={client.telefono} />
+                                            <ClientInfo icon={CreditCard} label="Registro Legal" text={`C.C. ${client.cedula}`} />
+                                        </div>
+
+                                        <div className="mt-12 pt-8 border-t border-white/5 flex justify-between items-center">
+                                            <div className="flex flex-col gap-1">
+                                                <span className="text-[8px] font-black text-gray-600 uppercase tracking-[0.3em]">Miembro desde</span>
+                                                <span className="text-[10px] font-bold text-gray-400">{new Date(client.createdAt).toLocaleDateString('es-ES', { month: 'short', year: 'numeric' }).toUpperCase()}</span>
+                                            </div>
+                                            <button
+                                                onClick={() => setConfirmDelete({ id: client.id, nombre: client.nombre, cedula: client.cedula })}
+                                                className="w-10 h-10 rounded-xl bg-red-500/5 hover:bg-red-500 text-red-500/50 hover:text-white border border-red-500/10 hover:border-red-500 transition-all duration-300 flex items-center justify-center group/trash hover:scale-110 active:scale-90 shadow-lg"
+                                                title="Eliminar Cliente"
+                                            >
+                                                <Trash2 className="w-4 h-4 group-hover/trash:rotate-12 transition-transform" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </div>
+                ) : (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col items-center justify-center py-32 text-center"
+                    >
+                        <div className="w-24 h-24 bg-white/5 rounded-[2.5rem] border border-white/10 flex items-center justify-center text-gray-700 mb-8 relative group">
+                            <Users className="w-10 h-10 group-hover:text-[#FFD700] transition-colors duration-500" />
+                            <div className="absolute inset-0 bg-[#FFD700]/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                        <h2 className="text-2xl font-black mb-3 font-[family-name:var(--font-orbitron)] uppercase tracking-tight text-white">Directorio Vacío</h2>
+                        <p className="text-gray-500 text-sm max-w-sm mb-10 leading-relaxed font-medium">
+                            No se han detectado socios comerciales en el ecosistema. <br />
+                            Registra tu primer cliente para expandir el alcance de Nexus.
+                        </p>
+                        <button
+                            onClick={() => setIsAdding(true)}
+                            className="px-10 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 hover:bg-[#FFD700] hover:text-black hover:border-transparent transition-all duration-500"
                         >
-                            {/* Glow de fondo tricolor en Hover */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#FFD700]/20 via-[#a855f7]/20 to-[#22d3ee]/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-[3rem]" />
-
-                            <div className="relative bg-[#0a0a0a]/40 backdrop-blur-3xl border border-white/5 p-10 rounded-[3rem] hover:border-white/20 transition-all duration-500 h-full flex flex-col overflow-hidden">
-                                {/* Línea de energía superior */}
-                                <div className="absolute top-0 left-0 w-0 group-hover:w-full h-[2px] bg-gradient-to-r from-[#FFD700] via-[#a855f7] to-[#22d3ee] transition-all duration-700" />
-
-                                <div className="flex justify-between items-start mb-10">
-                                    <div className="w-16 h-16 rounded-[2rem] bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 flex items-center justify-center text-[#FFD700] group-hover:bg-[#FFD700] group-hover:text-black group-hover:rotate-6 transition-all duration-500">
-                                        <Users className="w-7 h-7" />
-                                    </div>
-                                    <div className="flex flex-col items-end gap-1">
-                                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-gray-600">ID Identificador</span>
-                                        <span className="text-xs font-black text-gray-400 group-hover:text-[#FFD700] transition-colors">#{client.cedula}</span>
-                                    </div>
-                                </div>
-
-                                <div className="mb-10">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#a855f7] mb-2 block">Cliente Visionario</span>
-                                    <h3 className="text-2xl font-black group-hover:bg-gradient-to-r group-hover:from-[#FFD700] group-hover:via-[#a855f7] group-hover:to-[#22d3ee] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-500 leading-none">{client.nombre}</h3>
-                                </div>
-
-                                <div className="space-y-5 flex-1">
-                                    <ClientInfo icon={Mail} label="Enlace Digital" text={client.email} />
-                                    <ClientInfo icon={Phone} label="Línea Directa" text={client.telefono} />
-                                    <ClientInfo icon={CreditCard} label="Registro Legal" text={`C.C. ${client.cedula}`} />
-                                </div>
-
-                                <div className="mt-12 pt-8 border-t border-white/5 flex justify-between items-center">
-                                    <div className="flex flex-col gap-1">
-                                        <span className="text-[8px] font-black text-gray-600 uppercase tracking-[0.3em]">Miembro desde</span>
-                                        <span className="text-[10px] font-bold text-gray-400">{new Date(client.createdAt).toLocaleDateString('es-ES', { month: 'short', year: 'numeric' }).toUpperCase()}</span>
-                                    </div>
-                                    <button
-                                        onClick={() => setConfirmDelete({ id: client.id, nombre: client.nombre, cedula: client.cedula })}
-                                        className="w-10 h-10 rounded-xl bg-red-500/5 hover:bg-red-500 text-red-500/50 hover:text-white border border-red-500/10 hover:border-red-500 transition-all duration-300 flex items-center justify-center group/trash hover:scale-110 active:scale-90 shadow-lg"
-                                        title="Eliminar Cliente"
-                                    >
-                                        <Trash2 className="w-4 h-4 group-hover/trash:rotate-12 transition-transform" />
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    ))}
-                </AnimatePresence>
+                            Comenzar Registro
+                        </button>
+                    </motion.div>
+                )}
             </div>
 
             {/* Modal de Registro Ultra-Premium */}

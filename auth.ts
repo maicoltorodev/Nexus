@@ -10,14 +10,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         Credentials({
             name: "Credentials",
             credentials: {
-                email: { label: "Email", type: "email" },
+                username: { label: "Username", type: "text" },
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-                if (!credentials?.email || !credentials?.password) return null;
+                if (!credentials?.username || !credentials?.password) return null;
 
                 const user = await db.query.usuariosAdmin.findFirst({
-                    where: eq(usuariosAdmin.email, credentials.email as string),
+                    where: eq(usuariosAdmin.username, credentials.username as string),
                 });
 
                 if (!user) return null;
@@ -32,13 +32,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 return {
                     id: user.id,
                     name: user.nombre,
-                    email: user.email,
+                    username: user.username,
                 };
             },
         }),
     ],
     pages: {
         signIn: "/admin/login",
+    },
+    session: {
+        strategy: "jwt",
+        maxAge: 24 * 60 * 60, // 24 Horas
     },
     callbacks: {
         authorized({ auth, request: { nextUrl } }) {

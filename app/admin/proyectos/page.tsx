@@ -26,6 +26,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import AdminLoading from '../loading';
 import { NEXUS_PLANS, NEXUS_PLANS_ARRAY } from '@/lib/constants';
+import CountdownTimer from '@/components/CountdownTimer';
 
 export default function ProjectsAdmin() {
     const [projects, setProjects] = useState<any[]>([]);
@@ -149,7 +150,7 @@ export default function ProjectsAdmin() {
                                             </div>
 
                                             {/* Details Matrix */}
-                                            <div className="grid grid-cols-2 gap-8 mb-10 p-6 rounded-3xl bg-white/[0.02] border border-white/5 group-hover:bg-white/[0.04] transition-all duration-500">
+                                            <div className="grid grid-cols-2 gap-8 mb-6 p-6 rounded-3xl bg-white/[0.02] border border-white/5 group-hover:bg-white/[0.04] transition-all duration-500">
                                                 <div className="space-y-1">
                                                     <div className="flex items-center gap-2 text-[8px] font-black uppercase tracking-widest text-gray-500">
                                                         <User className="w-3 h-3" /> Socio Master
@@ -161,6 +162,22 @@ export default function ProjectsAdmin() {
                                                         <Calendar className="w-3 h-3" /> Cierre Estimado
                                                     </div>
                                                     <p className="text-sm font-bold text-gray-100">{new Date(project.fechaEntrega).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }).toUpperCase()}</p>
+                                                </div>
+                                            </div>
+
+                                            {/* Countdown Timer for Priority */}
+                                            <div className="mb-8 p-6 rounded-3xl bg-black/20 border border-white/5 flex flex-col items-center">
+                                                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-gray-500 mb-4">Reloj de Prioridad</span>
+                                                <div className="scale-75 origin-top">
+                                                    <CountdownTimer
+                                                        targetDate={
+                                                            project.onboardingData?.onboardingCompletedAt
+                                                                ? new Date(new Date(project.onboardingData.onboardingCompletedAt).getTime() + (projectPlan.days * 24 * 60 * 60 * 1000))
+                                                                : null
+                                                        }
+                                                        isCompleted={project.estado === 'completado'}
+                                                        size="small"
+                                                    />
                                                 </div>
                                             </div>
 

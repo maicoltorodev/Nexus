@@ -1,10 +1,25 @@
 'use server';
 
 import { db } from './db';
-import { clientes, proyectos, archivos, usuariosAdmin } from './db/schema';
-import { eq, and } from 'drizzle-orm';
+import { clientes, proyectos, archivos, usuariosAdmin, notas } from './db/schema';
+import { eq, and, desc, asc } from 'drizzle-orm';
 import { put } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
+import bcrypt from 'bcryptjs';
+
+// Helper: Notifications
+async function sendNotification(type: 'CREATE' | 'ONBOARDING' | 'MESSAGE', projectName: string) {
+    const priority = type === 'ONBOARDING' ? '5' : type === 'MESSAGE' ? '4' : '3';
+    try {
+        await fetch('https://ntfy.sh/crm_idk_secure_923847293847293847', {
+            method: 'POST',
+            headers: { 'Priority': priority },
+            body: `${type} | ${projectName}`,
+        });
+    } catch (e) {
+        console.error('Notification Error:', e);
+    }
+}
 
 // Clientes
 export async function createCliente(formData: FormData) {
@@ -52,285 +67,252 @@ export async function getProyectos() {
         with: {
             cliente: true,
             archivos: true,
+            notas: {
+                orderBy: (notas, { asc }) => [asc(notas.createdAt)]
+            }
         },
         orderBy: (proyectos, { desc }) => [desc(proyectos.createdAt)],
     });
 }
 
-// Proyectos
+export async function getProyectoByCedula(cedula: string) {
+    const result = await db.query.clientes.findFirst({
+        where: eq(clientes.cedula, cedula),
+        with: {
+            proyectos: {
+                with: {
+                    archivos: true,
+                    notas: {
+                        orderBy: (notas, { asc }) => [asc(notas.createdAt)]
+                    }
+                }
+            }
+        }
+    });
+
+    return result;
+}
+
 export async function createProyecto(formData: FormData) {
     const nombre = formData.get('nombre') as string;
     const plan = formData.get('plan') as string;
     const clienteId = formData.get('clienteId') as string;
-    const fechaEntrega = formData.get('fechaEntrega') as string;
-
-    // Blindaje Logístico: Verificar si este cliente ya tiene un proyecto con el mismo nombre
-    const existing = await db.query.proyectos.findFirst({
-        where: and(
-            eq(proyectos.nombre, nombre),
-            eq(proyectos.clienteId, clienteId)
-        )
-    });
-
-    if (existing) {
-        return { error: 'EL CLIENTE YA TIENE UN PROYECTO REGISTRADO CON ESTE NOMBRE.' };
-    }
+    const fechaEntregaStr = formData.get('fechaEntrega') as string;
 
     try {
         await db.insert(proyectos).values({
             nombre,
             plan,
             clienteId,
-            fechaEntrega: fechaEntrega ? new Date(fechaEntrega) : null,
             estado: 'pendiente',
             progreso: 0,
+            fechaEntrega: fechaEntregaStr ? new Date(fechaEntregaStr) : null,
         });
+
+        // NOTIFICACION: Proyecto Creado
+        await sendNotification('CREATE', nombre);
 
         revalidatePath('/admin');
         return { success: true };
     } catch (e) {
-        return { error: 'ERROR CRÍTICO AL INJECTAR EL PROYECTO.' };
+        return { error: 'ERROR AL CREAR EL PROYECTO.' };
     }
 }
 
 export async function updateProyectoProgreso(id: string, progreso: number, estado: string) {
-    await db.update(proyectos)
-        .set({ progreso, estado })
-        .where(eq(proyectos.id, id));
-
-    revalidatePath('/admin');
-    return { success: true };
-}
-
-export async function updateProyectoPlan(id: string, plan: string) {
-    await db.update(proyectos)
-        .set({ plan })
-        .where(eq(proyectos.id, id));
-
-    revalidatePath('/admin');
-    return { success: true };
-}
-
-export async function updateProyectoFecha(id: string, fecha: string) {
-    await db.update(proyectos)
-        .set({ fechaEntrega: new Date(fecha) })
-        .where(eq(proyectos.id, id));
-
-    revalidatePath('/admin');
-    return { success: true };
-}
-
-export async function updateProyectoLink(id: string, link: string) {
-    await db.update(proyectos)
-        .set({ link })
-        .where(eq(proyectos.id, id));
-
-    revalidatePath('/admin');
-    return { success: true };
+    try {
+        await db.update(proyectos)
+            .set({ progreso, estado })
+            .where(eq(proyectos.id, id));
+        revalidatePath('/admin');
+        revalidatePath(`/seguimiento`);
+        return { success: true };
+    } catch (e) {
+        return { error: 'ERROR AL ACTUALIZAR EL PROGRESO.' };
+    }
 }
 
 export async function updateProyectoVisibilidad(id: string, visibilidad: boolean) {
-    await db.update(proyectos)
-        .set({ visibilidad })
-        .where(eq(proyectos.id, id));
-
-    revalidatePath('/admin');
-    return { success: true };
-}
-
-// Wizard Onboarding
-export async function updateProyectoOnboarding(id: string, step: number, data: any) {
     try {
         await db.update(proyectos)
-            .set({ onboardingStep: step, onboardingData: data })
+            .set({ visibilidad })
             .where(eq(proyectos.id, id));
-
         revalidatePath('/admin');
+        revalidatePath(`/seguimiento`);
         return { success: true };
     } catch (e) {
-        console.error("Error onboarding:", e);
-        return { error: 'ERROR AL GUARDAR EL PROGRESO.' };
+        return { error: 'ERROR AL CAMBIAR VISIBILIDAD.' };
     }
 }
 
-// Seguimiento Cliente (Búsqueda por cédula)
-export async function deleteProyecto(id: string) {
+export async function updateProyectoOnboarding(id: string, step: number, data: any) {
     try {
-        // Limpiamos la Bóveda del proyecto primero (DB Only - Blob Cleanup is async/managed elsewhere)
-        await db.delete(archivos).where(eq(archivos.proyectoId, id));
-
-        // Ejecutamos la eliminación del proyecto
-        await db.delete(proyectos).where(eq(proyectos.id, id));
-
-        revalidatePath('/admin');
-        return { success: true };
-    } catch (e) {
-        console.error("Error eliminando proyecto:", e);
-        return { error: 'ERROR AL ELIMINAR EL PROYECTO.' };
-    }
-}
-
-export async function getProyectoByCedula(cedula: string) {
-    const cliente = await db.query.clientes.findFirst({
-        where: eq(clientes.cedula, cedula),
-        with: {
-            proyectos: {
-                with: {
-                    archivos: true
-                }
-            }
+        // NOTIFICACION: Onboarding Completo
+        if (data.onboardingCompletedAt) {
+            const proj = await db.query.proyectos.findFirst({ where: eq(proyectos.id, id) });
+            await sendNotification('ONBOARDING', proj?.nombre || 'Sin Nombre');
         }
-    });
 
-    return cliente;
+        // PREPARE UPDATE: Base fields
+        const updateFields: any = { onboardingStep: step, onboardingData: data };
+
+        // AUTOMATION: Set Public URL from Domain
+        if (data.dominioUno) {
+            updateFields.link = `www.${data.dominioUno}.com`;
+            revalidatePath('/admin'); // Revalidate admin if link changes
+        }
+
+        await db.update(proyectos)
+            .set(updateFields)
+            .where(eq(proyectos.id, id));
+        revalidatePath('/seguimiento');
+        return { success: true };
+    } catch (e) {
+        return { error: "Failed to update onboarding" };
+    }
 }
 
-import bcrypt from 'bcryptjs';
-
-// Admins
-export async function createAdmin(formData: FormData) {
-    const nombre = formData.get('nombre') as string;
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-
-    // Blindaje: Verificar si el email ya existe
-    const existing = await db.query.usuariosAdmin.findFirst({
-        where: eq(usuariosAdmin.email, email)
-    });
-
-    if (existing) {
-        return { error: 'ESTE EMAIL YA TIENE ACCESO ADMINISTRATIVO.' };
-    }
-
+export async function updateProyectoLink(id: string, link: string) {
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        await db.update(proyectos)
+            .set({ link })
+            .where(eq(proyectos.id, id));
+        revalidatePath('/admin');
+        revalidatePath(`/seguimiento`);
+        return { success: true };
+    } catch (e) {
+        return { error: 'ERROR AL ACTUALIZAR EL ENLACE.' };
+    }
+}
 
-        await db.insert(usuariosAdmin).values({
-            nombre,
-            email,
-            password: hashedPassword,
+export async function updateProyectoPlan(id: string, plan: string) {
+    try {
+        await db.update(proyectos)
+            .set({ plan })
+            .where(eq(proyectos.id, id));
+        revalidatePath('/admin');
+        return { success: true };
+    } catch (e) {
+        return { error: 'ERROR AL ACTUALIZAR EL PLAN.' };
+    }
+}
+
+export async function updateProyectoFecha(id: string, fechaEntrega: Date) {
+    try {
+        await db.update(proyectos)
+            .set({ fechaEntrega })
+            .where(eq(proyectos.id, id));
+        revalidatePath('/admin');
+        return { success: true };
+    } catch (e) {
+        return { error: 'ERROR AL ACTUALIZAR LA FECHA.' };
+    }
+}
+
+// Support for legacy single-note field but forwarding to new system if possible
+// Or just creating a new note
+export async function updateProyectoNotas(id: string, notasContent: string, images: string[] = []) {
+    return await addNota(id, notasContent, 'cliente', images);
+}
+
+// New Notes System
+export async function addNota(proyectoId: string, contenido: string, autor: 'cliente' | 'admin', imagenes: string[] = []) {
+    try {
+        await db.insert(notas).values({
+            proyectoId,
+            contenido,
+            autor,
+            imagenes,
+            leido: false,
         });
 
+        // NOTIFICACION: Nuevo Mensaje de Cliente
+        if (autor === 'cliente') {
+            const proj = await db.query.proyectos.findFirst({ where: eq(proyectos.id, proyectoId) });
+            await sendNotification('MESSAGE', proj?.nombre || 'Sin Nombre');
+        }
+
+        // OPTIMIZATION: Keep only the last 50 messages
+        const allNotes = await db.select().from(notas)
+            .where(eq(notas.proyectoId, proyectoId))
+            .orderBy(asc(notas.createdAt));
+
+        if (allNotes.length > 50) {
+            const excessCount = allNotes.length - 50;
+            const notesToDelete = allNotes.slice(0, excessCount);
+
+            for (const note of notesToDelete) {
+                await db.delete(notas).where(eq(notas.id, note.id));
+            }
+        }
+
+        revalidatePath('/admin');
+        revalidatePath('/seguimiento');
         return { success: true };
     } catch (e) {
-        return { error: 'FALLO EN LA ASIGNACIÓN DE CREDENCIALES.' };
+        return { error: 'ERROR AL GUARDAR LA NOTA.' };
     }
 }
 
-export async function getAdmins() {
-    return await db.select({
-        id: usuariosAdmin.id,
-        nombre: usuariosAdmin.nombre,
-        email: usuariosAdmin.email,
-        createdAt: usuariosAdmin.createdAt
-    }).from(usuariosAdmin).orderBy(usuariosAdmin.createdAt);
-}
-
-export async function deleteAdmin(id: string) {
-    // Protocolo de Supervivencia: Verificar cuántos administradores quedan
-    const totalAdmins = await db.select().from(usuariosAdmin);
-
-    if (totalAdmins.length <= 1) {
-        return { error: 'PROTOCOL DE SEGURIDAD: NO SE PUEDE ELIMINAR AL ÚLTIMO ADMINISTRADOR DEL SISTEMA.' };
+export async function deleteProyecto(id: string) {
+    try {
+        await db.delete(proyectos).where(eq(proyectos.id, id));
+        revalidatePath('/admin');
+        return { success: true };
+    } catch (e) {
+        return { error: 'ERROR AL ELIMINAR PROYECTO.' };
     }
-
-    await db.delete(usuariosAdmin).where(eq(usuariosAdmin.id, id));
-    return { success: true };
 }
 
 // Archivos
-const MAX_FILE_SIZE = 4.5 * 1024 * 1024; // 4.5MB (Límite estándar Vercel Blob Hobby)
-const ALLOWED_TYPES = [
-    'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml',
-    'application/pdf', 'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'text/plain', 'application/zip'
-];
-
-const PROJECT_STORAGE_LIMIT = 50 * 1024 * 1024; // 50MB por proyecto
-
-export async function uploadArchivo(formData: FormData, proyectoId: string, subidoPor: 'admin' | 'cliente', context?: string) {
+export async function uploadArchivo(formData: FormData) {
     const file = formData.get('file') as File;
-    if (!file) return { error: 'No se detectó ningún archivo.' };
+    const proyectoId = formData.get('proyectoId') as string;
+    const subidoPor = formData.get('subidoPor') as string; // 'admin' o 'cliente'
 
-    if (!proyectoId) return { error: 'ERROR TÉCNICO: ID de proyecto no detectado.' };
+    if (!file) return { error: 'NO SE HA SELECCIONADO NINGÚN ARCHIVO.' };
 
-    // Blindaje de Tamaño (Individual)
-    if (file.size > MAX_FILE_SIZE) {
-        return { error: `ARCHIVO DEMASIADO GRANDE. Límite máximo: 4.5MB (El archivo pesa ${(file.size / (1024 * 1024)).toFixed(2)}MB).` };
-    }
-
-    // Blindaje de Tipo
+    // SECURITY: Validate File Type (Whitelist)
+    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     if (!ALLOWED_TYPES.includes(file.type)) {
-        return { error: 'TIPO DE ARCHIVO NO PERMITIDO. Por seguridad, solo se aceptan imágenes, PDFs y documentos estándar.' };
+        return { error: 'FORMATO NO VALIDO. SOLO SE PERMITEN IMAGENES (JPG, PNG, WEBP).' };
     }
 
-    // Blindaje de Cuota Total por Proyecto (50MB)
-    const archivosProyecto = await db.query.archivos.findMany({
-        where: eq(archivos.proyectoId, proyectoId)
-    });
-
-    const tamanoTotalActual = archivosProyecto.reduce((acc, arc) => acc + (arc.tamano || 0), 0);
-    const nuevoTamanoTotal = tamanoTotalActual + file.size;
-
-    if (nuevoTamanoTotal > PROJECT_STORAGE_LIMIT) {
-        const MB_RESTANTES = ((PROJECT_STORAGE_LIMIT - tamanoTotalActual) / (1024 * 1024)).toFixed(2);
-        return {
-            error: `CUOTA DE PROYECTO EXCEDIDA. Límite de bóveda: 50MB. Espacio disponible: ${MB_RESTANTES}MB.`
-        };
-    }
-
-    // Blindaje de Duplicidad (Nombre + Peso)
-    const existeDuplicado = await db.query.archivos.findFirst({
-        where: and(
-            eq(archivos.nombre, file.name),
-            eq(archivos.tamano, file.size),
-            eq(archivos.proyectoId, proyectoId)
-        )
-    });
-
-    if (existeDuplicado) {
-        return { error: 'ESTE ACTIVO YA EXISTE EN LA BÓVEDA. Verifica el contenido para evitar duplicados.' };
-    }
-
-    if (!process.env.BLOB_READ_WRITE_TOKEN) {
-        return { error: 'ERROR DE CONFIGURACIÓN: Llave de acceso a la nube no encontrada.' };
-    }
-
-    let blob;
     try {
-        blob = await put(file.name, file, {
+        const uniqueFilename = `${Date.now()}-${file.name}`;
+        const blob = await put(uniqueFilename, file, {
             access: 'public',
-            token: process.env.BLOB_READ_WRITE_TOKEN,
-            addRandomSuffix: true
         });
-    } catch (blobError: any) {
-        console.error('Error Cloud Storage:', blobError);
-        return { error: `ERROR DE CONEXIÓN CON LA NUBE: ${blobError.message || 'Fallo en la comunicación'}` };
-    }
-
-    try {
-        let finalName = file.name;
-        if (context) {
-            finalName = `[${context.toUpperCase()}] ${file.name}`;
-        }
 
         await db.insert(archivos).values({
             url: blob.url,
-            nombre: finalName,
-            tipo: file.type && file.type.startsWith('image/') ? 'imagen' : 'documento',
+            nombre: file.name,
+            tipo: file.type.split('/')[0], // imagen, application, etc.
             tamano: file.size,
             subidoPor,
             proyectoId,
         });
 
+        // NOTIFICACION: Nuevo Archivo (Deshabilitado por simplificación)
+
+
         revalidatePath('/admin');
+        revalidatePath(`/seguimiento`);
         return { success: true, url: blob.url };
-    } catch (dbError: any) {
-        console.error('Error Database Sync:', dbError);
-        return { error: `ERROR DE SINCRONIZACIÓN DB: ${dbError.message || 'FALLO EN EL REGISTRO'}` };
+    } catch (e) {
+        return { error: 'ERROR EN LA CARGA DEL ARCHIVO.' };
+    }
+}
+
+export async function deleteArchivo(id: string) {
+    try {
+        // En un caso real, también eliminaríamos del blob store usando del()
+        await db.delete(archivos).where(eq(archivos.id, id));
+        revalidatePath('/admin');
+        revalidatePath(`/seguimiento`);
+        return { success: true };
+    } catch (e) {
+        return { error: 'ERROR AL ELIMINAR ARCHIVO.' };
     }
 }
 
@@ -347,30 +329,99 @@ export async function getArchivos() {
     });
 }
 
-export async function deleteArchivo(id: string) {
-    await db.delete(archivos).where(eq(archivos.id, id));
-    revalidatePath('/admin/archivos');
-    return { success: true };
+// Auth Admin (Simple)
+export async function loginAdmin(formData: FormData) {
+    const username = formData.get('username') as string;
+    const password = formData.get('password') as string;
+
+    try {
+        const user = await db.query.usuariosAdmin.findFirst({
+            where: eq(usuariosAdmin.username, username)
+        });
+
+        if (user && await bcrypt.compare(password, user.password)) {
+            return { success: true };
+        }
+        return { error: 'CREDENCIALES INVÁLIDAS' };
+    } catch (e) {
+        return { error: 'ERROR DE AUTENTICACIÓN' };
+    }
+}
+
+
+export async function getAdmins() {
+    return await db.select().from(usuariosAdmin).orderBy(desc(usuariosAdmin.createdAt));
+}
+
+
+
+// Client Data Updates (Post-Onboarding)
+export async function updateProyectoClientData(id: string, onboardingData: any) {
+    try {
+        await db.update(proyectos)
+            .set({ onboardingData })
+            .where(eq(proyectos.id, id));
+
+        revalidatePath('/seguimiento');
+        revalidatePath('/admin');
+        return { success: true };
+    } catch (e) {
+        console.error('Error updating client data:', e);
+        return { error: 'ERROR AL ACTUALIZAR LOS DATOS.' };
+    }
+}
+
+export async function createAdmin(formData: FormData) {
+    const nombre = formData.get('nombre') as string;
+    const username = formData.get('username') as string;
+    const password = formData.get('password') as string;
+
+    const existing = await db.query.usuariosAdmin.findFirst({
+        where: eq(usuariosAdmin.username, username)
+    });
+
+    if (existing) {
+        return { error: 'EL USUARIO YA EXISTE.' };
+    }
+
+    // BLINDAJE DE SEGURIDAD: Validación de contraseña fuerte
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+        return {
+            error: 'LA CONTRASEÑA ES DÉBIL. Debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&).'
+        };
+    }
+
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await db.insert(usuariosAdmin).values({
+            nombre,
+            username,
+            password: hashedPassword,
+        });
+
+        revalidatePath('/admin/admins');
+        return { success: true };
+    } catch (e) {
+        return { error: 'ERROR AL CREAR ADMINISTRADOR.' };
+    }
+}
+
+export async function deleteAdmin(id: string) {
+    try {
+        await db.delete(usuariosAdmin).where(eq(usuariosAdmin.id, id));
+        revalidatePath('/admin/admins');
+        return { success: true };
+    } catch (e) {
+        return { error: 'ERROR AL ELIMINAR ADMINISTRADOR.' };
+    }
 }
 
 export async function getSystemStatus() {
     try {
-        // 1. Database Check
-        await db.select().from(clientes).limit(1);
-
-        // 2. Vercel Blob Check
-        const blobActive = process.env.BLOB_READ_WRITE_TOKEN ? 'Sincronizado' : 'Error Config';
-
-        return {
-            database: 'Óptimo',
-            blob: blobActive,
-            auth: 'Seguro (AES-256)'
-        };
+        await db.execute('SELECT 1');
+        return { database: 'ok', blob: 'ok', auth: 'ok' };
     } catch (e) {
-        return {
-            database: 'Error Conexión',
-            blob: 'Pendiente',
-            auth: 'Vulnerable'
-        };
+        return { database: 'error', blob: 'error', auth: 'error' };
     }
 }

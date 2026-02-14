@@ -4,12 +4,13 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ClientShell from '@/components/ClientShell';
 import Footer from '@/components/Footer';
-import { Settings, Maximize2, RotateCcw, Download, Info, Zap, Ruler, Layers, Loader2 } from 'lucide-react';
-import jsPDF from 'jspdf';
-import * as htmlToImage from 'html-to-image';
+import { Settings, Maximize2, RotateCcw, Info, Zap, Ruler, Layers, BookOpen, CheckCircle2, AlertTriangle, ArrowRight } from 'lucide-react';
 
 export default function CalculadoraCorte() {
-    // Inputs
+    // State for Units
+    const [unit, setUnit] = useState<'cm' | 'mm'>('cm');
+
+    // Inputs with persistence
     const [sheetW, setSheetW] = useState<number>(100);
     const [sheetH, setSheetH] = useState<number>(70);
     const [cutW, setCutW] = useState<number>(9);
@@ -17,8 +18,49 @@ export default function CalculadoraCorte() {
     const [margin, setMargin] = useState<number>(0);
     const [gap, setGap] = useState<number>(0);
     const [neededQty, setNeededQty] = useState<number>(1000);
-    const [sheetPrice, setSheetPrice] = useState<number>(1500); // Cost per full sheet
-    const [sellPrice, setSellPrice] = useState<number>(500); // Selling price per cut
+    const [allowRotation, setAllowRotation] = useState<boolean>(true);
+    const [showGuide, setShowGuide] = useState<boolean>(false);
+    const [strategyMode, setStrategyMode] = useState<'auto' | 'manual'>('auto');
+
+    // Persistence Effect
+    useEffect(() => {
+        const saved = localStorage.getItem('nexus-calc-settings');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                setSheetW(parsed.sheetW ?? 100);
+                setSheetH(parsed.sheetH ?? 70);
+                setCutW(parsed.cutW ?? 9);
+                setCutH(parsed.cutH ?? 5);
+                setMargin(parsed.margin ?? 0);
+                setGap(parsed.gap ?? 0);
+                setNeededQty(parsed.neededQty ?? 1000);
+                setUnit(parsed.unit ?? 'cm');
+                setAllowRotation(parsed.allowRotation ?? true);
+                setStrategyMode(parsed.strategyMode ?? 'auto');
+            } catch (e) {
+                console.error("Error loading saved settings", e);
+            }
+        }
+    }, []);
+
+    // Conversion logic
+    const toggleUnit = (newUnit: 'cm' | 'mm') => {
+        if (newUnit === unit) return;
+        const conv = newUnit === 'mm' ? 10 : 0.1;
+        setSheetW(prev => Number((prev * conv).toFixed(2)));
+        setSheetH(prev => Number((prev * conv).toFixed(2)));
+        setCutW(prev => Number((prev * conv).toFixed(2)));
+        setCutH(prev => Number((prev * conv).toFixed(2)));
+        setMargin(prev => Number((prev * conv).toFixed(2)));
+        setGap(prev => Number((prev * conv).toFixed(2)));
+        setUnit(newUnit);
+    };
+
+    useEffect(() => {
+        const settings = { sheetW, sheetH, cutW, cutH, margin, gap, neededQty, unit, allowRotation, strategyMode };
+        localStorage.setItem('nexus-calc-settings', JSON.stringify(settings));
+    }, [sheetW, sheetH, cutW, cutH, margin, gap, neededQty, unit, allowRotation, strategyMode]);
 
     // Derived calculations
     const calculation = useMemo(() => {
@@ -39,32 +81,46 @@ export default function CalculadoraCorte() {
 
             // Extra Right
             const remW = sW - usedW;
-            const extraR_Cols = Math.floor(remW / (cH + gap));
-            const extraR_Rows = Math.floor((sH + gap) / (cW + gap));
-            const extraR_Total = Math.max(0, extraR_Cols * extraR_Rows);
-
-            // Extra Bottom
             const remH = sH - usedH;
-            const extraB_Rows = Math.floor(remH / (cW + gap));
-            const extraB_Cols = Math.floor((sW + gap) / (cH + gap));
-            const extraB_Total = Math.max(0, extraB_Cols * extraB_Rows);
 
-            if (extraR_Total > 0 && extraR_Total >= extraB_Total) {
-                return {
-                    total: mainTotal + extraR_Total,
-                    parts: [mainPart, { type: 'extra', cols: extraR_Cols, rows: extraR_Rows, w: cH, h: cW, total: extraR_Total, x: usedW + gap, y: 0 }]
-                };
-            } else if (extraB_Total > 0) {
-                return {
-                    total: mainTotal + extraB_Total,
-                    parts: [mainPart, { type: 'extra', cols: extraB_Cols, rows: extraB_Rows, w: cH, h: cW, total: extraB_Total, x: 0, y: usedH + gap }]
-                };
+            // Strategy 1: Right Strip (Full Height) + Bottom Left (Under Main)
+            const r1_Cols = Math.floor(remW / (cH + gap));
+            const r1_Rows = Math.floor((sH + gap) / (cW + gap));
+            const r1_Total = Math.max(0, r1_Cols * r1_Rows);
+
+            const b1_Cols = Math.floor((usedW + gap) / (cH + gap));
+            const b1_Rows = Math.floor(remH / (cW + gap));
+            const b1_Total = Math.max(0, b1_Cols * b1_Rows);
+
+            const total1 = mainTotal + r1_Total + b1_Total;
+
+            // Strategy 2: Bottom Strip (Full Width) + Top Right (Next to Main)
+            const b2_Cols = Math.floor((sW + gap) / (cH + gap));
+            const b2_Rows = Math.floor(remH / (cW + gap));
+            const b2_Total = Math.max(0, b2_Cols * b2_Rows);
+
+            const r2_Cols = Math.floor(remW / (cH + gap));
+            const r2_Rows = Math.floor((usedH + gap) / (cW + gap));
+            const r2_Total = Math.max(0, r2_Cols * r2_Rows);
+
+            const total2 = mainTotal + b2_Total + r2_Total;
+
+            if (total1 >= total2 && (r1_Total > 0 || b1_Total > 0)) {
+                const parts = [mainPart];
+                if (r1_Total > 0) parts.push({ type: 'extra', cols: r1_Cols, rows: r1_Rows, w: cH, h: cW, total: r1_Total, x: usedW + gap, y: 0 });
+                if (b1_Total > 0) parts.push({ type: 'extra', cols: b1_Cols, rows: b1_Rows, w: cH, h: cW, total: b1_Total, x: 0, y: usedH + gap });
+                return { total: total1, parts };
+            } else if (total2 > total1 && (b2_Total > 0 || r2_Total > 0)) {
+                const parts = [mainPart];
+                if (b2_Total > 0) parts.push({ type: 'extra', cols: b2_Cols, rows: b2_Rows, w: cH, h: cW, total: b2_Total, x: 0, y: usedH + gap });
+                if (r2_Total > 0) parts.push({ type: 'extra', cols: r2_Cols, rows: r2_Rows, w: cH, h: cW, total: r2_Total, x: usedW + gap, y: 0 });
+                return { total: total2, parts };
             }
             return { total: mainTotal, parts: [mainPart] };
         };
 
         const layout1 = getLayout(effW, effH, cutW, cutH);
-        const layout2 = getLayout(effW, effH, cutH, cutW);
+        const layout2 = allowRotation ? getLayout(effW, effH, cutH, cutW) : { total: 0, parts: [] };
 
         const best = layout1.total >= layout2.total ? layout1 : layout2;
 
@@ -72,9 +128,9 @@ export default function CalculadoraCorte() {
         const usedArea = best.total * (cutW * cutH);
         const wastePercent = totalArea > 0 ? ((totalArea - usedArea) / totalArea) * 100 : 0;
 
-        const totalMaterialCost = Math.ceil(neededQty / Math.max(1, best.total)) * sheetPrice;
-        const totalRevenue = neededQty * sellPrice;
-        const profit = totalRevenue - totalMaterialCost;
+        const pliegosCalculados = Math.ceil(neededQty / Math.max(1, best.total)) || 0;
+        const totalYield = pliegosCalculados * best.total;
+        const extraQty = totalYield - neededQty;
 
         return {
             ...best,
@@ -83,53 +139,10 @@ export default function CalculadoraCorte() {
             origCutW: cutW,
             origCutH: cutH,
             wastePercent,
-            pliegos: Math.ceil(neededQty / Math.max(1, best.total)) || 0,
-            totalMaterialCost,
-            totalRevenue,
-            profit
+            pliegos: pliegosCalculados,
+            extraQty
         };
-    }, [sheetW, sheetH, cutW, cutH, margin, gap, neededQty, sheetPrice, sellPrice]);
-
-    const [isExporting, setIsExporting] = useState(false);
-
-    const handleExportPDF = async () => {
-        if (!calculation) return;
-        setIsExporting(true);
-
-        try {
-            const studioElement = document.getElementById('studio-report-content');
-            if (!studioElement) return;
-
-            // html-to-image is much better with modern CSS colors like oklab
-            const dataUrl = await htmlToImage.toPng(studioElement, {
-                quality: 1.0,
-                pixelRatio: 2,
-                backgroundColor: '#0a0a0a'
-            });
-
-            const pdf = new jsPDF({
-                orientation: 'landscape',
-                unit: 'mm',
-                format: 'a4'
-            });
-
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
-
-            // Background color for the whole page
-            pdf.setFillColor(5, 5, 5);
-            pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
-
-            // Add the image fitting the page
-            pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
-
-            pdf.save(`Nexus-Report-${new Date().getTime()}.pdf`);
-        } catch (error) {
-            console.error('Error generating PDF:', error);
-        } finally {
-            setIsExporting(false);
-        }
-    };
+    }, [sheetW, sheetH, cutW, cutH, margin, gap, neededQty, allowRotation]);
 
     return (
         <ClientShell>
@@ -141,329 +154,193 @@ export default function CalculadoraCorte() {
                 </div>
 
                 <div className="max-w-[1700px] mx-auto px-4 relative z-10 min-h-[calc(100vh-100px)] flex flex-col pt-4">
-                    {/* THE UNIFIED STUDIO BOX */}
                     <div id="studio-report-content" className="flex-1 relative group min-h-0 flex flex-col lg:flex-row bg-[#0a0a0a] rounded-3xl md:rounded-[38px] border border-white/5 overflow-hidden">
 
                         {/* LEFT HUD - INTELLIGENCE & PRESETS */}
                         <aside className="w-full lg:w-72 bg-black/40 backdrop-blur-2xl border-b lg:border-r lg:border-b-0 border-white/5 flex flex-col p-4 md:p-6 overflow-x-auto lg:overflow-y-auto custom-scrollbar lg:max-h-full max-h-[300px] lg:h-auto shrink-0">
                             <div className="flex lg:flex-col gap-4 lg:gap-6 min-w-max lg:min-w-0">
-                                {/* Rendimiento Section */}
-                                <div className="bg-white/5 rounded-2xl p-4 md:p-5 border border-white/5 w-[240px] lg:w-full shrink-0">
-                                    <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] mb-4">Rendimiento</p>
-                                    <div className="space-y-4">
-                                        <div className="flex justify-between items-end">
-                                            <span className="text-xs text-gray-400">Cortes x Pliego</span>
-                                            <span className="text-xl md:text-2xl font-black text-white leading-none">{calculation?.total || 0}</span>
+
+                                <div className="mt-6 space-y-6">
+                                    <div className="bg-white/5 border border-white/10 rounded-[32px] p-1.5 overflow-hidden w-[240px] lg:w-full shrink-0">
+                                        <div className="flex p-1 gap-1 bg-white/5 rounded-[26px] mb-2">
+                                            <button onClick={() => { setStrategyMode('auto'); setAllowRotation(true); }} className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-[20px] text-[10px] font-black uppercase tracking-tighter transition-all ${strategyMode === 'auto' ? 'bg-[#FFD700] text-black shadow-lg' : 'text-gray-500 hover:text-white'}`}><Zap className="w-3.5 h-3.5" /> Auto Pro</button>
+                                            <button onClick={() => { setStrategyMode('manual'); setAllowRotation(false); }} className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-[20px] text-[10px] font-black uppercase tracking-tighter transition-all ${strategyMode === 'manual' ? 'bg-[#FFA500] text-black shadow-lg' : 'text-gray-500 hover:text-white'}`}><Ruler className="w-3.5 h-3.5" /> Manual</button>
                                         </div>
-                                        <div className="space-y-1">
-                                            <div className="flex justify-between text-[10px]">
-                                                <span className="text-green-500">Eficiencia</span>
-                                                <span className="text-green-500">{(100 - (calculation?.wastePercent || 0)).toFixed(1)}%</span>
-                                            </div>
-                                            <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                                                <div
-                                                    className="h-full bg-green-500 transition-all duration-500"
-                                                    style={{ width: `${100 - (calculation?.wastePercent || 0)}%` }}
-                                                ></div>
-                                            </div>
+                                        <div className="px-4 py-2 space-y-3">
+                                            <p className="text-[10px] text-white font-black uppercase italic tracking-tight">{strategyMode === 'auto' ? "Optimización Inteligente" : "Control de Fibra Activo"}</p>
+                                            <p className="text-[11px] text-gray-500 leading-relaxed font-medium">{strategyMode === 'auto' ? "Nexus buscará el mejor rendimiento rotando piezas automáticamente." : "Posición estricta. Usa los controles para orientar el diseño."}</p>
+                                            <AnimatePresence>
+                                                {strategyMode === 'manual' && (
+                                                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="pt-2 border-t border-white/5 grid grid-cols-2 gap-2">
+                                                        <button onClick={() => { setSheetW(sheetH); setSheetH(sheetW); }} className="flex flex-col items-center justify-center p-3 bg-white/5 rounded-2xl border border-white/5 hover:border-[#FFD700]/50 hover:bg-[#FFD700]/10 transition-all group"><RotateCcw className="w-4 h-4 text-gray-400 group-hover:text-[#FFD700] mb-1" /><span className="text-[7px] font-black text-gray-500 uppercase group-hover:text-white">Girar Pliego</span></button>
+                                                        <button onClick={() => { setCutW(cutH); setCutH(cutW); }} className="flex flex-col items-center justify-center p-3 bg-white/5 rounded-2xl border border-white/5 hover:border-[#FFA500]/50 hover:bg-[#FFA500]/10 transition-all group"><Maximize2 className="w-4 h-4 text-gray-400 group-hover:text-[#FFA500] mb-1 rotate-90" /><span className="text-[7px] font-black text-gray-500 uppercase group-hover:text-white">Girar Corte</span></button>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
                                         </div>
+                                    </div>
+                                    <div className="bg-white/5 rounded-2xl p-4 border border-white/5 w-[240px] lg:w-full shrink-0">
+                                        <p className="text-[10px] text-[#FFD700] font-black uppercase tracking-[0.2em] mb-4">Producción</p>
+                                        <StudioInput label="Tiraje Deseado" value={neededQty} onChange={setNeededQty} highlight />
                                     </div>
                                 </div>
 
-                                {/* Business Intel Panel */}
-                                <div className={`bg-gradient-to-br ${calculation && calculation.profit < 0 ? 'from-red-500/10' : 'from-[#FFD700]/10'} to-transparent rounded-2xl p-4 md:p-5 border ${calculation && calculation.profit < 0 ? 'border-red-500/20' : 'border-[#FFD700]/10'} w-[240px] lg:w-full shrink-0`}>
-                                    <p className={`text-[10px] ${calculation && calculation.profit < 0 ? 'text-red-500' : 'text-[#FFD700]'} font-black uppercase tracking-[0.2em] mb-4`}>Business Intel</p>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <p className="text-[10px] text-gray-500 uppercase">Utilidad Estimada</p>
-                                            <p className={`text-xl md:text-2xl font-black ${calculation && calculation.profit < 0 ? 'text-red-500' : 'text-green-400'}`}>
-                                                ${calculation?.profit.toLocaleString()}
-                                            </p>
-                                        </div>
-                                        <div className="pt-4 border-t border-white/5">
-                                            <p className="text-[10px] text-gray-500 uppercase">ROI Retorno</p>
-                                            <p className={`text-lg md:text-xl font-black ${calculation && calculation.profit < 0 ? 'text-red-500' : 'text-white'}`}>
-                                                {calculation ? ((calculation.profit / (calculation.totalMaterialCost || 1)) * 100).toFixed(0) : 0}%
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Industrial Presets */}
-                                <div className="pt-0 lg:pt-4 w-[240px] lg:w-full shrink-0">
-                                    <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] mb-4 px-2">Presets</p>
-                                    <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
-                                        <PresetButton label="SRA3" onClick={() => { setSheetW(45); setSheetH(32); }} />
-                                        <PresetButton label="Tabloide" onClick={() => { setSheetW(48); setSheetH(33); }} />
-                                        <PresetButton label="Pliego" onClick={() => { setSheetW(100); setSheetH(70); }} />
-                                        <PresetButton label="M. Pliego" onClick={() => { setSheetW(70); setSheetH(50); }} />
-                                    </div>
+                                <div className="pt-4 mt-auto w-[240px] lg:w-full shrink-0">
+                                    <button onClick={() => setShowGuide(true)} className="w-full py-4 bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/20 rounded-2xl flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-[#FFD700] transition-all group shadow-lg">
+                                        <BookOpen className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                        Guía de Corte
+                                    </button>
                                 </div>
                             </div>
                         </aside>
 
-                        {/* Premium Export Overlay */}
-                        <AnimatePresence>
-                            {isExporting && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    className="absolute inset-0 z-[100] bg-black/80 backdrop-blur-md flex flex-col items-center justify-center text-center p-8"
-                                >
-                                    <div className="relative mb-8">
-                                        {/* Spinning outer rings */}
-                                        <motion.div
-                                            animate={{ rotate: 360 }}
-                                            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                            className="w-32 h-32 rounded-full border-t-2 border-b-2 border-[#FFD700]/30"
-                                        ></motion.div>
-                                        <motion.div
-                                            animate={{ rotate: -360 }}
-                                            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                            className="absolute inset-2 rounded-full border-l-2 border-r-2 border-[#FFD700]/50"
-                                        ></motion.div>
-
-                                        {/* Central Icon */}
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <div className="relative">
-                                                <motion.div
-                                                    animate={{ scale: [1, 1.2, 1] }}
-                                                    transition={{ duration: 2, repeat: Infinity }}
-                                                    className="w-12 h-12 bg-[#FFD700] rounded-2xl rotate-45 flex items-center justify-center shadow-[0_0_30px_rgba(255,215,0,0.5)]"
-                                                >
-                                                    <Zap className="w-6 h-6 text-black -rotate-45" />
-                                                </motion.div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <motion.div
-                                        initial={{ y: 20, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        transition={{ delay: 0.2 }}
-                                        className="space-y-4"
-                                    >
-                                        <h3 className="text-xl font-black text-white uppercase tracking-[0.3em] italic">Generando Reporte</h3>
-                                        <div className="flex flex-col items-center gap-1">
-                                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest animate-pulse">
-                                                Nexus está procesando su diseño...
-                                            </p>
-                                            <p className="text-[9px] text-gray-500 uppercase tracking-widest max-w-[250px] leading-relaxed">
-                                                Optimizando geometría y análisis financiero para formato industrial.
-                                            </p>
-                                        </div>
-                                    </motion.div>
-
-                                    {/* Progress bar simulation */}
-                                    <div className="mt-8 w-48 h-[1px] bg-white/10 rounded-full overflow-hidden">
-                                        <motion.div
-                                            initial={{ x: "-100%" }}
-                                            animate={{ x: "100%" }}
-                                            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-                                            className="w-full h-full bg-gradient-to-r from-transparent via-[#FFD700] to-transparent"
-                                        />
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
                         {/* CENTER - THE WORKSPACE/CANVAS */}
                         <div className="flex-1 relative overflow-hidden bg-[radial-gradient(#1a1a1a_2px,transparent_2px)] [background-size:40px_40px] min-h-[400px] lg:min-h-0">
+
+                            <AnimatePresence>
+                                {showGuide && (
+                                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-[80] bg-black/95 backdrop-blur-xl p-6 md:p-10 overflow-y-auto custom-scrollbar">
+                                        <button onClick={() => setShowGuide(false)} className="absolute top-6 right-6 p-2 text-gray-500 hover:text-white transition-colors"><Maximize2 className="w-6 h-6 rotate-45" /></button>
+                                        <div className="max-w-3xl mx-auto space-y-12 py-10">
+                                            <div className="text-center space-y-4">
+                                                <h2 className="text-3xl md:text-4xl font-black text-white italic tracking-tighter uppercase">Guía Maestra de Corte</h2>
+                                                <p className="text-gray-400 text-sm md:text-base leading-relaxed">Entiende la diferencia entre la matemática del algoritmo y la realidad de la imprenta.</p>
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                                <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 space-y-4">
+                                                    <div className="w-12 h-12 bg-[#FFD700]/20 rounded-2xl flex items-center justify-center"><Zap className="w-6 h-6 text-[#FFD700]" /></div>
+                                                    <h3 className="text-lg font-black text-white uppercase tracking-widest">Sentido de Fibra</h3>
+                                                    <p className="text-xs text-gray-400 leading-relaxed">El papel tiene "vetas" como la madera. Al doblarlo a favor de la fibra, el acabado es perfecto.</p>
+                                                    <div className="flex items-center gap-2 text-[10px] text-green-400 font-bold uppercase"><CheckCircle2 className="w-3 h-3" /> Tip: Desactiva "Permitir Rotación" si tienes fibra obligatoria.</div>
+                                                </div>
+                                                <div className="bg-white/5 p-6 rounded-[32px] border border-white/10 space-y-4">
+                                                    <div className="w-12 h-12 bg-[#FFA500]/20 rounded-2xl flex items-center justify-center"><Settings className="w-6 h-6 text-[#FFA500]" /></div>
+                                                    <h3 className="text-lg font-black text-white uppercase tracking-widest">Pinzas de Máquina</h3>
+                                                    <p className="text-xs text-gray-400 leading-relaxed">Las máquinas de imprenta necesitan un borde (usualmente 1cm) para "sujetar" el papel.</p>
+                                                    <div className="flex items-center gap-2 text-[10px] text-[#FFA500] font-bold uppercase"><AlertTriangle className="w-3 h-3" /> Ojo: Revisa el manual de tu máquina antes de imprimir.</div>
+                                                </div>
+                                            </div>
+                                            <div className="bg-[#FFD700] p-8 rounded-[38px] text-black">
+                                                <h4 className="text-xl font-black uppercase tracking-tighter italic mb-4">¿Por qué usar el Modo Inteligente?</h4>
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                    <div className="space-y-2"><p className="text-xs font-black uppercase opacity-60">01. Máximo Aprovechamiento</p><p className="text-[10px] leading-relaxed font-bold">Nexus intenta mezclar piezas verticales y horizontales para no dejar retales grandes.</p></div>
+                                                    <div className="space-y-2"><p className="text-xs font-black uppercase opacity-60">02. Menos Basura</p><p className="text-[10px] leading-relaxed font-bold">Calcula la merma exacta en dinero para que sepas cuánto estás perdiendo por pliego.</p></div>
+                                                    <div className="space-y-2"><p className="text-xs font-black uppercase opacity-60">03. Realidad Técnica</p><p className="text-[10px] leading-relaxed font-bold">Si una pieza no cabe por 1mm, el algoritmo la descarta para evitar problemas en guillotina.</p></div>
+                                                </div>
+                                                <button onClick={() => setShowGuide(false)} className="mt-8 w-full py-4 bg-black text-white text-xs font-black rounded-2xl flex items-center justify-center gap-2 hover:gap-4 transition-all uppercase tracking-widest">Entendido, volver a la mesa de trabajo <ArrowRight className="w-4 h-4" /></button>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
                             <AnimatePresence mode="wait">
                                 {calculation ? (
-                                    <motion.div
-                                        key={`${sheetW}-${sheetH}-${cutW}-${cutH}-${margin}`}
-                                        initial={{ opacity: 0, scale: 0.98 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 1.02 }}
-                                        transition={{ duration: 0.5, ease: "circOut" }}
-                                        className="w-full h-full flex items-center justify-center p-8"
-                                    >
-                                        <MainLayoutPreview data={calculation} gap={gap} margin={margin} />
-                                    </motion.div>
+                                    <MainLayoutPreview data={calculation} gap={gap} margin={margin} unit={unit} strategyMode={strategyMode} />
                                 ) : (
                                     <div className="w-full h-full flex flex-col items-center justify-center text-center space-y-4">
-                                        <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto border border-white/10">
-                                            <Info className="text-gray-600 w-10 h-10" />
-                                        </div>
+                                        <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto border border-white/10"><Info className="text-gray-600 w-10 h-10" /></div>
                                         <p className="text-gray-500 font-light text-xl tracking-tight">Introduce dimensiones para renderizar</p>
                                     </div>
                                 )}
                             </AnimatePresence>
 
-                            {/* Simple bottom bar inside the studio */}
                             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-wrap items-center justify-center gap-3 md:gap-6 px-4 md:px-6 py-2 md:py-3 bg-black/60 backdrop-blur-xl border border-white/5 rounded-2xl shadow-2xl w-[90%] md:w-auto">
                                 <DimensionTag label="Pliego" value={`${sheetW}x${sheetH}`} />
                                 <div className="hidden md:block w-[1px] h-4 bg-white/10"></div>
                                 <DimensionTag label="Corte" value={`${cutW}x${cutH}`} />
                                 <div className="hidden md:block w-[1px] h-4 bg-white/10"></div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-[10px] font-bold text-gray-500 uppercase">Req.</span>
-                                    <span className="text-xs md:text-sm font-bold text-[#FFD700]">{calculation?.pliegos || 0}</span>
-                                </div>
+                                <div className="flex items-center gap-2"><span className="text-[10px] font-bold text-gray-500 uppercase">Req.</span><span className="text-xs md:text-sm font-bold text-[#FFD700]">{calculation?.pliegos || 0}</span></div>
                             </div>
 
-                            {/* Nexus Studio Watermark */}
-                            <div className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 opacity-5 pointer-events-none select-none">
-                                <Zap className="w-5 h-5 text-white" />
-                                <span className="text-2xl font-black text-white italic tracking-tighter uppercase leading-none">NEXUS ENGINE</span>
+                            <div className="absolute top-6 left-6 flex bg-black/40 backdrop-blur-md rounded-2xl border border-white/10 p-1 shadow-2xl z-[70]">
+                                {(['cm', 'mm'] as const).map((u) => (
+                                    <button key={u} onClick={() => toggleUnit(u)} className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${unit === u ? 'bg-[#FFD700] text-black shadow-lg' : 'text-gray-500 hover:text-white'}`}>{u}</button>
+                                ))}
                             </div>
-
-                            {/* Floating Rotate Tool */}
-                            {!isExporting && (
-                                <button
-                                    onClick={() => {
-                                        const tempW = sheetW;
-                                        setSheetW(sheetH);
-                                        setSheetH(tempW);
-                                    }}
-                                    className="absolute top-6 right-6 p-4 bg-black/40 backdrop-blur-md text-white rounded-2xl border border-white/10 hover:bg-[#FFD700] hover:text-black transition-all group/rotate shadow-2xl"
-                                    title="Rotar Pliego"
-                                >
-                                    <RotateCcw className="w-5 h-5 group-active/rotate:rotate-180 transition-transform" />
-                                </button>
-                            )}
                         </div>
 
                         {/* RIGHT SIDEBAR - CONTROLS */}
                         <aside className="w-full lg:w-80 bg-black/40 backdrop-blur-2xl border-t lg:border-l lg:border-t-0 border-white/5 p-4 md:p-6 overflow-y-auto custom-scrollbar lg:h-auto shrink-0">
                             <div className="space-y-8">
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-8 lg:gap-8">
+
+                                <div className="space-y-6">
                                     <div>
-                                        <p className="text-[10px] text-[#FFD700] font-black uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                                            <Layers className="w-3 h-3" /> Configuración
-                                        </p>
+                                        <p className="text-[10px] text-[#FFD700] font-black uppercase tracking-[0.2em] mb-6 flex items-center gap-2"><Layers className="w-3 h-3" /> Configuración</p>
                                         <div className="space-y-6">
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <StudioInput label="Ancho Pliego" value={sheetW} onChange={setSheetW} />
-                                                <StudioInput label="Largo Pliego" value={sheetH} onChange={setSheetH} />
-                                            </div>
+                                            <div className="grid grid-cols-2 gap-4"><StudioInput label="Ancho Pliego" value={sheetW} onChange={setSheetW} /><StudioInput label="Largo Pliego" value={sheetH} onChange={setSheetH} /></div>
+                                            <div className="h-[1px] bg-white/5 my-4"></div>
+                                            <div className="grid grid-cols-2 gap-4"><StudioInput label="Ancho Corte" value={cutW} onChange={setCutW} /><StudioInput label="Largo Corte" value={cutH} onChange={setCutH} /></div>
                                             <div className="h-[1px] bg-white/5 my-4"></div>
                                             <div className="grid grid-cols-2 gap-4">
-                                                <StudioInput label="Ancho Corte" value={cutW} onChange={setCutW} />
-                                                <StudioInput label="Largo Corte" value={cutH} onChange={setCutH} />
+                                                <div className="col-span-2 text-[9px] text-gray-500 uppercase font-black tracking-widest mb-1 flex items-center gap-1"><Settings className="w-3 h-3" /> Ajustes Técnicos</div>
+                                                <StudioInput label="Márgenes" value={margin} onChange={setMargin} />
+                                                <StudioInput label="Calle (Gap)" value={gap} onChange={setGap} />
+                                            </div>
+
+                                            <div className="pt-6 mt-6 border-t border-white/5">
+                                                <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] mb-4">Rendimiento</p>
+                                                <div className="bg-white/5 rounded-2xl p-4 border border-white/5 space-y-4">
+                                                    <div className="flex justify-between items-end">
+                                                        <span className="text-xs text-gray-400">Cortes x Pliego</span>
+                                                        <span className="text-xl md:text-2xl font-black text-white leading-none">{calculation?.total || 0}</span>
+                                                    </div>
+                                                    <div className="flex justify-between items-end pt-2 border-t border-white/5">
+                                                        <span className="text-[10px] text-gray-500 uppercase font-bold">Sobra (Demasía)</span>
+                                                        <span className="text-sm font-black text-green-400">+{calculation?.extraQty || 0}</span>
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <div className="flex justify-between text-[10px]">
+                                                            <span className="text-green-500">Eficiencia</span>
+                                                            <span className="text-green-500">{(100 - (calculation?.wastePercent || 0)).toFixed(1)}%</span>
+                                                        </div>
+                                                        <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                                                            <div className="h-full bg-green-500 transition-all duration-500" style={{ width: `${100 - (calculation?.wastePercent || 0)}%` }}></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div className="md:border-l lg:border-l-0 md:pl-6 lg:pl-0 border-white/5">
-                                        <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                                            <Settings className="w-3 h-3" /> Ajustes Técnicos
-                                        </p>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <StudioInput label="Márgenes" value={margin} onChange={setMargin} />
-                                            <StudioInput label="Calle (Gap)" value={gap} onChange={setGap} />
-                                        </div>
-                                    </div>
                                 </div>
-
-                                <div className="pt-6 border-t border-white/5">
-                                    <p className="text-[10px] text-[#FFD700] font-black uppercase tracking-[0.2em] mb-6">Producción & Costos</p>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
-                                        <StudioInput label="Tiraje Deseado" value={neededQty} onChange={setNeededQty} highlight />
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <StudioInput label="Costo Pliego" value={sheetPrice} onChange={setSheetPrice} />
-                                            <StudioInput label="Venta Unidad" value={sellPrice} onChange={setSellPrice} />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="bg-white/5 rounded-2xl p-4 border border-white/5 flex items-center gap-3">
-                                    <Info className="w-4 h-4 text-gray-500" />
-                                    <p className="text-[10px] text-gray-500 italic leading-snug">
-                                        Tip: Nexus ahora utiliza algoritmos de corte mixto para maximizar el aprovechamiento.
-                                    </p>
-                                </div>
-
-                                <button
-                                    onClick={handleExportPDF}
-                                    disabled={isExporting}
-                                    className="w-full flex items-center justify-center gap-3 py-4 bg-white text-black text-[11px] font-black rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl uppercase tracking-[0.1em] disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {isExporting ? (
-                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                    ) : (
-                                        <Download className="w-4 h-4" />
-                                    )}
-                                    {isExporting ? 'Generando...' : 'Exportar Registro PDF'}
-                                </button>
                             </div>
                         </aside>
                     </div>
-                </div>
-            </main>
+                </div >
+            </main >
             <Footer />
-        </ClientShell>
+        </ClientShell >
     );
 }
 
-function StudioInput({ label, value, onChange, highlight = false }: { label: string, value: number, onChange: (v: number) => void, highlight?: boolean }) {
+function StudioInput({ label, value, onChange, highlight = false, step = 1 }: { label: string, value: number, onChange: (v: number) => void, highlight?: boolean, step?: number }) {
     const [localValue, setLocalValue] = useState<string>(value.toString());
-
-    // Sincronizar estado local cuando el valor cambia externamente (ej. Presets)
-    useEffect(() => {
-        if (value !== Number(localValue)) {
-            setLocalValue(value.toString());
-        }
-    }, [value]);
-
+    useEffect(() => { if (value !== Number(localValue)) setLocalValue(value.toString()); }, [value]);
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
-        setLocalValue(val);
-
-        // Solo enviamos el cambio al padre si es un número válido
-        if (val !== '' && !isNaN(Number(val))) {
-            onChange(Number(val));
-        } else if (val === '') {
-            onChange(0); // Para cálculos internos, el vacío es 0
+        if (val === '' || /^-?\d*\.?\d*$/.test(val)) {
+            setLocalValue(val);
+            if (val !== '' && val !== '-' && val !== '.') onChange(Number(val));
         }
     };
-
+    const handleStep = (delta: number) => { const newValue = Math.max(0, value + delta); onChange(newValue); setLocalValue(newValue.toString()); };
     return (
         <div className="space-y-1.5 group">
             <label className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block transition-colors group-focus-within:text-[#FFD700] ml-1">{label}</label>
             <div className={`relative flex items-center ${highlight ? 'bg-[#FFD700]/10 border-[#FFD700]/30' : 'bg-black/40 border-white/10'} border rounded-xl overflow-hidden transition-all focus-within:border-[#FFD700] focus-within:ring-1 focus-within:ring-[#FFD700]/30`}>
-                <input
-                    type="text"
-                    inputMode="decimal"
-                    value={localValue}
-                    onFocus={(e) => e.target.select()}
-                    onChange={handleChange}
-                    onBlur={() => {
-                        // Al salir del campo, si está vacío, restaurar a 0
-                        if (localValue === '') {
-                            setLocalValue('0');
-                        }
-                    }}
-                    className="w-full bg-transparent px-3 py-2.5 text-white text-sm font-bold focus:outline-none"
-                />
+                <button onClick={() => handleStep(-step)} className="px-2 text-gray-600 hover:text-[#FFD700] transition-colors">-</button>
+                <input type="text" inputMode="decimal" value={localValue} onFocus={(e) => e.target.select()} onChange={handleChange} onBlur={() => { if (localValue === '' || isNaN(Number(localValue))) { setLocalValue('0'); onChange(0); } }} className="w-full bg-transparent px-1 py-2.5 text-white text-sm font-bold focus:outline-none text-center" />
+                <button onClick={() => handleStep(step)} className="px-2 text-gray-600 hover:text-[#FFD700] transition-colors">+</button>
             </div>
         </div>
     );
 }
 
-function PresetButton({ label, onClick }: { label: string; onClick: () => void }) {
-    return (
-        <button
-            onClick={onClick}
-            className="w-full px-4 py-2 bg-white/5 border border-white/5 rounded-xl text-[9px] font-black text-gray-500 hover:text-white hover:border-[#FFD700]/50 hover:bg-[#FFD700]/10 transition-all uppercase tracking-widest text-left"
-        >
-            {label}
-        </button>
-    );
-}
 
 function DimensionTag({ label, value }: { label: string, value: string | number }) {
-    return (
-        <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold text-white/20 uppercase">{label}</span>
-            <span className="text-sm font-mono text-[#FFD700]">{value}</span>
-        </div>
-    );
+    return <div className="flex items-center gap-2"><span className="text-[10px] font-bold text-white/20 uppercase">{label}</span><span className="text-sm font-mono text-[#FFD700]">{value}</span></div>;
 }
-
-function MainLayoutPreview({ data, gap, margin }: { data: any, gap: number, margin: number }) {
+function MainLayoutPreview({ data, gap, margin, unit, strategyMode }: { data: any, gap: number, margin: number, unit: string, strategyMode: 'auto' | 'manual' }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
 
@@ -473,11 +350,7 @@ function MainLayoutPreview({ data, gap, margin }: { data: any, gap: number, marg
             if (!container) return;
             const padW = container.clientWidth < 600 ? 120 : 180;
             const padH = container.clientHeight < 400 ? 120 : 180;
-
-            const s = Math.min(
-                (container.clientWidth - padW) / data.sheetW,
-                (container.clientHeight - padH) / data.sheetH
-            );
+            const s = Math.min((container.clientWidth - padW) / data.sheetW, (container.clientHeight - padH) / data.sheetH);
             setScale(s);
         };
         updateScale();
@@ -493,42 +366,39 @@ function MainLayoutPreview({ data, gap, margin }: { data: any, gap: number, marg
     return (
         <div ref={containerRef} className="w-full h-full flex items-center justify-center">
             <div className="relative" style={{ width: vSheetW, height: vSheetH }}>
-                {/* Main Sheet */}
-                <div className="absolute inset-0 bg-white shadow-[0_50px_100px_rgba(0,0,0,0.5)] flex items-center justify-center rounded-sm">
-                    {/* Perspective shadow */}
-                    <div className="absolute -bottom-10 left-10 right-10 h-2 bg-black/40 blur-2xl rounded-full"></div>
-
-                    {/* Margin area */}
-                    <div className="absolute bg-[#F5F5F5] border-2 border-dashed border-gray-300 overflow-hidden"
-                        style={{ inset: vMargin }}>
-
-                        <div className="relative w-full h-full">
+                <div className="absolute inset-0 bg-[#f0f0f0] shadow-[0_50px_100px_rgba(0,0,0,0.5)] flex items-center justify-center rounded-sm overflow-hidden border border-gray-300">
+                    <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: `linear-gradient(45deg, #000 25%, transparent 25%, transparent 50%, #000 50%, #000 75%, transparent 75%, transparent)`, backgroundSize: '8px 8px' }}></div>
+                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/paper-fibers.png')]"></div>
+                    <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: `radial-gradient(circle, #000 1px, transparent 1px)`, backgroundSize: `${1 * scale}px ${1 * scale}px` }}></div>
+                    <div className={`absolute shadow-2xl overflow-hidden transition-all ${margin > 0 ? 'bg-white border-[1.5px] border-dashed border-pink-500/40' : ''}`} style={{ inset: vMargin }}>
+                        <div className="relative w-full h-full bg-gray-900/5">
                             {data.parts.map((part: any, pIdx: number) => (
-                                <div key={pIdx} className="absolute flex flex-wrap content-start" style={{
-                                    left: part.x * scale,
-                                    top: part.y * scale,
-                                    width: part.cols * (part.w * scale + vGap) + 1, // buffer
-                                    gap: vGap
-                                }}>
+                                <div key={pIdx} className="absolute flex flex-wrap content-start" style={{ left: part.x * scale, top: part.y * scale, width: part.cols * (part.w * scale + vGap), gap: vGap }}>
                                     {Array.from({ length: Math.min(part.total, 400) }).map((_, i) => (
                                         <motion.div
                                             key={i}
-                                            initial={{ opacity: 0, scale: 0.8 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            whileHover={{
-                                                scale: 1.1,
-                                                zIndex: 50,
-                                                boxShadow: "0 10px 25px rgba(255, 215, 0, 0.4)"
-                                            }}
-                                            className={`relative ${part.type === 'main' ? 'bg-[#FFD700]' : 'bg-[#FFA500]'} rounded-[2px] border-[0.5px] border-black/10 cursor-pointer overflow-hidden flex items-center justify-center group/cut shadow-sm`}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            className={`relative ${part.type === 'main'
+                                                ? 'bg-[#FFD700] border-[#B8860B]/40'
+                                                : 'bg-[#FFA500] border-[#D2691E]/40'
+                                                } rounded-[1.5px] border-[1px] cursor-pointer overflow-hidden flex items-center justify-center group/cut shadow-[0_1px_3px_rgba(0,0,0,0.15),inset_0_1px_1px_rgba(255,255,255,0.3)] transition-all duration-300 hover:border-[#FF4500]/50`}
                                             style={{ width: part.w * scale, height: part.h * scale }}
                                         >
-                                            <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
-                                            <div className="absolute inset-0 bg-gradient-to-br from-[#FFD700] via-[#FFA500] to-[#FF4500] opacity-0 group-hover/cut:opacity-100 transition-all duration-300"></div>
-                                            <span className="relative z-20 text-[7px] text-black font-black opacity-30 group-hover/cut:opacity-80 transition-all">
-                                                {part.type === 'main' ? i + 1 : `+${i + 1}`}
-                                            </span>
-                                            <div className="absolute inset-0 translate-x-[-100%] group-hover/cut:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12"></div>
+                                            <div className="absolute inset-0 bg-gradient-to-br from-[#FF8C00] via-[#FF4500] to-[#E31E24] opacity-0 group-hover/cut:opacity-100 transition-opacity duration-300 ease-in-out" />
+                                            <div
+                                                className="absolute inset-0 pointer-events-none z-10 transition-all duration-500"
+                                                style={{
+                                                    opacity: strategyMode === 'manual' ? 0.22 : 0.1,
+                                                    backgroundImage: part.w > part.h
+                                                        ? 'repeating-linear-gradient(0deg, transparent, transparent 10px, rgba(0,0,0,0.5) 11px, rgba(0,0,0,0.5) 12px)'
+                                                        : 'repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(0,0,0,0.5) 11px, rgba(0,0,0,0.5) 12px)',
+                                                    backgroundSize: part.w > part.h ? '100% 12px' : '12px 100%'
+                                                }}
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent z-0"></div>
+                                            <div className="absolute bottom-1 right-1 opacity-0 group-hover/cut:opacity-100 transition-all duration-300 z-20 scale-90">{part.w > part.h ? <ArrowRight className="w-3 h-3 text-white" /> : <ArrowRight className="w-3 h-3 text-white rotate-90" />}</div>
+                                            <span className="relative z-20 text-[7px] text-black font-black opacity-30 group-hover/cut:opacity-100 group-hover/cut:text-white transition-all duration-300">{part.type === 'main' ? i + 1 : `+${i + 1}`}</span>
                                         </motion.div>
                                     ))}
                                 </div>
@@ -536,25 +406,16 @@ function MainLayoutPreview({ data, gap, margin }: { data: any, gap: number, marg
                         </div>
                     </div>
                 </div>
-
-                {/* Vertical Ruler */}
-                <div className="absolute top-0 -left-12 bottom-0 w-6 border-r border-[#FFD700]/30 flex flex-col justify-between py-1 pr-2">
-                    <div className="w-full h-[1px] bg-[#FFD700]/40"></div>
-                    <div className="flex-1 flex items-center justify-center">
-                        <span className="text-[12px] text-[#FFD700] font-mono font-bold -rotate-90 whitespace-nowrap">{data.sheetH} cm</span>
+                <div className="absolute top-0 -left-12 bottom-0 w-8 border-r border-[#FFD700]/30 flex flex-col justify-between py-1 pr-2"><div className="absolute inset-0 flex items-center justify-center pointer-events-none"><span className="text-[12px] text-[#FFD700] font-mono font-bold -rotate-90 whitespace-nowrap bg-black/80 px-2 rounded-full border border-[#FFD700]/20">{data.sheetH} {unit}</span></div></div>
+                <div className="absolute -top-12 left-0 right-0 h-8 border-b border-[#FFD700]/30 flex justify-between px-1 pb-2"><div className="absolute inset-0 flex items-center justify-center pointer-events-none"><span className="text-[12px] text-[#FFD700] font-mono font-bold uppercase tracking-widest bg-black/80 px-2 rounded-full border border-[#FFD700]/20">{data.sheetW} {unit}</span></div></div>
+                {data.parts.some((p: any) => p.total > 400) && (
+                    <div className="absolute bottom-4 right-4 bg-black/80 backdrop-blur border border-yellow-500/30 text-yellow-500 px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-2 shadow-xl z-50">
+                        <AlertTriangle className="w-3 h-3" />
+                        Visualización limitada (Max 400)
                     </div>
-                    <div className="w-full h-[1px] bg-[#FFD700]/40"></div>
-                </div>
-
-                {/* Horizontal Ruler */}
-                <div className="absolute -top-12 left-0 right-0 h-6 border-b border-[#FFD700]/30 flex justify-between px-1 pb-2">
-                    <div className="w-[1px] h-full bg-[#FFD700]/40"></div>
-                    <div className="flex-1 flex items-center justify-center">
-                        <span className="text-[12px] text-[#FFD700] font-mono font-bold uppercase tracking-widest">{data.sheetW} cm</span>
-                    </div>
-                    <div className="w-[1px] h-full bg-[#FFD700]/40"></div>
-                </div>
+                )}
             </div>
         </div>
     );
 }
+

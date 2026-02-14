@@ -9,12 +9,9 @@ import {
   Mail,
   Phone,
   MapPin,
-  ArrowUpRight,
-  Instagram,
-  Facebook,
-  Linkedin,
-  Twitter
+  ArrowUpRight
 } from 'lucide-react';
+import { SOCIAL_LINKS } from '@/data/navigation';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -60,19 +57,17 @@ export default function Footer() {
             </p>
 
             <div className="flex gap-4 pt-4">
-              {[
-                { icon: Instagram, href: '#' },
-                { icon: Facebook, href: '#' },
-                { icon: Linkedin, href: '#' },
-                { icon: Twitter, href: '#' }
-              ].map((social, i) => (
-                <Link
+              {SOCIAL_LINKS.map((social, i) => (
+                <a
                   key={i}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:bg-[#FFD700] hover:text-black hover:border-[#FFD700] hover:-translate-y-1 transition-all duration-300"
+                  aria-label={social.label}
                 >
-                  <social.icon className="w-5 h-5" />
-                </Link>
+                  {social.icon}
+                </a>
               ))}
             </div>
 

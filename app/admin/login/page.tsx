@@ -3,11 +3,11 @@
 import React, { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Lock, Mail, Loader2, AlertCircle } from 'lucide-react';
+import { Lock, User, Loader2, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function LoginPage() {
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -20,7 +20,7 @@ export default function LoginPage() {
 
         try {
             const result = await signIn('credentials', {
-                email,
+                username,
                 password,
                 redirect: false,
             });
@@ -66,16 +66,16 @@ export default function LoginPage() {
                         )}
 
                         <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-4">Email Corporativo</label>
+                            <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-4">Usuario</label>
                             <div className="relative">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                                 <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    type="text"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
                                     required
                                     className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 focus:outline-none focus:border-[#FFD700] transition-colors"
-                                    placeholder="nombre@estudionexus.com"
+                                    placeholder="Nombre de usuario"
                                 />
                             </div>
                         </div>

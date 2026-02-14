@@ -16,7 +16,7 @@ export const NAV_LINKS = [
     { href: `/#${SECTION_IDS.INICIO}`, label: 'Inicio', desc: 'Volver arriba' },
     { href: `/#${SECTION_IDS.TARJETA}`, label: 'Tarjetas', desc: 'Presentación premium' },
     { href: `/#${SECTION_IDS.WEB_DESIGN}`, label: 'Webs', desc: 'Tu sitio profesional' },
-    { href: `/#${SECTION_IDS.SERVICIOS}`, label: 'Impresión', desc: 'Calidad litográfica' },
+    { href: `/#${SECTION_IDS.SERVICIOS}`, label: 'Servicios', desc: 'Calidad litográfica' },
     { href: `/#${SECTION_IDS.CALCULADORA}`, label: 'Calculadora', desc: 'Cotiza al instante' },
     { href: `/#${SECTION_IDS.TESTIMONIOS}`, label: 'Opiniones', desc: 'Qué dicen de nosotros' },
     { href: `/#${SECTION_IDS.SEGUIMIENTO}`, label: 'Proyectos', desc: 'Estado de tu proyecto' },

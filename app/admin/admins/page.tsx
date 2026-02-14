@@ -6,8 +6,8 @@ import { useToast } from '@/app/providers/ToastProvider';
 import {
     ShieldCheck,
     Plus,
+    User,
     Loader2,
-    Mail,
     Calendar,
     UserCircle,
     X,
@@ -29,10 +29,10 @@ export default function AdminsPage() {
     const [errors, setErrors] = useState<any>({});
     const [adminToDelete, setAdminToDelete] = useState<any>(null);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [confirmEmail, setConfirmEmail] = useState('');
+    const [confirmUsername, setConfirmUsername] = useState('');
 
     useEffect(() => {
-        if (!adminToDelete) setConfirmEmail('');
+        if (!adminToDelete) setConfirmUsername('');
     }, [adminToDelete]);
 
     useEffect(() => {
@@ -63,7 +63,7 @@ export default function AdminsPage() {
 
     const filteredAdmins = admins.filter(a =>
         a.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        a.email.toLowerCase().includes(searchTerm.toLowerCase())
+        a.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (loading) return <AdminLoading />;
@@ -107,51 +107,81 @@ export default function AdminsPage() {
             </header>
 
             {/* Content Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <AnimatePresence mode="popLayout">
-                    {filteredAdmins.map((admin, idx) => (
-                        <motion.div
-                            key={admin.id}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            transition={{ delay: idx * 0.05 }}
-                            className="group relative"
+            <div className="min-h-[400px]">
+                {filteredAdmins.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <AnimatePresence mode="popLayout">
+                            {filteredAdmins.map((admin, idx) => (
+                                <motion.div
+                                    key={admin.id}
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    transition={{ delay: idx * 0.05 }}
+                                    className="group relative"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-br from-[#a855f7]/10 to-cyan-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[2.5rem]" />
+                                    <div className="relative bg-[#0a0a0a]/50 backdrop-blur-3xl border border-white/5 p-8 rounded-[2.5rem] hover:border-white/20 transition-all duration-500 h-full flex flex-col">
+                                        <div className="flex justify-between items-start mb-6">
+                                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#a855f7]/20 to-[#a855f7]/5 border border-white/5 flex items-center justify-center text-[#a855f7] group-hover:scale-110 transition-transform duration-500">
+                                                <ShieldCheck className="w-6 h-6" />
+                                            </div>
+                                            <div className="px-3 py-1 bg-[#a855f7]/10 border border-[#a855f7]/20 rounded-full text-[8px] font-black uppercase tracking-widest text-[#a855f7]">
+                                                Full Access
+                                            </div>
+                                        </div>
+
+                                        <h3 className="text-xl font-bold mb-2 group-hover:text-white transition-colors">{admin.nombre}</h3>
+                                        <div className="flex items-center gap-2 text-gray-500 text-xs mb-8">
+                                            <UserCircle className="w-3.5 h-3.5" />
+                                            <span className="truncate">{admin.username}</span>
+                                        </div>
+
+                                        <div className="mt-auto pt-6 border-t border-white/5 flex justify-between items-center text-[10px] font-black text-gray-600 uppercase tracking-widest">
+                                            <div className="flex items-center gap-2">
+                                                <Calendar className="w-3.5 h-3.5" />
+                                                <span>Desde {new Date(admin.createdAt).toLocaleDateString()}</span>
+                                            </div>
+                                            <button
+                                                onClick={() => admins.length > 1 && setAdminToDelete(admin)}
+                                                disabled={admins.length <= 1}
+                                                className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 shadow-lg ${admins.length <= 1
+                                                        ? 'bg-gray-500/5 text-gray-700 border border-white/5 cursor-not-allowed opacity-50'
+                                                        : 'bg-red-500/5 hover:bg-red-500 text-red-500/50 hover:text-white border border-red-500/10 hover:border-red-500 group/trash hover:scale-110 active:scale-90'
+                                                    }`}
+                                                title={admins.length <= 1 ? "Debe existir al menos un guardián" : "Revocar Acceso"}
+                                            >
+                                                <Trash2 className="w-3.5 h-3.5 group-hover/trash:rotate-12 transition-transform" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </div>
+                ) : (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="flex flex-col items-center justify-center py-32 text-center"
+                    >
+                        <div className="w-24 h-24 bg-white/5 rounded-[2.5rem] border border-white/10 flex items-center justify-center text-gray-700 mb-8 relative group">
+                            <ShieldAlert className="w-10 h-10 group-hover:text-[#a855f7] transition-colors duration-500" />
+                            <div className="absolute inset-0 bg-[#a855f7]/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                        <h2 className="text-2xl font-black mb-3 font-[family-name:var(--font-orbitron)] uppercase tracking-tight text-white">Seguridad en Standby</h2>
+                        <p className="text-gray-500 text-sm max-w-sm mb-10 leading-relaxed font-medium">
+                            No se han detectado guardianes adicionales en el laboratorio de control. <br />
+                            Vincula una nueva cuenta para distribuir la gestión operativa.
+                        </p>
+                        <button
+                            onClick={() => setIsAdding(true)}
+                            className="px-10 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 hover:bg-[#a855f7] hover:text-white hover:border-transparent transition-all duration-500"
                         >
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#a855f7]/10 to-cyan-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[2.5rem]" />
-                            <div className="relative bg-[#0a0a0a]/50 backdrop-blur-3xl border border-white/5 p-8 rounded-[2.5rem] hover:border-white/20 transition-all duration-500 h-full flex flex-col">
-                                <div className="flex justify-between items-start mb-6">
-                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#a855f7]/20 to-[#a855f7]/5 border border-white/5 flex items-center justify-center text-[#a855f7] group-hover:scale-110 transition-transform duration-500">
-                                        <ShieldCheck className="w-6 h-6" />
-                                    </div>
-                                    <div className="px-3 py-1 bg-[#a855f7]/10 border border-[#a855f7]/20 rounded-full text-[8px] font-black uppercase tracking-widest text-[#a855f7]">
-                                        Full Access
-                                    </div>
-                                </div>
-
-                                <h3 className="text-xl font-bold mb-2 group-hover:text-white transition-colors">{admin.nombre}</h3>
-                                <div className="flex items-center gap-2 text-gray-500 text-xs mb-8">
-                                    <Mail className="w-3.5 h-3.5" />
-                                    <span className="truncate">{admin.email}</span>
-                                </div>
-
-                                <div className="mt-auto pt-6 border-t border-white/5 flex justify-between items-center text-[10px] font-black text-gray-600 uppercase tracking-widest">
-                                    <div className="flex items-center gap-2">
-                                        <Calendar className="w-3.5 h-3.5" />
-                                        <span>Desde {new Date(admin.createdAt).toLocaleDateString()}</span>
-                                    </div>
-                                    <button
-                                        onClick={() => setAdminToDelete(admin)}
-                                        className="w-8 h-8 rounded-lg bg-red-500/5 hover:bg-red-500 text-red-500/50 hover:text-white border border-red-500/10 hover:border-red-500 transition-all duration-300 flex items-center justify-center group/trash hover:scale-110 active:scale-90 shadow-lg"
-                                        title="Revocar Acceso"
-                                    >
-                                        <Trash2 className="w-3.5 h-3.5 group-hover/trash:rotate-12 transition-transform" />
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    ))}
-                </AnimatePresence>
+                            Alta de Guardián
+                        </button>
+                    </motion.div>
+                )}
             </div>
 
             {/* Modal de Registro Premium */}
@@ -192,8 +222,11 @@ export default function AdminsPage() {
                                 const newErrors: any = {};
 
                                 if (!formData.get('nombre')) newErrors.nombre = 'Nombre requerido.';
-                                if (!formData.get('email')) newErrors.email = 'Email necesario.';
+                                if (!formData.get('username')) newErrors.username = 'Usuario necesario.';
                                 if (!formData.get('password')) newErrors.password = 'Seguridad requerida.';
+                                if (formData.get('password') !== formData.get('confirmPassword')) {
+                                    newErrors.confirmPassword = 'Las contraseñas no coinciden.';
+                                }
 
                                 if (Object.keys(newErrors).length > 0) {
                                     setErrors(newErrors);
@@ -203,7 +236,7 @@ export default function AdminsPage() {
                                 const result = await createAdmin(formData);
 
                                 if (result?.error) {
-                                    setErrors({ email: result.error });
+                                    setErrors({ username: result.error });
                                     showToast(result.error, 'error');
                                     return;
                                 }
@@ -213,9 +246,15 @@ export default function AdminsPage() {
                                 setErrors({});
                                 loadAdmins();
                             }} className="space-y-6">
-                                <PremiumInput name="nombre" placeholder="Nombre del Administrador" icon={UserCircle} error={errors.nombre} onFocus={() => setErrors({ ...errors, nombre: null })} />
-                                <PremiumInput name="email" type="email" placeholder="Email Corporativo" icon={Mail} error={errors.email} onFocus={() => setErrors({ ...errors, email: null })} />
-                                <PremiumInput name="password" type="password" placeholder="Contraseña de Seguridad" icon={ShieldCheck} error={errors.password} onFocus={() => setErrors({ ...errors, password: null })} />
+                                <PremiumInput name="nombre" placeholder="Nombre Real" icon={UserCircle} error={errors.nombre} onFocus={() => setErrors({ ...errors, nombre: null })} />
+                                <PremiumInput name="username" placeholder="Nombre de Usuario (Login)" icon={User} error={errors.username} onFocus={() => setErrors({ ...errors, username: null })} />
+                                <div className="space-y-4">
+                                    <PremiumInput name="password" type="password" placeholder="Contraseña de Seguridad" icon={ShieldCheck} error={errors.password} onFocus={() => setErrors({ ...errors, password: null })} />
+                                    <PremiumInput name="confirmPassword" type="password" placeholder="Confirmar Contraseña" icon={ShieldCheck} error={errors.confirmPassword} onFocus={() => setErrors({ ...errors, confirmPassword: null })} />
+                                    <p className="px-4 text-[8px] text-gray-600 font-bold uppercase tracking-widest leading-loose">
+                                        REQUISITO: MIN 8 CARACTERES, MAYÚSCULA, NÚMERO Y SÍMBOLO (@$!%*?&).
+                                    </p>
+                                </div>
 
                                 <button
                                     type="submit"
@@ -257,15 +296,15 @@ export default function AdminsPage() {
                                 </p>
 
                                 <div className="mb-8 text-left">
-                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2 block">Escribe el email para confirmar:</label>
+                                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 mb-2 block">Escribe el usuario para confirmar:</label>
                                     <div className="relative group/confirm">
-                                        <Mail className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${confirmEmail === adminToDelete.email ? 'text-emerald-400' : 'text-gray-600'}`} />
+                                        <UserCircle className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${confirmUsername === adminToDelete.username ? 'text-emerald-400' : 'text-gray-600'}`} />
                                         <input
                                             type="text"
-                                            value={confirmEmail}
-                                            onChange={(e) => setConfirmEmail(e.target.value)}
-                                            placeholder={adminToDelete.email}
-                                            className={`w-full bg-white/[0.03] border rounded-2xl py-4 pl-12 pr-6 text-xs transition-all placeholder:text-gray-800 focus:outline-none ${confirmEmail === adminToDelete.email ? 'border-emerald-500/50 bg-emerald-500/5 text-emerald-400' : 'border-white/10 focus:border-red-500/30'}`}
+                                            value={confirmUsername}
+                                            onChange={(e) => setConfirmUsername(e.target.value)}
+                                            placeholder={adminToDelete.username}
+                                            className={`w-full bg-white/[0.03] border rounded-2xl py-4 pl-12 pr-6 text-xs transition-all placeholder:text-gray-800 focus:outline-none ${confirmUsername === adminToDelete.username ? 'border-emerald-500/50 bg-emerald-500/5 text-emerald-400' : 'border-white/10 focus:border-red-500/30'}`}
                                         />
                                     </div>
                                 </div>
@@ -279,9 +318,9 @@ export default function AdminsPage() {
                                         Cancelar
                                     </button>
                                     <button
-                                        disabled={isDeleting || confirmEmail !== adminToDelete.email}
+                                        disabled={isDeleting || confirmUsername !== adminToDelete.username}
                                         onClick={handleDeleteConfirm}
-                                        className={`py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-xl border ${confirmEmail === adminToDelete.email
+                                        className={`py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-xl border ${confirmUsername === adminToDelete.username
                                             ? 'bg-red-500 text-white border-red-400/20 hover:bg-red-600 shadow-[0_10px_20px_-5px_rgba(239,68,68,0.3)]'
                                             : 'bg-gray-800/50 text-gray-600 border-white/5 grayscale cursor-not-allowed'
                                             }`}
