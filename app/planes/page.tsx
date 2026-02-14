@@ -53,7 +53,7 @@ export default function PlansPage() {
                             <Zap className="w-4 h-4 animate-pulse" /> Solución de Alto Rendimiento
                         </div>
                         <h1 className="text-5xl md:text-8xl font-black mb-8 tracking-tighter">
-                            Inversión <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600">Web Inteligente</span>
+                            Inversión <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600">Web</span>
                         </h1>
                         <p className="text-lg md:text-2xl text-slate-400 max-w-3xl mx-auto leading-relaxed font-light mb-12">
                             Hemos fusionado el diseño creativo de <span className="text-white font-bold">NEXUS</span> con la infraestructura de alta velocidad de <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent font-black tracking-[0.2em] uppercase font-[family-name:var(--font-orbitron)]">InZidium</span>.
