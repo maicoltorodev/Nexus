@@ -1,4 +1,4 @@
-import { Facebook, Instagram, MessageCircle } from 'lucide-react';
+import { Facebook, Instagram, MessageCircle, Music2 } from 'lucide-react';
 
 export const SECTION_IDS = {
     INICIO: 'inicio',
@@ -25,7 +25,8 @@ export const NAV_LINKS = [
 ];
 
 export const SOCIAL_LINKS = [
-    { icon: <Facebook className="w-5 h-5" />, href: "https://facebook.com", label: "Facebook", color: "#1877F2" },
+    { icon: <Facebook className="w-5 h-5" />, href: "https://www.facebook.com/p/Nexusco-100071467471359/?locale=es_LA", label: "Facebook", color: "#1877F2" },
     { icon: <Instagram className="w-5 h-5" />, href: "https://instagram.com/nexus.col", label: "Instagram", color: "#E4405F" },
-    { icon: <MessageCircle className="w-5 h-5" />, href: "https://wa.me/573184022999", label: "WhatsApp", color: "#25D366" }
+    { icon: <MessageCircle className="w-5 h-5" />, href: "https://wa.me/573184022999", label: "WhatsApp", color: "#25D366" },
+    { icon: <Music2 className="w-5 h-5" />, href: "https://www.tiktok.com/@estudionexus", label: "TikTok", color: "#FE2C55" }
 ];
