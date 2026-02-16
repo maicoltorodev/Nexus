@@ -26,7 +26,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     <div className="flex items-center justify-between px-6 py-6 border-b border-white/5 bg-[#0a0a0a]/50 backdrop-blur-md">
                         <Link href="/" onClick={onClose} className="group flex items-center gap-2">
                             <Image
-                                src="/nexus-solo.webp"
+                                src="/nexus.webp"
                                 alt="Nexus"
                                 width={100}
                                 height={40}

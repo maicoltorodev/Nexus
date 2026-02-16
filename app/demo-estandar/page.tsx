@@ -317,7 +317,7 @@ export default function DemoEstandar() {
     // } as React.CSSProperties;
 
     return (
-        <div className={`bg-[var(--bg)] text-[var(--text)] min-h-screen selection:bg-[var(--primary)] selection:text-[var(--bg)] font-sans transition-colors duration-700 ${modalType ? 'cursor-auto' : 'cursor-none'}`}>
+        <div className={`bg-[var(--bg)] text-[var(--text)] min-h-screen w-full overflow-x-hidden selection:bg-[var(--primary)] selection:text-[var(--bg)] font-sans transition-colors duration-700 ${modalType ? 'cursor-auto' : 'cursor-none'}`}>
 
             {/* --- ESTILOS COMPLEMENTARIOS DINÁMICOS (React Standard) --- */}
             <style dangerouslySetInnerHTML={{
@@ -331,14 +331,16 @@ export default function DemoEstandar() {
                     --text-muted: ${currentTheme.textMuted};
                 }
 
-                html {
+                html, body {
                     scroll-behavior: smooth;
+                    overflow-x: hidden;
+                    width: 100%;
                 }
                 
                 /* Forzar Scrollbar del Tema (Valores Reales para Máxima Compatibilidad) */
                 ::-webkit-scrollbar {
-                    width: 10px !important;
-                    height: 10px !important;
+                    width: 8px !important;
+                    height: 8px !important;
                 }
 
                 ::-webkit-scrollbar-track {
@@ -371,46 +373,45 @@ export default function DemoEstandar() {
             <CustomCursor forceHidden={isHoveringMap} />
 
             {/* --- NEXUS UNIFIED CONTROL BAR --- */}
-            <div className="fixed top-0 left-0 w-full bg-[var(--accent)] z-[110] py-4 px-6 shadow-2xl border-b border-white/10">
+            <div className="fixed top-0 left-0 w-full bg-[var(--accent)] z-[110] py-3 md:py-4 px-4 md:px-6 shadow-2xl border-b border-white/10">
                 <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-white">
                     {/* Info */}
-                    <span className="text-[9px] font-black uppercase tracking-[0.4em] flex items-center gap-2 shrink-0 opacity-80">
+                    <span className="hidden sm:flex text-[9px] font-black uppercase tracking-[0.4em] items-center gap-2 shrink-0 opacity-80">
                         <Shield className="w-3.5 h-3.5" /> PLAN ESTÁNDAR NEXUS
                     </span>
 
                     {/* Theme Selector Group */}
-                    <div className="flex items-center gap-6">
-                        <span className="hidden md:block text-[10px] font-bold uppercase tracking-widest text-white/90 animate-pulse">
+                    {/* Theme Selector Group */}
+                    <div className="flex items-center justify-center w-full md:w-auto relative order-3 md:order-2">
+                        <span className="hidden md:block text-[10px] font-bold uppercase tracking-widest text-white/90 animate-pulse absolute right-full mr-6 whitespace-nowrap">
                             ¡Tendrás tu propio dominio!
                         </span>
 
-                        <div className="flex gap-4 items-center bg-black/10 px-4 py-2 rounded-2xl border border-white/5">
-                            <span className="text-[8px] font-black uppercase tracking-[0.2em] text-white/40 mr-1 hidden lg:block whitespace-nowrap">Personalizar:</span>
-                            <div className="flex gap-3">
-                                {THEMES.map((theme) => (
-                                    <button
-                                        key={theme.id}
-                                        onClick={() => setCurrentTheme(theme)}
-                                        title={theme.name}
-                                        className={`relative w-8 h-8 rounded-full transition-all duration-300 flex items-center justify-center p-[2px] ${currentTheme.id === theme.id
-                                            ? 'bg-white scale-110 shadow-[0_0_15px_rgba(255,255,255,0.4)]'
-                                            : 'bg-white/10 hover:bg-white/20 hover:scale-110'
-                                            }`}
-                                    >
-                                        <div className="w-full h-full rounded-full flex overflow-hidden rotate-45 border border-black/5">
-                                            <div className="w-1/2 h-full" style={{ backgroundColor: theme.primary }} />
-                                            <div className="w-1/2 h-full" style={{ backgroundColor: theme.bg }} />
-                                        </div>
+                        <div className="bg-white/5 backdrop-blur-sm px-2 py-1.5 md:px-3 md:py-2 rounded-full flex gap-2 items-center justify-center">
+                            {THEMES.map((theme) => (
+                                <button
+                                    key={theme.id}
+                                    onClick={() => setCurrentTheme(theme)}
+                                    title={theme.name}
+                                    className={`relative w-7 h-7 md:w-8 md:h-8 rounded-full transition-all duration-300 flex items-center justify-center p-[2px] shrink-0 ${currentTheme.id === theme.id
+                                        ? 'bg-white scale-110 shadow-[0_0_15px_rgba(255,255,255,0.4)] z-10'
+                                        : 'bg-white/10 hover:bg-white/20'
+                                        }`}
+                                >
+                                    <div className="w-full h-full rounded-full flex overflow-hidden rotate-45 border border-black/10">
+                                        <div className="w-1/2 h-full" style={{ backgroundColor: theme.primary }} />
+                                        <div className="w-1/2 h-full" style={{ backgroundColor: theme.bg }} />
+                                    </div>
 
-                                        {currentTheme.id === theme.id && (
-                                            <motion.div
-                                                layoutId="activeThemeDot"
-                                                className="absolute -bottom-1.5 w-1 h-1 bg-white rounded-full"
-                                            />
-                                        )}
-                                    </button>
-                                ))}
-                            </div>
+                                    {currentTheme.id === theme.id && (
+                                        <motion.div
+                                            layoutId="activeThemeDot"
+                                            className="absolute -bottom-2 w-1 h-1 bg-white rounded-full opacity-50 hidden md:block"
+                                        />
+                                    )}
+                                </button>
+                            ))}
+
                         </div>
                     </div>
 
@@ -422,7 +423,7 @@ export default function DemoEstandar() {
             </div>
 
             {/* --- HEADER --- */}
-            <header className="fixed top-24 sm:top-20 left-0 w-full z-50 bg-[var(--bg)]/80 backdrop-blur-md border-b border-[var(--text)]/10 py-4 md:py-6">
+            <header className="fixed top-[112px] sm:top-20 left-0 w-full z-50 bg-[var(--bg)]/80 backdrop-blur-md border-b border-[var(--text)]/10 py-3 md:py-6 transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
                     <button
                         onClick={openLogoModal}
@@ -454,7 +455,7 @@ export default function DemoEstandar() {
                         {/* Botón Llamar (Visible siempre, ajustado en móvil) */}
                         <button
                             onClick={openCallModal}
-                            className="bg-[var(--accent)] text-white px-4 py-2 md:px-6 md:py-2.5 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest hover:bg-[var(--primary)] hover:shadow-[0_0_20px_var(--primary)]/40 transition-all duration-300 active:scale-95 shadow-lg flex items-center gap-2"
+                            className="hidden md:flex bg-[var(--accent)] text-white px-4 py-2 md:px-6 md:py-2.5 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest hover:bg-[var(--primary)] hover:shadow-[0_0_20px_var(--primary)]/40 transition-all duration-300 active:scale-95 shadow-lg items-center gap-2"
                         >
                             <Phone className="w-3 h-3" /> <span className="hidden sm:inline">LLAMAR</span>
                         </button>
@@ -501,17 +502,17 @@ export default function DemoEstandar() {
             </header>
 
             {/* --- HERO --- */}
-            <section id="inicio" className="relative pt-44 md:pt-72 pb-20 md:pb-32 px-6 overflow-hidden scroll-mt-40">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--primary)]/10 blur-[120px] rounded-full -mr-60 -mt-60" />
+            <section id="inicio" className="relative pt-48 md:pt-72 pb-16 md:pb-32 px-6 overflow-hidden scroll-mt-40">
+                <div className="absolute top-0 right-0 w-[250px] h-[250px] md:w-[500px] md:h-[500px] bg-[var(--primary)]/10 blur-[80px] md:blur-[120px] rounded-full -mr-20 -mt-20 md:-mr-60 md:-mt-60 pointer-events-none" />
 
                 <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 md:gap-16 items-center">
                     <motion.div
-                        initial={{ opacity: 0, x: -30 }}
-                        animate={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
                         <DynamicBadge>Bienvenido al Futuro</DynamicBadge>
-                        <h1 className="text-4xl md:text-7xl font-black mb-8 leading-[0.9] tracking-tight uppercase pr-2">
+                        <h1 className="text-3xl sm:text-4xl md:text-7xl font-black mb-6 md:mb-8 leading-[1.1] md:leading-[0.9] tracking-tight uppercase pr-2 break-words">
                             NUESTRO <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary)] to-[var(--accent)]">NEGOCIO FICTICIO</span>
                         </h1>
@@ -533,7 +534,7 @@ export default function DemoEstandar() {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 1 }}
-                        className="relative h-[500px] rounded-[3.5rem] p-[3px] overflow-hidden group shadow-2xl shadow-[var(--primary)]/20"
+                        className="relative h-[350px] md:h-[500px] rounded-[2.5rem] md:rounded-[3.5rem] p-[3px] overflow-hidden group shadow-2xl shadow-[var(--primary)]/20 my-8 md:my-0"
                     >
                         {/* --- EFECTO DE ENERGÍA FLUYENTE (DINÁMICO) --- */}
                         <div className="absolute inset-[-200%] bg-[conic-gradient(from_0deg,transparent,rgba(34,211,238,0),var(--primary),var(--accent),transparent)] animate-[spin_6s_linear_infinite] z-0" />
@@ -589,13 +590,13 @@ export default function DemoEstandar() {
             </section>
 
             {/* --- SECCIÓN 3: TEXTO + IMAGEN (NOSOTROS) --- */}
-            <section id="nosotros" className="py-32 px-6 bg-[var(--bg)]">
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-20 items-center">
+            <section id="nosotros" className="py-20 md:py-32 px-6 bg-[var(--bg)] overflow-hidden">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 md:gap-20 items-center">
                     <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="w-full md:w-1/2 relative h-[600px] rounded-[4rem] overflow-hidden group shadow-2xl border border-[var(--text)]/10"
+                        className="w-full md:w-1/2 relative h-[400px] md:h-[600px] rounded-[2.5rem] md:rounded-[4rem] overflow-hidden group shadow-2xl border border-[var(--text)]/10"
                     >
                         <Image
                             src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop"
@@ -609,8 +610,8 @@ export default function DemoEstandar() {
                     </motion.div>
 
                     <motion.div
-                        initial={{ opacity: 0, x: 50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         className="w-full md:w-1/2"
                     >
@@ -643,10 +644,10 @@ export default function DemoEstandar() {
             </section>
 
             {/* --- SECCIÓN 4: SERVICIOS (CATÁLOGO) --- */}
-            <section id="catalogo" className="py-32 px-6 bg-[var(--bg-muted)] scroll-mt-40">
-                <div className="max-w-7xl mx-auto text-center mb-24">
+            <section id="catalogo" className="py-20 md:py-32 px-6 bg-[var(--bg-muted)] scroll-mt-40">
+                <div className="max-w-7xl mx-auto text-center mb-16 md:mb-24">
                     <DynamicBadge>Catálogo de Ejemplo</DynamicBadge>
-                    <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tight pr-2">NUESTROS 6 SERVICIOS/PRODUCTOS</h2>
+                    <h2 className="text-3xl md:text-6xl font-black uppercase tracking-tight pr-2">NUESTROS 6 SERVICIOS</h2>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
@@ -679,11 +680,11 @@ export default function DemoEstandar() {
             </section>
 
             {/* --- SECCIÓN 5: CONTACTO --- */}
-            <section id="contacto" className="py-32 px-6 bg-[var(--bg)] border-t border-[var(--text)]/10 scroll-mt-40">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <section id="contacto" className="py-32 px-6 bg-[var(--bg)] border-t border-[var(--text)]/10 scroll-mt-40 overflow-hidden">
+                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 md:gap-16 items-center">
                     <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
                         <DynamicBadge>Estamos Cerca</DynamicBadge>
@@ -735,10 +736,10 @@ export default function DemoEstandar() {
                     </motion.div>
 
                     <motion.div
-                        initial={{ opacity: 0, x: 50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="w-full h-[500px] rounded-[3rem] overflow-hidden border border-[var(--text)]/10 shadow-2xl relative group"
+                        className="w-full h-[350px] md:h-[500px] rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-[var(--text)]/10 shadow-2xl relative group"
                         onMouseEnter={() => setIsHoveringMap(true)}
                         onMouseLeave={() => setIsHoveringMap(false)}
                     >
@@ -1010,6 +1011,6 @@ export default function DemoEstandar() {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </div >
     );
 }
