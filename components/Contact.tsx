@@ -20,8 +20,28 @@ const SCHEDULE: { day: string; times: string[] }[] = [
   { day: 'Domingo', times: ['Cerrado'] },
 ];
 
+const LOCATIONS = [
+  {
+    id: 'principal',
+    label: 'Sede 1',
+    address: 'Calle 71 # 69M - 05',
+    city: 'Bogotá, Colombia',
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.5037717737646!2d-74.09166590203546!3d4.682148050380403!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f9b175e0b947b%3A0xd3315c1cd8c20385!2sNEXUS%20ESTUDIO%20GRAFICO!5e0!3m2!1ses-419!2sco!4v1769066189707!5m2!1ses-419!2sco",
+    link: "https://maps.google.com/?q=NEXUS+ESTUDIO+GRAFICO"
+  },
+  {
+    id: 'sede-produccion',
+    label: 'Sede 2',
+    address: 'Cra. 69m #70-78',
+    city: 'Bogotá, Colombia',
+    mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d994.1262836325701!2d-74.092404671466!3d4.681908299704594!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f9b112a7d799b%3A0x7b12948660ff7b07!2sCra.%2069m%20%2370-78%2C%20Bogot%C3%A1!5e0!3m2!1ses-419!2sco!4v1771638923286!5m2!1ses-419!2sco",
+    link: "https://www.google.com/maps/search/?api=1&query=Cra.+69m+%2370-78,+Bogot%C3%A1"
+  }
+];
+
 export default function Contact() {
   const { centeredId, registerElement } = useViewportCenter();
+  const [activeLocation, setActiveLocation] = useState(LOCATIONS[0]);
 
   const openWhatsApp = (phoneNumber: string) => {
     const cleanNumber = phoneNumber.replace(/\s/g, ''); // Eliminar espacios
@@ -125,12 +145,12 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="text-[11px] font-black uppercase tracking-[0.25em] text-gray-400">Ubicación</p>
-                      <h4 className="text-lg font-bold text-white">{CONTACT.address}</h4>
+                      <h4 className="text-lg font-bold text-white">{activeLocation.address}</h4>
                     </div>
                   </div>
-                  <p className="text-gray-400 text-sm">{CONTACT.city}</p>
+                  <p className="text-gray-400 text-sm">{activeLocation.city}</p>
                   <a
-                    href="https://maps.google.com/?q=NEXUS+ESTUDIO+GRAFICO"
+                    href={activeLocation.link}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-4 w-full inline-flex justify-center px-4 py-2 rounded-lg bg-[#FFD700] text-black text-xs font-bold tracking-wide shadow-[0_8px_30px_rgba(255,215,0,0.35)] hover:shadow-[0_12px_40px_rgba(255,215,0,0.5)] transition-all hover:scale-[1.02]"
@@ -157,18 +177,35 @@ export default function Contact() {
           </div>
         </div>
 
-        <div className="mt-10 rounded-2xl overflow-hidden border-2 border-[#FFD700]/30 shadow-2xl">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.5037717737646!2d-74.09166590203546!3d4.682148050380403!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f9b175e0b947b%3A0xd3315c1cd8c20385!2sNEXUS%20ESTUDIO%20GRAFICO!5e0!3m2!1ses-419!2sco!4v1769066189707!5m2!1ses-419!2sco"
-            width="100%"
-            height="360"
-            style={{ border: 0 }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            className="w-full h-[360px] bg-black"
-            title="Mapa de ubicación"
-          />
+        <div className="mt-10">
+          <div className="flex justify-center gap-4 mb-6">
+            {LOCATIONS.map((loc) => (
+              <button
+                key={loc.id}
+                onClick={() => setActiveLocation(loc)}
+                className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 border ${activeLocation.id === loc.id
+                  ? 'bg-[#FFD700] text-black border-[#FFD700] shadow-[0_0_15px_rgba(255,215,0,0.3)]'
+                  : 'bg-transparent text-gray-400 border-white/10 hover:border-[#FFD700]/50 hover:text-white'
+                  }`}
+              >
+                {loc.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="rounded-2xl overflow-hidden border-2 border-[#FFD700]/30 shadow-2xl transition-all duration-500">
+            <iframe
+              src={activeLocation.mapUrl}
+              width="100%"
+              height="450"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="w-full h-[450px] bg-black"
+              title={`Mapa de ${activeLocation.label}`}
+            />
+          </div>
         </div>
       </div>
     </section>
@@ -200,11 +237,10 @@ function ScheduleBlock({ schedule }: { schedule: { day: string; times: string[] 
                 setSelectedDay(entry.day);
                 setPaused(true);
               }}
-              className={`px-4 py-2 rounded-full text-xs font-bold tracking-wide transition-all duration-300 ${
-                active
-                  ? 'bg-[#FFD700] text-black shadow-[0_8px_30px_rgba(255,215,0,0.35)]'
-                  : 'bg-white/5 text-gray-300 hover:bg-white/10'
-              }`}
+              className={`px-4 py-2 rounded-full text-xs font-bold tracking-wide transition-all duration-300 ${active
+                ? 'bg-[#FFD700] text-black shadow-[0_8px_30px_rgba(255,215,0,0.35)]'
+                : 'bg-white/5 text-gray-300 hover:bg-white/10'
+                }`}
               aria-label={`Ver horario de ${entry.day}`}
             >
               {entry.day}
