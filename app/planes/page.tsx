@@ -56,7 +56,7 @@ export default function PlansPage() {
                             Inversión <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600">Web</span>
                         </h1>
                         <p className="text-lg md:text-2xl text-slate-400 max-w-3xl mx-auto leading-relaxed font-light mb-12">
-                            Hemos fusionado el diseño creativo de <span className="text-white font-bold">NEXUS</span> con la infraestructura de alta velocidad de <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent font-black tracking-[0.2em] uppercase font-[family-name:var(--font-orbitron)]">InZidium</span>.
+                            Hemos fusionado el diseño creativo de <span className="text-white font-medium italic-none">NE<span className="text-[#FFD700] font-black">X</span>US</span> con la infraestructura de alta velocidad de <span className="font-[family-name:var(--font-orbitron)] bg-gradient-to-r from-purple-500 to-cyan-400 bg-clip-text text-transparent font-bold">InZidium</span>.
                         </p>
 
                         <div className="flex justify-center mb-16">
@@ -219,7 +219,7 @@ export default function PlansPage() {
                                     ].map((rule, i) => (
                                         <div key={i}>
                                             <h5 className="text-white font-black text-sm uppercase tracking-wider mb-4 flex items-center gap-3">
-                                                <div className="w-2 h-2 rounded-full bg-amber-500" /> 0{i + 1}. {rule.t}
+                                                <div className="w-2 h-2 rounded-full bg-amber-500" /> {String(i + 1).padStart(2, '0')}. {rule.t}
                                             </h5>
                                             <p className="text-slate-400 text-sm leading-relaxed">{rule.d}</p>
                                         </div>
