@@ -56,7 +56,7 @@ export default function PlansPage() {
                             Inversión <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600">Web</span>
                         </h1>
                         <p className="text-lg md:text-2xl text-slate-400 max-w-3xl mx-auto leading-relaxed font-light mb-12">
-                            Hemos fusionado el diseño creativo de <span className="text-white font-medium italic-none">NE<span className="text-[#FFD700] font-black">X</span>US</span> con la infraestructura de alta velocidad de <span className="font-[family-name:var(--font-orbitron)] bg-gradient-to-r from-purple-500 to-cyan-400 bg-clip-text text-transparent font-bold">InZidium</span>.
+                            Hemos fusionado el diseño creativo de <span className="text-white font-medium italic-none">NE<span className="text-[#FFD700] font-black">X</span>US</span> con la tecnología de <span className="font-[family-name:var(--font-orbitron)] bg-gradient-to-r from-purple-500 to-cyan-400 bg-clip-text text-transparent font-bold">InZidium</span>.
                         </p>
 
                         <div className="flex justify-center mb-16">
